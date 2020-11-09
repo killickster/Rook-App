@@ -5,6 +5,8 @@ const dotenv = require('dotenv')
 
 //Import Routes
 const authRoute = require('./routes/auth')
+const postRoute = require('./routes/posts')
+const gameRoute = require('./routes/games/games')
 
 dotenv.config()
 
@@ -16,6 +18,8 @@ mongoose.connect(process.env.DB_CONNECT, {useUnifiedTopology: true, useNewUrlPar
 app.use(express.json())
 //Route Middleware
 app.use('/api/user', authRoute)
+app.use('/api/posts', postRoute)
+app.use('/api/games', gameRoute)
 
 
 app.listen(3000, () => {console.log("Server is up and running")})
