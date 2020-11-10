@@ -1,6 +1,13 @@
 
+To get this server working you need to get a mongodb database and the key associated with it and also create a file which contains this key.
 
-To get the server connected to a mongodb database you need to create a database at https://www.mongodb.com/cloud/atlas
+To do this create a .env file with the following two variables;
+
+![Alt text](./readme-photos/enviornment.png)
+
+The TOKEN_SECRET is the salt used to hash passwords and is just a random string and the DB_CONNECT is used in the index.js to connect to your database.
+
+Go to https://www.mongodb.com/cloud/atlas and create your database.
 
 Once you have the free version created connect to database by adding your current ip address to the database access:
 
@@ -22,10 +29,6 @@ You can use the name test for to replace <dbname> in
   
 ![Alt text](./readme-photos/name.png)
 
-Now create a .env file in the server directory and define the following two variables
+now add this url to the DB_CONNECT variable in the .env file you have created.
 
-![Alt text](./readme-photos/enviornment.png)
-
-The TOKEN_SECRET is used to hash passwords and the DB_CONNECT is used in the index.js to connect to your database
-
-Now enter npm run start to start up the server and you should be able to write to your database.
+The server should run when you type npm run start.
