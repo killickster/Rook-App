@@ -2,4 +2,4 @@
 
 
 
-[My image](killickster.github.com/Rook-App/server/readme-photos/name.png)
+[My image](./readme-photos/name.png)
