@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators} from '@angular/forms';
 import { Subject } from 'rxjs';
+import {AuthService} from '../auth.service'
 
 @Component({
   selector: 'app-register',
@@ -11,24 +12,48 @@ export class RegisterComponent implements OnInit {
 
   signupForm: FormGroup
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
 
         this.signupForm = new FormGroup({
           'username': new FormControl(null, Validators.required),
           'email': new FormControl(null, [Validators.required, Validators.email]),
-          'password': new FormControl(null, Validators.required),
-          'confPassword': new FormControl(null, [Validators.required])
+          'passwords': new FormGroup({
+            'password': new FormControl(null, Validators.required),
+            'confPassword': new FormControl(null, [Validators.required])
+          }, this.passwordValidator.bind(this))
+
 
     })
   }
 
 
+  passwordValidator(group: FormGroup): {[s:string]: boolean}{
+    const password = group.controls.password.value
+    const confPassword = group.controls.confPassword.value
+    if(password !== confPassword){
+      return {'password does not match confermation password': true}
+    }
+    return null 
+  }
 
 
   onSubmit(){
     console.log(this.signupForm)
+
+    if(this.signupForm.valid){
+
+      const username = this.signupForm.get('username').value
+      const email = this.signupForm.get('email').value
+      const password = this.signupForm.get('passwords').get('password').value
+      this.authService.signup(username, email, password).subscribe(resData => {
+        console.log(resData)
+      }, errorRes => {
+        console.log(errorRes)
+      })
+    }
+
   }
 
 

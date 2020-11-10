@@ -19,26 +19,28 @@
                 formControlName="email"
                 >
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input
-                type="password"
-                id="password"
-                class="form-control"
-                formControlName="password"
-                >
-            </div>
-            <div class="form-group">
-                <label for="confPassword">Confermation Password</label>
-                <input
-                type="confPassword"
-                id="confPassword"
-                class="form-control"
-                formControlName="confPassword"
-                >
+            <div formGroupName="passwords" class="from-group">
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    formControlName="password"
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="confPassword">Confermation Password</label>
+                    <input
+                    type="password"
+                    id="confPassword"
+                    class="form-control"
+                    formControlName="confPassword"
+                    >
+                </div>
             </div>
                 <button class="btn btn-primary" type="submit" [class.disabled]="!signupForm.valid">Sign Up</button>
-                <button class="btn btn-primary" type="button">Swith to Sign In</button>
+                <button class="btn btn-primary" type="button" routerLink="/login">Swith to Sign In</button>
         </form>
     </div>
 </div>
