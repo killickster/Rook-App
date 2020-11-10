@@ -1,7 +1,7 @@
 
-To get this server working you need to get a mongodb database and the key associated with it and also create a file which contains this key.
+To get this server working you need to get a mongodb database and obtain the url key associated with it.
 
-To do this create a .env file with the following two variables;
+To use this key you will need to create a .env file with the following two variables;
 
 ![Alt text](./readme-photos/enviornment.png)
 
