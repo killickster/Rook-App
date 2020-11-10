@@ -2,4 +2,4 @@
 
 
 
-[My image](./readme-photos/name.png)
+![Alt text](./readme-photos/name.png)
