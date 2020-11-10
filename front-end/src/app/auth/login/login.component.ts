@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
+import { AuthService } from '../auth.service';
+import jwt_decode from 'jwt-decode'
 
 @Component({
   selector: 'app-login',
@@ -9,7 +11,7 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -19,7 +21,21 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(){
+
     console.log(this.loginForm)
+
+    if(this.loginForm.valid){
+
+      const email = this.loginForm.get('email').value
+      const password = this.loginForm.get('password').value
+      this.authService.signin(email, password).subscribe(res => {
+        console.log(res)
+
+        console.log(jwt_decode(res['token']))
+
+        
+      })
+    }
   }
 
 }
