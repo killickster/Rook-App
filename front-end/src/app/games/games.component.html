@@ -1,0 +1,15 @@
+<div *ngFor="let game of games" class="list-group">
+    <a style="cursor: pointer;" class="list-group-item row">
+        <div class="col-sm-4">
+            <div >Game: {{game.id}}</div>
+        </div>
+        <div class="col-sm-4">
+            <div class="list-group">
+                <li class="list-group-item" *ngFor="let player of game.players">{{player.name}}</li>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            {{game.numberOfPlayers - game.players.length | display}}
+        </div>
+    </a>
+</div>
