@@ -1,11 +1,11 @@
 
 To get this server working you need to get a mongodb database and obtain the url key associated with it.
 
-To use this key you will need to create a .env file with the following two variables;
+To use this key you will need to create a .env file with the following two variables.
 
 ![Alt text](./readme-photos/enviornment.png)
 
-The TOKEN_SECRET is the salt used to hash passwords and is just a random string and the DB_CONNECT is used in the index.js to connect to your database.
+The variables are specific to your local enviornment. TOKEN_SECRET is the salt used to hash passwords and is just a random string and the DB_CONNECT is used in the index.js to connect to your database.
 
 Go to https://www.mongodb.com/cloud/atlas and create your database.
 
