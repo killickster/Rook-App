@@ -1,7 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'
-import {HttpClientModule} from '@angular/common/http'
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http'
+import {AuthInterceptorService} from './auth/auth-interceptor.service'
 
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -9,7 +10,8 @@ import { GamesComponent } from './games/games.component';
 import {DisplayPipe} from './games/game-display.pipe'
 import {RoutingModule} from './router.module';
 import { RegisterComponent} from './auth/register/register.component';
-import { LoginComponent } from './auth/login/login.component'
+import { LoginComponent } from './auth/login/login.component';
+import { CreateGameComponent } from './games/create-game/create-game.component'
 
 
 @NgModule({
@@ -19,7 +21,8 @@ import { LoginComponent } from './auth/login/login.component'
     GamesComponent,
     DisplayPipe,
     RegisterComponent,
-    LoginComponent
+    LoginComponent,
+    CreateGameComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +31,7 @@ import { LoginComponent } from './auth/login/login.component'
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

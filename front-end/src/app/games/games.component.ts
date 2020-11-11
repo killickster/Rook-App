@@ -14,6 +14,6 @@ export class GamesComponent implements OnInit {
 
   ngOnInit(): void {
     this.games = this.gameService.games
+    this.gameService.fetchGames()
   }
-
 }
