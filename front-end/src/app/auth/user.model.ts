@@ -3,6 +3,6 @@ export class User{
         public name: string,
         public id: string,
         public token: string,
-        public expiration: string
+        public expiration: Date
     ){}
 }

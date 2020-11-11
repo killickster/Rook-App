@@ -1,17 +1,29 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http'
 import {User} from './user.model'
-import {Subject, throwError} from 'rxjs'
-import {catchError} from 'rxjs/operators'
+import {Subject, BehaviorSubject, throwError} from 'rxjs'
+import {catchError, tap} from 'rxjs/operators'
+import { stringify } from '@angular/compiler/src/util';
+import { Router } from '@angular/router';
+import jwt_decode from 'jwt-decode'
+
+export interface AuthResponseData{
+  token: string,
+  name: string
+}
+
 
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class AuthService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
-  user:Subject<User> = new Subject<User>()
+  user: BehaviorSubject<User> = new BehaviorSubject<User>(null)
+  private tokenExpirationTimer: any
 
 
   signup(username: string, email: string, password: string){
@@ -27,11 +39,68 @@ export class AuthService {
 
   signin(email: string, password: string){
 
-    return this.http.post('http://localhost:3000/api/user/login',{
+    return this.http.post<AuthResponseData>('http://localhost:3000/api/user/login',{
       email: email,
       password: password
-    }).pipe(catchError(this.handleErrors))
+    }).pipe(catchError(this.handleErrors), tap(resData => {
+
+      this.handleAuthentication(resData.name, resData.token)
+    }))
   }
+
+
+  autoLogin(){
+    const userData: {name: string, id: string, token: string, expirationDate: string} = JSON.parse(localStorage.getItem('userData'))
+
+    if(!userData){
+      return
+    }
+
+    const loadedUser = new User(userData.name, userData.id, userData.token, new Date(userData.expirationDate))
+
+    if(loadedUser.token){
+      this.user.next(loadedUser)
+    }
+
+  }
+
+  logout(){
+    this.user.next(null)
+    this.router.navigate(['/login'])
+    localStorage.removeItem('userData')
+
+    if(this.tokenExpirationTimer){
+      clearTimeout(this.tokenExpirationTimer)
+    }
+
+    this.tokenExpirationTimer = null
+  }
+
+  autoLogout(expirationDuration: number){
+    this.tokenExpirationTimer = setTimeout(() => {
+      console.log('logged out')
+      this.logout()
+    }, expirationDuration)
+  }
+
+
+  handleAuthentication(name: string, token: string){
+
+
+    const data = jwt_decode(token)
+    const id = data['_id']
+    const expirationDate = new Date(+data['exp'])
+
+    const user = new User(name, id, token, expirationDate)
+    this.user.next(user)
+    localStorage.setItem('userData', JSON.stringify(user))
+    const expirationDuration = (+expirationDate*1000) - Date.now()
+    this.autoLogout(expirationDuration)
+
+    this.router.navigate(['/games'])
+  }
+
+
 
 
 

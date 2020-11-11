@@ -10,13 +10,13 @@
         </div>
         <div class="navbar-collapse" [class.collapse]="collapsed" (window:resize)="collapsed=true">
             <ul class="nav navbar-nav">
-                <li><a style="cursor: pointer;" routerLink="/games">Games</a></li>
-                <li><a style="cursor: pointer;">Leaderboard</a></li>
-                <li><a style="cursor: pointer;" routerLink="/register">Register</a></li>
-                <li><a style="cursor: pointer;" routerLink="/login">Login</a></li>
+                <li *ngIf="authenticated" ><a style="cursor: pointer;" routerLink="/games">Games</a></li>
+                <li *ngIf="authenticated" ><a style="cursor: pointer;">Leaderboard</a></li>
+                <li *ngIf="!authenticated"><a style="cursor: pointer;" routerLink="/register">Register</a></li>
+                <li *ngIf="!authenticated"><a style="cursor: pointer;" routerLink="/login">Login</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a style="cursor: pointer;">Logout</a></li>
+                <li *ngIf="authenticated" ><a style="cursor: pointer;" *ngIf="authenticated" (click)="logout()">Logout</a></li>
             </ul>
         </div>
     </div>

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { AuthService } from '../auth.service';
 import jwt_decode from 'jwt-decode'
+import { Observable } from 'rxjs';
+import {AuthResponseData} from '../auth.service'
 
 @Component({
   selector: 'app-login',
@@ -11,6 +13,8 @@ import jwt_decode from 'jwt-decode'
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup
+  error: string = null
+
   constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -28,14 +32,16 @@ export class LoginComponent implements OnInit {
 
       const email = this.loginForm.get('email').value
       const password = this.loginForm.get('password').value
-      this.authService.signin(email, password).subscribe(res => {
-        console.log(res)
 
-        console.log(jwt_decode(res['token']))
-
-        
+      this.authService.signin(email, password).subscribe(resData => {
+        console.log(resData)
+      }, errorMessage => {
+        this.error = errorMessage
+        console.log(this.error)
       })
     }
+
+    this.loginForm.reset()
   }
 
 }
