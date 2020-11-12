@@ -2,7 +2,7 @@ import {Player} from './player.model'
 
 export class Game{
 
-    constructor(public name: string ,public id: number, public numberOfPlayers: number, public players: Player[]){
+    constructor(public hostName: string ,public id: string, public numberOfPlayers: number, public playersNames: string[]){
 
     }
 }

@@ -6,6 +6,7 @@ const http = require('http')
 const socketio = require('socket.io')
 const server = http.createServer(app)
 const cors = require('cors')
+const Deck = require('./model/game/Deck')
 
 var corsOptions = {
     origin: 'http://localhost:4200',
@@ -26,6 +27,8 @@ const authRoute = require('./routes/auth')
 const postRoute = require('./routes/posts')
 const gameRoute = require('./routes/games/games')
 const { isObject } = require('util')
+const Game = require('./model/game/Game')
+const Player = require('./model/game/Player')
 
 dotenv.config()
 
@@ -40,5 +43,11 @@ app.use('/api/user', authRoute)
 app.use('/api/posts', postRoute)
 app.use('/api/games', gameRoute)
 
+var game = new Game()
+game.addPlayer(new Player('bob'))
+game.addPlayer(new Player('jim'))
+game.addPlayer(new Player('vi'))
+game.addPlayer(new Player('dli'))
+game.formTeams()
 
 server.listen(3000, () => {console.log("Server is up and running")})

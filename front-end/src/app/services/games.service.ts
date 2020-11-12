@@ -1,14 +1,23 @@
 import { HttpClient, HttpClientModule, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
+import { map} from 'rxjs/operators';
 import {Game} from '../models/game.model'
 import {Player} from '../models/player.model'
+
+interface GameResponseData {
+  host: string;
+  numberOfPlayers: string,
+  id: string
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GamesService {
 
-  games: Game[] = [new Game('Bob',0, 4, [new Player(0,'Micah', 10), new Player(1,'Micahel', 10)]), new Game('John',1, 4, [new Player(10, 'Dad', 10), new Player(11,'Adri', 10), new Player(12,'Anthony', 10), new Player(13,'Graeme', 10)])]
+  gamesChanged: Subject<Game[]> = new Subject<Game[]>()
+  games: Game[] = []
 
   constructor(private http: HttpClient) { }
 
@@ -16,17 +25,20 @@ export class GamesService {
   fetchGames(){
 
     return this.http.get('http://localhost:3000/api/games').subscribe(games => {
-      console.log(games)
+
+      this.games = games['allGames']
+      console.log(this.games)
+      this.gamesChanged.next(this.games)
     })
   }
 
   addGame(numberOfPlayers: number){
-
-    return this.http.post('http://localhost:3000/api/games/game', {numberOfPlayers: numberOfPlayers}).subscribe(game => {
+    return this.http.post<Game>('http://localhost:3000/api/games/game', {numberOfPlayers: numberOfPlayers}).subscribe(game =>{
       console.log(game)
+      console.log((this.games))
+      this.games.push((new Game(game.hostName, game.id, game.numberOfPlayers, [game.hostName])))
+      this.gamesChanged.next(this.games)
     })
-
-
   }
 
 }

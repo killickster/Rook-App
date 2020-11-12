@@ -15,7 +15,7 @@ const gameSchema = new mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         required: false
     },
-    player_names:{
+    playersNames:{
         type: [String],
         required: true
     },

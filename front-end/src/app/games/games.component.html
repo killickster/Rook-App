@@ -1,18 +1,19 @@
 
-<button routerLink="create">Add Game</button>
+<button class="btn btn-primary" routerLink="create">Add Game</button>
 <router-outlet></router-outlet>
 <div *ngFor="let game of games" class="list-group">
     <a style="cursor: pointer;" class="list-group-item row">
         <div class="col-sm-4">
             <div >Game: {{game.id}}</div>
+            <button class="btn btn-primary" [class.disabled]="true">Join</button>
         </div>
         <div class="col-sm-4">
             <div class="list-group">
-                <li class="list-group-item" *ngFor="let player of game.players">{{player.name}}</li>
+                <li class="list-group-item" *ngFor="let player of game.playersNames">{{player}}</li>
             </div>
         </div>
         <div class="col-sm-4">
-            {{game.numberOfPlayers - game.players.length | display}}
+            {{game.numberOfPlayers - game.playersNames.length | display}}
         </div>
     </a>
 </div>

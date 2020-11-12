@@ -2,12 +2,11 @@ const verifyToken = require('../verifyToken')
 const router = require('express').Router()
 const Game = require('../../model/Game')
 const User = require('../../model/User')
+const verifyNotHost = require('../verifyNotHost')
 
 
 
-router.post('/game', verifyToken, async (req,res) => {
-
-    
+router.post('/game', verifyToken, verifyNotHost, async (req,res) => {
 
     const host = await User.findOne({_id: req.user._id})
 
@@ -16,7 +15,7 @@ router.post('/game', verifyToken, async (req,res) => {
         host_id: req.user._id,
         host_name: host.name,
         players_id: [],
-        playerNames: [],
+        playersNames: [host.name],
         numberOfPlayers: req.body.numberOfPlayers 
     })
 
@@ -25,9 +24,10 @@ router.post('/game', verifyToken, async (req,res) => {
         const game = await newGame.save()
 
         const returnGame = {
-                host: game.host_name,
-                playerNames: game.playerNames,
-                numberOfPlayers: game.numberOfPlayers
+                hostName: game.host_name,
+                playersNames: game.playersNames,
+                numberOfPlayers: game.numberOfPlayers,
+                id: game._id
             }
         
 
@@ -45,9 +45,10 @@ router.get('/', verifyToken, async (req,res) => {
 
     const allGames= games.map((game) => {
         return {
-            host: game.host_name,
-            playerNames: game.playerNames,
-            numberOfPlayers: game.numberOfPlayers
+            hostName: game.host_name,
+            playersNames: game.playersNames,
+            numberOfPlayers: game.numberOfPlayers,
+            id: game._id
         }
     })
 

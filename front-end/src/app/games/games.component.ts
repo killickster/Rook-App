@@ -14,6 +14,10 @@ export class GamesComponent implements OnInit {
 
   ngOnInit(): void {
     this.games = this.gameService.games
+
+    this.gameService.gamesChanged.subscribe((games: Game[]) => {
+      this.games = games
+    })
     this.gameService.fetchGames()
   }
 }
