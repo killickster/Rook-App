@@ -2,9 +2,9 @@
 var id = 0
 
 class Player{
-    constructor(name){
+    constructor(id, name){
         this.name = name
-        this.id = id++
+        this.id = id
         this.hand = []
         this.hasPassed = false;
     }

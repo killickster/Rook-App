@@ -5,7 +5,9 @@ var Trick = require('./Trick')
 
 
 class Game{
-    constructor(){
+    constructor(game_id){
+        this.numberOfPlayers = 4
+        this.id = game_id
         this.players = []
         this.kitty = []
         this.currentBid = 80
@@ -14,6 +16,7 @@ class Game{
         this.tricks = []
         this.team1 = []
         this.team2 = []
+        this.waitingForPlayers = true
 
     }
 
@@ -50,8 +53,8 @@ class Game{
             i++
         }
 
-        console.log(this.team1)
-        console.log(this.team2)
+        this.waitingForPlayers = false
+
 
     }
 
@@ -150,6 +153,20 @@ class Game{
 
     play(id, card){
         this.tricks[this.tricks.length-1].submitPlay(id, card)
+    }
+
+
+    getGameForDisplay(){
+
+        var players = []
+        for(let player of this.players){
+            players.push(player)
+        }
+        return {
+            id: game.id,
+            players: players,
+            numberOfPlayersRequired: this.numberOfPlayers
+        }
     }
 }
 

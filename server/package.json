@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "game_server": "nodemon ./routes/sockets/game_socket/setup.js",
+    "game_test": "nodemon ./routes/sockets/game_socket_tests/game_test.js"
   },
   "author": "",
   "license": "ISC",
@@ -12,7 +14,8 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "mongoose": "^5.10.13"
+    "mongoose": "^5.10.13",
+    "socket.io-client": "^3.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"
