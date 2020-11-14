@@ -94,8 +94,34 @@ class Game{
             i++
         }
 
+        this.bidderIndex = 0
+        this.currentBidder = this.getCurrentBidder(this.bidderIndex)
 
 
+    }
+
+    getCurrentBidder(index){
+
+        console.log(index)
+
+        var currentBidder
+        if(index == 0){
+            currentBidder = this.team1[0]
+        }else if(index == 1){
+            currentBidder = this.team2[0]
+        }else if(index == 2){
+            currentBidder = this.team1[1]
+        }else if(index == 3){
+            currentBidder = this.team2[1]
+        }
+
+        if(index == this.numberOfPlayers-1){
+           this.bidderIndex = 0 
+        }else{
+            this.bidderIndex += 1
+        }
+
+        return currentBidder
     }
 
     submitBid(playerId, bid){
@@ -120,15 +146,21 @@ class Game{
             this.bidFinished = true;
             this.completeBid()
         }
+
+
+
+        console.log('bidder index:')
+        console.log(this.bidderIndex)
+        this.currentBidder = this.getCurrentBidder(this.bidderIndex)
     }
 
     completeBid(){
         for(var i = 0; i < this.players.length; i++){
             if(this.players[i].hasPassed !== true){
-                if(this.team1.players.includes(this.players[i])){
+                if(this.team1.includes(this.players[i])){
                     this.team1.bid = this.currentBid
                 }
-                if(this.team2.players.includes(this.players[i])){
+                if(this.team2.includes(this.players[i])){
                     this.team2.bid = this.currentBid
                 }
             }
@@ -138,6 +170,7 @@ class Game{
         console.log(this.players[1])
         console.log(this.players[2])
         console.log(this.players[3])
+
     }
 
     decideTrump(color){
@@ -146,8 +179,8 @@ class Game{
     }
 
 
-    beginTrick(){
-        this.tricks.push(new Trick(this.players.length, this.color))
+    beginTrick(player){
+        this.tricks.push(new Trick(this.players.length, this.color, player))
     }
 
 

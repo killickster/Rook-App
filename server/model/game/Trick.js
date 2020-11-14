@@ -1,5 +1,6 @@
 class Trick{
-    constructor(numberOfPlayers, trump){
+    constructor(numberOfPlayers, trump, firstPlayer){
+        this.currentPlayer = firstPlayer
         this.numberOfPlayers = numberOfPlayers
         this.trump = trump
         this.isTrumped = false;
