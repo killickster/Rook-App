@@ -1,16 +1,21 @@
 const Game = require('../../../model/game/Game')
 const Player = require('../../../model/game/Player')
+const GameSchema = require('../../../model/Game')
 
 
-const games = []
+
 
 
 
 module.exports = function(io){
-    io.of('/games/socket').on('connection', (socket) => {
-        console.log('connected')
 
-        socket.emit('connected')
+    var games = []
+
+
+    io.on('connection', (socket) => {
+
+        console.log('hello')
+
 
         socket.on('initalize_game', async (game_data) => {
 
@@ -19,17 +24,19 @@ module.exports = function(io){
             //get player_name from database
 
             //Check database for game
-
+            var game_from_database = GameSchema.findOne({_id: game_id})
             
             var game = await games.find(g => {
                 return g.id === game_id
             })
 
+
+
             if(game){
                 socket.emit('declined', "this game already exists")
             }else{
 
-                const game = await new Game(game_id)             //player_id will be replaced by player_name
+                const game = await new Game(game_from_database._id)
                 games.push(game)
                 game.addPlayer(new Player(player_id, player_id))
 

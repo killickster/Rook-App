@@ -1,25 +1,21 @@
 const express = require('express')
 const app = express()
+var server = require('http').createServer(app)
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
-const http = require('http')
-const socketio = require('socket.io')
-const server = http.createServer(app)
 const cors = require('cors')
+const game_socket = require('./routes/sockets/game_socket/game_socket')
 
-var corsOptions = {
-    origin: 'http://localhost:4200',
-    optionsSuccessStatus: 200
-
-}
+const corsOptions = {
+  };
 
 app.use(cors(corsOptions))
 
-const io = socketio(server)
 
-io.on('connection', socket => {
-    console.log('New connection')
-})
+
+
+
+
 
 //Import Routes
 const authRoute = require('./routes/auth')
@@ -38,6 +34,18 @@ app.use(express.json())
 app.use('/api/user', authRoute)
 app.use('/api/posts', postRoute)
 app.use('/api/games', gameRoute)
-
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
+    next();
+});
 
 server.listen(3000, () => {console.log("Server is up and running")})
+
+
+const io = require('socket.io')(server, {log:false, origins:'*:*'})
+
+
+game_socket(io)
