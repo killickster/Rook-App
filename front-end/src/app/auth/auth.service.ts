@@ -6,6 +6,8 @@ import {catchError, tap} from 'rxjs/operators'
 import { stringify } from '@angular/compiler/src/util';
 import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode'
+import { GamesService } from '../services/games.service';
+import { Game } from '../models/game.model';
 
 export interface AuthResponseData{
   token: string,
@@ -43,6 +45,7 @@ export class AuthService {
       email: email,
       password: password
     }).pipe(catchError(this.handleErrors), tap(resData => {
+      console.log('data')
 
       this.handleAuthentication(resData.name, resData.token)
     }))
@@ -66,6 +69,7 @@ export class AuthService {
       this.user.next(loadedUser)
     }
 
+
   }
 
   logout(){
@@ -79,7 +83,6 @@ export class AuthService {
 
     this.tokenExpirationTimer = null
   }
-
   autoLogout(expirationDuration: number){
     this.tokenExpirationTimer = setTimeout(() => {
       console.log('logged out')
@@ -87,9 +90,8 @@ export class AuthService {
     }, expirationDuration)
   }
 
-
   handleAuthentication(name: string, token: string){
-
+    console.log(name)
 
     const data = jwt_decode(token)
     const id = data['_id']
@@ -97,7 +99,6 @@ export class AuthService {
 
     const user = new User(name, id, token, expirationDate)
     this.user.next(user)
-    localStorage.setItem('userData', JSON.stringify(user))
     const expirationDuration = (+expirationDate*1000) - Date.now()
     this.autoLogout(expirationDuration)
 
@@ -110,6 +111,8 @@ export class AuthService {
 
   private handleErrors(errorRes: HttpErrorResponse){
     let errorMessage = errorRes.error
+
+    console.log(errorRes)
 
     let message = 'an unkown error has occured'
 

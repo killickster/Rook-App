@@ -34,18 +34,16 @@ app.use(express.json())
 app.use('/api/user', authRoute)
 app.use('/api/posts', postRoute)
 app.use('/api/games', gameRoute)
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-    res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
-    next();
-});
 
 server.listen(3000, () => {console.log("Server is up and running")})
 
 
-const io = require('socket.io')(server, {log:false, origins:'*:*'})
+const io = require('socket.io')(server, {
+    cors: {
+        origin:'http://localhost:4200',
+        method:["GET", "POST"]
+    }
+})
 
 
 game_socket(io)

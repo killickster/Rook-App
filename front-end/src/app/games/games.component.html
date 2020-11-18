@@ -1,19 +1,28 @@
 
 <button class="btn btn-primary" routerLink="create">Add Game</button>
+<div *ngIf="errorMessage" class="row">
+    <div class="col-sm-6">
+        <div class="alert alert-danger">
+            {{errorMessage}}
+        </div>
+    </div>
+</div>
+
+
 <router-outlet></router-outlet>
 <div *ngFor="let game of games" class="list-group">
     <a style="cursor: pointer;" class="list-group-item row">
         <div class="col-sm-4">
             <div >Game: {{game.id}}</div>
-            <button class="btn btn-primary" [class.disabled]="true">Join</button>
+            <button class="btn btn-primary" [class.disabled]="slectedGame && game.id === selectedGame.id" (click)="joinGame(game)">Join</button>
         </div>
         <div class="col-sm-4">
             <div class="list-group">
-                <li class="list-group-item" *ngFor="let player of game.playersNames">{{player}}</li>
+                <li class="list-group-item" *ngFor="let player of game.playerNames">{{player}}</li>
             </div>
         </div>
         <div class="col-sm-4">
-            {{game.numberOfPlayers - game.playersNames.length | display}}
+            {{game.numberOfPlayers - game.playerNames.length | display}}
         </div>
     </a>
 </div>

@@ -5,6 +5,15 @@ class Team{
         this.bid = 0;
     }
 
+    getPlayerNames(){
+        var playerNames = []
+        for(let player of players){
+            playerNames.push(player.name)
+        }
+
+        return playerNames
+    }
+
     addPointsMade(points){
         if(points > this.bid){
             this.score += points

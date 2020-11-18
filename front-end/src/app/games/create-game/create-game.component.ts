@@ -9,7 +9,7 @@ import { GamesService } from 'src/app/services/games.service';
 })
 export class CreateGameComponent implements OnInit {
 
-  numberOfPlayers: number = 3
+  numberOfPlayers: number = 4
   createdGame = false
 
   constructor(private gameService: GamesService) { }
@@ -18,14 +18,14 @@ export class CreateGameComponent implements OnInit {
   }
 
   increment(){
-    if(this.numberOfPlayers <= 5){
+    if(this.numberOfPlayers < 4){
       this.numberOfPlayers++
     }
 
   }
 
   decrement(){
-    if(this.numberOfPlayers >= 4){
+    if(this.numberOfPlayers > 4){
       this.numberOfPlayers--
     }
 

@@ -1,9 +1,11 @@
-import { HttpClient, HttpClientModule, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { map} from 'rxjs/operators';
+import { BehaviorSubject, Subject, throwError } from 'rxjs';
+import { catchError, tap} from 'rxjs/operators';
+import { AuthService } from '../auth/auth.service';
 import {Game} from '../models/game.model'
 import {Player} from '../models/player.model'
+import{WebSocketService} from '../web-socket.service'
 
 interface GameResponseData {
   host: string;
@@ -18,27 +20,123 @@ export class GamesService {
 
   gamesChanged: Subject<Game[]> = new Subject<Game[]>()
   games: Game[] = []
+  errorMessage: Subject<string> = new Subject<string>()
+  game: BehaviorSubject<Game> = new BehaviorSubject<Game>(null)
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService, private socketService: WebSocketService) {
+
+    this.socketService.listen('new_player').subscribe(data => {
+      this.game.subscribe(game => {
+        console.log(this.games)
+        for(var i = 0 ; i < this.games.length; i++){
+          if(this.games[i].id === game.id){
+            this.authService.user.subscribe(user => {
+              if(user.name !== data['playerName']){
+                this.games[i].playerNames.push(data['playerName'])
+              }
+            })
+          }
+        }
+      })
+    })
+
+    this.socketService.listen('game_ready').subscribe(data => {
+      console.log(data)
+    })
+
+
+
+   }
 
 
   fetchGames(){
 
-    return this.http.get('http://localhost:3000/api/games').subscribe(games => {
-
-      this.games = games['allGames']
-      console.log(this.games)
+    return this.http.get<Game[]>('http://localhost:3000/api/games').pipe(catchError(this.handleErrors), tap(games => {
+      this.games = games
+    })).subscribe(resData => {
       this.gamesChanged.next(this.games)
+    }, error => {
+      this.errorMessage.next(error)
     })
+
   }
 
   addGame(numberOfPlayers: number){
-    return this.http.post<Game>('http://localhost:3000/api/games/game', {numberOfPlayers: numberOfPlayers}).subscribe(game =>{
-      console.log(game)
-      console.log((this.games))
-      this.games.push((new Game(game.hostName, game.id, game.numberOfPlayers, [game.hostName])))
+    return this.http.post<Game>('http://localhost:3000/api/games/game', {numberOfPlayers: numberOfPlayers}).pipe(catchError(this.handleErrors), tap(game => {
+      this.games.push(game)
+      this.game.next(game)
+
+      this.authService.user.subscribe((user) =>{
+        this.socketService.emit('initalize_game', {player_id: user.id, game_id : game.id})
+      })
+    })).subscribe(resData => {
       this.gamesChanged.next(this.games)
+
+    }, error => {
+
+      this.errorMessage.next(error)
     })
+
+
+
+
+  }
+
+  joinGame(game: Game){
+
+    this.game.next(game)
+
+    return this.http.put<Game>('http://localhost:3000/api/games/game', {game_id: game.id}).pipe(catchError(this.handleErrors), tap(changedGame => {
+
+    for(var i = 0 ; i < this.games.length; i++){
+      if(this.games[i].id === changedGame.id){
+        this.games[i] = changedGame
+      }
+    }
+
+    this.gamesChanged.next(this.games)
+
+      this.authService.user.subscribe((user) =>{
+        console.log(user)
+        this.socketService.emit('join_game', {player_id: user.id, game_id : changedGame.id})
+      })
+
+    })).subscribe( changedGame => {
+
+      console.log(changedGame)
+
+    }, error => {
+
+      this.errorMessage.next(error)
+    })
+  }
+
+
+
+  handleErrors(errorRes: HttpErrorResponse){
+    let errorMessage = errorRes.error
+
+    let message = 'an unkown error has occured'
+
+    console.log(errorRes)
+
+    switch(errorMessage){
+      case 'ALREADY_IN_GAME':
+        message ="You are already in this game"
+        break
+      case 'HOSTING_ALREADY':
+        message = 'You are already hosting a game'
+        break;
+      case 'INVALID_TOKEN':
+        message = 'your token is invalid'
+        break
+      case 'NO_TOKEN':
+        message = 'you have no token'
+        break
+
+    }
+    return throwError(message)
+
   }
 
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Game} from '../models/game.model'
 import {GamesService} from '../services/games.service'
+import {tap} from 'rxjs/operators'
 
 @Component({
   selector: 'app-games',
@@ -10,14 +11,31 @@ import {GamesService} from '../services/games.service'
 export class GamesComponent implements OnInit {
 
   games: Game[]
+  selectedGame: Game
+  errorMessage: string = ''
   constructor(private gameService: GamesService) { }
 
   ngOnInit(): void {
+    
     this.games = this.gameService.games
+
+    this.gameService.game.subscribe((game) => {
+      this.selectedGame
+    })
 
     this.gameService.gamesChanged.subscribe((games: Game[]) => {
       this.games = games
     })
+
+    this.gameService.errorMessage.subscribe((msg) => {
+      this.errorMessage = msg
+    })
+
     this.gameService.fetchGames()
+  }
+
+
+  joinGame(game){
+    this.gameService.joinGame(game)
   }
 }
