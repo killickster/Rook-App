@@ -6,6 +6,7 @@ import {RegisterComponent} from './auth/register/register.component'
 import { LoginComponent } from './auth/login/login.component'
 import {AuthGuardService} from './auth/auth-guard.service'
 import { CreateGameComponent } from './games/create-game/create-game.component'
+import { GameroomComponent } from './gameroom/gameroom.component'
 
 
 
@@ -18,7 +19,8 @@ const appRoutes: Routes = [
         {path: 'create', component: CreateGameComponent}
     ]},
     {path: 'register', component: RegisterComponent},
-    {path: 'login', component: LoginComponent}
+    {path: 'login', component: LoginComponent},
+    {path: 'gameroom/:id', component: GameroomComponent}
 ]
 
 @NgModule({

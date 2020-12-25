@@ -6,6 +6,8 @@ var Trick = require('./Trick')
 
 class Game{
     constructor(game_id){
+
+        this.bidWinner = null
         this.numberOfPlayers = 4
         this.id = game_id
         this.players = []
@@ -16,6 +18,8 @@ class Game{
         this.tricks = []
         this.team1 = []
         this.team2 = []
+        this.team1Bid = 0
+        this.team2Bid = 0
         this.waitingForPlayers = true
 
     }
@@ -102,7 +106,6 @@ class Game{
 
     getCurrentBidder(index){
 
-        console.log(index)
 
         var currentBidder
         if(index == 0){
@@ -125,12 +128,16 @@ class Game{
     }
 
     submitBid(playerId, bid){
+
+        var passed = false
+        console.log('submitting bid')
         for(var i = 0; i < this.players.length; i++){
             if(this.players[i].id === playerId){
                 if(bid > this.currentBid && bid%5 == 0){
                     this.currentBid = bid
                 }else{
                     this.players[i].hasPassed = true;
+                    passed = true
                 }
             }
         }
@@ -144,33 +151,38 @@ class Game{
 
         if(numberOfPlayersWhoHavePassed === this.players.length -1){
             this.bidFinished = true;
-            this.completeBid()
+            this.bidWinner = this.completeBid()
+        }else{
+
+            this.currentBidder = this.getCurrentBidder(this.bidderIndex)
+            while(this.currentBidder.hasPassed){
+                this.currentBidder = this.getCurrentBidder(this.bidderIndex)
+            }
+
+
         }
 
-
-
-        console.log('bidder index:')
-        console.log(this.bidderIndex)
-        this.currentBidder = this.getCurrentBidder(this.bidderIndex)
     }
 
     completeBid(){
         for(var i = 0; i < this.players.length; i++){
+            var bidWinner;
             if(this.players[i].hasPassed !== true){
                 if(this.team1.includes(this.players[i])){
-                    this.team1.bid = this.currentBid
+                    this.team1bid = this.currentBid
+                    bidWinner  = i
                 }
                 if(this.team2.includes(this.players[i])){
-                    this.team2.bid = this.currentBid
+                    this.team2bid = this.currentBid
+                    bidWinner  = i
                 }
             }
         }
 
-        console.log(this.players[0])
-        console.log(this.players[1])
-        console.log(this.players[2])
-        console.log(this.players[3])
+        console.log(this.players[bidWinner])
+        console.log('has won')
 
+        return this.players[bidWinner]
     }
 
     decideTrump(color){

@@ -117,9 +117,11 @@ module.exports = function(io){
                     console.log(team1)
                     console.log(team2)
 
-                    io.of('games/socket').in(game_id).emit("game_ready", {team1: team1, team2: team2})
 
                     game.deal(5)
+
+                    io.of('games/socket').in(game_id).emit("game_ready", {team1: team1, team2: team2})
+
                 }
 
                 return socket.emit("success", "you were added to the game")
@@ -169,9 +171,21 @@ module.exports = function(io){
                 return player.id === player_id
             })
 
-            game.submitBid(player.id, bid)
+            game.submitBid(player.id, +bid)
 
-            socket.to(game_id).emit("bid", {bid : bid, player: player.name})
+            console.log('bid')
+            console.log(game.currentBid)
+
+            console.log('bid finished')
+            console.log(game.bidFinished)
+
+            console.log(player.id)
+
+            if(!game.bidFinished){
+                socket.to(game_id).emit("bid", {bid : game.currentBid, player: player.name, nextBidder: game.currentBidder.id})
+            }else{
+                socket.to(game_id).emit("bid_completed")
+            }
 
             return socket.emit('bid_submitted')
 

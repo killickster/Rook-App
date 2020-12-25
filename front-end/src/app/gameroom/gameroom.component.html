@@ -1,0 +1,12 @@
+
+<div class="cards">
+    <div *ngFor="let card of cards" class="card">
+        <a href="#0"></a>
+        <div *ngIf="card.points" [style.backgroundColor]="card.color" class="number_of_points">{{card.points}}</div>
+        <div [style.color]="card.color" class="card_color">{{card.color}}</div>
+        <div class="inner_boarder"></div>
+        <div [style.color]="card.color" class="number_top_left">{{card.number}}</div>
+        <div [style.color]="card.color" class="number_bottom_right">{{card.number}}</div>
+        <div [style.color]="card.color" class="number_middle">{{card.number}}</div>
+    </div>
+</div>

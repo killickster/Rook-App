@@ -11,12 +11,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 
-
-
-
-
-
-
 //Import Routes
 const authRoute = require('./routes/auth')
 const postRoute = require('./routes/posts')

@@ -1,0 +1,19 @@
+<form [formGroup]="bidForm" (ngSubmit)="submitHandler()">
+    <div class="row">
+        <div class="col-sm">
+            <mat-form-field>
+                <input matInput placeholder="Bid" formControlName="bid">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <button mat-button class="btn btn-primary" color="primary" type="submit" [disabled]="bidForm.invalid">Enter bid</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <button mat-button class="btn btn-primary" color="primary" type="button" (click)="pass()">Pass</button>
+        </div>
+    </div>
+</form>

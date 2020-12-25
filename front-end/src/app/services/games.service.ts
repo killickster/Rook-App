@@ -1,5 +1,6 @@
 import { HttpClient, HttpClientModule, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import { BehaviorSubject, Subject, throwError } from 'rxjs';
 import { catchError, tap} from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
@@ -22,8 +23,12 @@ export class GamesService {
   games: Game[] = []
   errorMessage: Subject<string> = new Subject<string>()
   game: BehaviorSubject<Game> = new BehaviorSubject<Game>(null)
+  hand: Subject<any> = new Subject<any>()
+  bidRequest: Subject<any> = new Subject<any>()
+  bidDialogClosedStillBidding: Subject<any> = new Subject<any>()
+  bidding: boolean = false
 
-  constructor(private http: HttpClient, private authService: AuthService, private socketService: WebSocketService) {
+  constructor(private http: HttpClient, private authService: AuthService, private socketService: WebSocketService, private router: Router) {
 
     this.socketService.listen('new_player').subscribe(data => {
       this.game.subscribe(game => {
@@ -42,9 +47,56 @@ export class GamesService {
 
     this.socketService.listen('game_ready').subscribe(data => {
       console.log(data)
+
+      this.game.subscribe(game => {
+        this.router.navigate(['/gameroom/', game.id])
+          this.authService.user.subscribe((user) =>{
+            this.socketService.emit('get_cards', {player_id: user.id, game_id : game.id})
+          })
+      })
+
     })
 
 
+    this.socketService.listen('cards').subscribe(data => {
+      this.hand.next(data['hand'])
+
+    })
+
+    this.socketService.listen('bid_request').subscribe(data => {
+     console.log(data) 
+      this.bidRequest.next(80)      //Start bid at 80
+     console.log('bid request') 
+     this.bidding = true
+    })
+
+
+    this.socketService.listen('bid').subscribe(data => {
+      const nextBidder = data['nextBidder']
+      const bid = data['bid']
+      const player = data['player']
+      console.log(bid)
+      console.log(player)
+      this.authService.user.subscribe(user=> {
+        if(user.id === nextBidder){
+          this.bidRequest.next(bid)
+          console.log(user.id)
+        }
+      })
+    })
+
+   }
+
+
+   submitBid(bid){
+
+    this.bidding = false
+
+      this.game.subscribe(game => {
+          this.authService.user.subscribe((user) =>{
+            this.socketService.emit('bid_submit', {player_id: user.id, game_id : game.id, bid: bid})
+          })
+      })
 
    }
 

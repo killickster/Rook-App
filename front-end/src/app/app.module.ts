@@ -12,7 +12,13 @@ import {DisplayPipe} from './games/game-display.pipe'
 import {RoutingModule} from './router.module';
 import { RegisterComponent} from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
-import { CreateGameComponent } from './games/create-game/create-game.component'
+import { CreateGameComponent } from './games/create-game/create-game.component';
+import { GameroomComponent } from './gameroom/gameroom.component'
+import {MatDialogModule, MatDialogRef, MAT_DIALOG_DATA, MAT_DIALOG_DEFAULT_OPTIONS} from '@angular/material/dialog';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule}from '@angular/material/input'
+import { BidComponent } from './gameroom/bid/bid.component'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -22,18 +28,27 @@ import { CreateGameComponent } from './games/create-game/create-game.component'
     DisplayPipe,
     RegisterComponent,
     LoginComponent,
-    CreateGameComponent
+    CreateGameComponent,
+    GameroomComponent,
+    BidComponent
+  ],
+  entryComponents:[
+    BidComponent
   ],
   imports: [
     BrowserModule,
     RoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule,
+    BrowserAnimationsModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true},
-    {provide : HTTP_INTERCEPTORS, useClass: GameInterceptor, multi: true}
+    {provide : HTTP_INTERCEPTORS, useClass: GameInterceptor, multi: true},
   ],
   bootstrap: [AppComponent]
 })
