@@ -157,11 +157,8 @@ module.exports = function(io){
 
         socket.on('bid_submit', async (request_data) => {
 
-            console.log('requesting bid')
-
             const {player_id, game_id, bid} = request_data
 
-            console.log('bid: ' + bid)
 
             var game = await games.find(g => {
                 return g.id === game_id
@@ -171,23 +168,42 @@ module.exports = function(io){
                 return player.id === player_id
             })
 
-            game.submitBid(player.id, +bid)
+            var bidWinner = game.submitBid(player.id, +bid)
 
-            console.log('bid')
-            console.log(game.currentBid)
 
-            console.log('bid finished')
-            console.log(game.bidFinished)
+            if(bidWinner){
+                console.log(bidWinner)
+                console.log('has won')
+            }
 
-            console.log(player.id)
 
             if(!game.bidFinished){
                 socket.to(game_id).emit("bid", {bid : game.currentBid, player: player.name, nextBidder: game.currentBidder.id})
             }else{
-                socket.to(game_id).emit("bid_completed")
+                socket.to(game_id).emit("bid_completed", {id: bidWinner.id})
             }
 
             return socket.emit('bid_submitted')
+
+        })
+
+
+        socket.on('get_kitty', async (request_data) => {
+
+            const {player_id, game_id, bid} = request_data
+
+            var game = await games.find(g => {
+                return g.id === game_id
+            })
+
+
+            const player = await game.players.find(p=> {
+                return p.id === player_id
+            })
+
+            if(game.bidWinner.id === player.id){
+                socket.emit('kitty', {cards: game.kitty})
+            }
 
         })
 

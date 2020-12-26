@@ -27,6 +27,8 @@ export class GamesService {
   bidRequest: Subject<any> = new Subject<any>()
   bidDialogClosedStillBidding: Subject<any> = new Subject<any>()
   bidding: boolean = false
+  kitty: Subject<any> = new Subject<any>()
+
 
   constructor(private http: HttpClient, private authService: AuthService, private socketService: WebSocketService, private router: Router) {
 
@@ -83,6 +85,26 @@ export class GamesService {
           console.log(user.id)
         }
       })
+    })
+
+    this.socketService.listen('bid_completed').subscribe(data => {
+      console.log('bid completed')
+      const winnerId = data["id"]
+
+      this.authService.user.subscribe(user => {
+        if(user.id === winnerId){
+          console.log('you are the winner')
+          this.game.subscribe(game => {
+            this.socketService.emit('get_kitty', {player_id: user.id, game_id : game.id})
+          })
+
+        }
+      })
+    })
+
+
+    this.socketService.listen('kitty').subscribe(data => {
+      this.kitty.next(data['kitty'])
     })
 
    }

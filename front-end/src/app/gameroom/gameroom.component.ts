@@ -19,6 +19,8 @@ export class GameroomComponent implements OnInit {
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
+  kitty = null
+
 
   constructor(private gameService: GamesService, private dialog: MatDialog) { }
 
@@ -28,6 +30,11 @@ export class GameroomComponent implements OnInit {
     this.gameService.hand.subscribe(hand => {
       this.cards = hand
     })
+
+    this.gameService.kitty.subscribe(kitty => {
+      this.kitty = kitty
+    })
+
 
     this.bidSubscription = this.gameService.bidRequest.subscribe((bid) => {
 

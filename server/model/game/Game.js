@@ -15,6 +15,7 @@ class Game{
         this.currentBid = 80
         this.deck = new Deck()
         this.bidFinished = false;
+        this.bidWinner = null
         this.tricks = []
         this.team1 = []
         this.team2 = []
@@ -152,6 +153,7 @@ class Game{
         if(numberOfPlayersWhoHavePassed === this.players.length -1){
             this.bidFinished = true;
             this.bidWinner = this.completeBid()
+            return this.bidWinner
         }else{
 
             this.currentBidder = this.getCurrentBidder(this.bidderIndex)
@@ -178,9 +180,6 @@ class Game{
                 }
             }
         }
-
-        console.log(this.players[bidWinner])
-        console.log('has won')
 
         return this.players[bidWinner]
     }
