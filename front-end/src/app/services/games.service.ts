@@ -104,7 +104,7 @@ export class GamesService {
 
 
     this.socketService.listen('kitty').subscribe(data => {
-      this.kitty.next(data['kitty'])
+      this.kitty.next(data['cards'])
     })
 
    }
