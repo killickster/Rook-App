@@ -190,7 +190,7 @@ module.exports = function(io){
 
         socket.on('get_kitty', async (request_data) => {
 
-            const {player_id, game_id, bid} = request_data
+            const {player_id, game_id} = request_data
 
             var game = await games.find(g => {
                 return g.id === game_id
@@ -208,29 +208,34 @@ module.exports = function(io){
         })
 
 
-        socket.on('check_turn', async (request_data) => {
+        socket.on('decide_trump', async (request_data) => {
 
-            console.log('checking turn')
-            const {player_id, game_id} = request_data
+            const {player_id, game_id, trump_color} = request_data
 
             var game = await games.find(g => {
                 return g.id === game_id
             })
 
-
             const player = await game.players.find(p=> {
                 return p.id === player_id
             })
 
-            if(player.id === game.currentBidder.id){
-                console.log('your turn')
-                return socket.emit('bid_request')
-            }else{
-                console.log('not your turn')
-                return socket.emit('not_your_turn')
-            }
+            if(player_id === game.bidWinner.id){
 
+                game.decideTrump(trump_color)
+
+                socket.emit('please_lead')
+
+                game.beginTrick(player)
+            }
         })
+
+
+
+
+
+
+
     })
 
 
