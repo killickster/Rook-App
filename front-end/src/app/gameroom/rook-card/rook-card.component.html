@@ -1,0 +1,15 @@
+<div class="card">
+    <a href="#0"></a>
+    <div class="top-left-content">
+
+        <div [style.color]="card.color" class="number_top_left">{{card.value}}</div>
+        <div class="right-of-number">
+            <div [style.color]="card.color" class="card_color">{{card.color}}</div>
+            <div *ngIf="card.points" [style.backgroundColor]="card.color" class="number_of_points">{{card.points}}</div>
+        </div>
+    </div>
+    <div [style.color]="card.color" class="number_bottom_right">{{card.value}}</div>
+    <div class="flex-absolute-container">
+        <div [style.color]="card.color" class="number_middle" [style.backgroundColor]="card.color">{{card.value}}</div>
+    </div>
+</div>

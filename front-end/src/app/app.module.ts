@@ -19,6 +19,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule}from '@angular/material/input'
 import { BidComponent } from './gameroom/bid/bid.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RookCardComponent } from './gameroom/rook-card/rook-card.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     LoginComponent,
     CreateGameComponent,
     GameroomComponent,
-    BidComponent
+    BidComponent,
+    RookCardComponent
   ],
   entryComponents:[
     BidComponent
