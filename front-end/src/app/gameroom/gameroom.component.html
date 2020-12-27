@@ -1,9 +1,22 @@
 <div class="table">
-    <div class="flex-absolute-container">
+    <div class="top-player player">
         <app-rook-card *ngFor="let card of kitty" [card]="card">
         </app-rook-card>
     </div>
-
+    <div class="flex-row">
+        <div class="left-player player">
+            <app-rook-card *ngFor="let card of kitty" [card]="card">
+            </app-rook-card>
+        </div>
+        <div class="kitty">
+            <app-rook-card *ngFor="let card of kitty" [card]="card">
+            </app-rook-card>
+        </div>
+        <div class="right-player player">
+            <app-rook-card *ngFor="let card of kitty" [card]="card">
+            </app-rook-card>
+        </div>
+    </div>
 </div>
 
 <div class="cards">
