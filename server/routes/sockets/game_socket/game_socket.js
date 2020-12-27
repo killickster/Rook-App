@@ -202,6 +202,7 @@ module.exports = function(io){
             })
 
             if(game.bidWinner.id === player.id){
+                console.log('sending kitty')
                 socket.emit('kitty', {cards: game.kitty})
             }
 
@@ -222,11 +223,11 @@ module.exports = function(io){
 
             if(player_id === game.bidWinner.id){
 
-                game.decideTrump(trump_color)
+                //game.decideTrump(trump_color)
 
                 socket.emit('please_lead')
 
-                game.beginTrick(player)
+                //game.beginTrick(player)
             }
         })
 

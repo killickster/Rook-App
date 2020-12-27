@@ -30,6 +30,7 @@ export class GameroomComponent implements OnInit {
 
     this.gameService.hand.subscribe(hand => {
       this.cards = hand
+      console.log(this.cards)
     })
 
     this.gameService.kitty.subscribe(kitty => {
