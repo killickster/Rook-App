@@ -1,4 +1,18 @@
 :host {
+    position: relative;
+    width: 20%;
+    padding-top: 26%;
+    perspective: 600px;
+    transform-style: preserve-3d;
+    transition: 0.2s;
+}
+
+.flipped {
+    transform: rotateY(181deg);
+}
+
+.card {
+    top: 0;
     border-color: rgb(208, 208, 208);
     opacity: 1;
     border-width: 1px;
@@ -6,23 +20,27 @@
     color: black;
     background-color: white;
     font-size: 30pt;
-    position: relative;
-    width: 20%;
-    padding-top: 26%;
+    position: absolute;
+    width: 100%;
+    height: 100%;
     border-radius: 10px;
     box-shadow: 2px 2px 2px 1px rgba(232, 232, 232, 0.2);
     transition: 0.2s;
-    perspective: 600px;
     transform-style: preserve-3d;
 }
 
-.front {
+.face {
     border-radius: 10px;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    backface-visibility: hidden;
+}
+
+.front {
+    transform: rotateY(180deg);
 }
 
 .back-card {
@@ -50,15 +68,6 @@
     background-size: contain;
     background-position: center center;
     background-image: url(../../../assets/img/crow.svg);
-}
-
-.back {
-    border-radius: 10px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 }
 
 :host:not(:first-child) {
