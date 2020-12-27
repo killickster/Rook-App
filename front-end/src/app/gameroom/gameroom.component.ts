@@ -16,7 +16,7 @@ import {Card} from './card.model'
 })
 export class GameroomComponent implements OnInit {
 
-  cards: Card[] = [new Card('yellow', 10, 10, "flipped"), new Card('yellow', 11, null, "face")]
+  cards: Card[] = [new Card('yellow', 10, 10, "face"), new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"), new Card('yellow', 11, null, "face")]
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
