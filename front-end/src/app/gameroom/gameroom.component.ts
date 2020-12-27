@@ -7,6 +7,7 @@ import { Game } from '../models/game.model';
 import { GamesService } from '../services/games.service';
 import { WebSocketService } from '../web-socket.service';
 import { BidComponent } from './bid/bid.component';
+import {Card} from './card.model'
 
 @Component({
   selector: 'app-gameroom',
@@ -15,11 +16,11 @@ import { BidComponent } from './bid/bid.component';
 })
 export class GameroomComponent implements OnInit {
 
-  cards = [{color: "yellow", number: 13},{color: "green", number: 1, points: 15},{color: "black", number: 12},{color: "red", number: 10, points: 10},{color: "black", number: 5, points: 5},{color: "black", number: 8},{color: "yellow", number: 7}]
+  cards: Card[] = [new Card('yellow', 10, 10)]
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
-  kitty = null
+  kitty: Card[] = [{color: 'unknown', value: null, points: null}, {color: 'unknown', value: null, points: null}, {color: 'unknown', value: null, points: null}, {color: 'unknown', value: null, points: null}, {color: 'unknown', value: null, points: null}]
 
 
   constructor(private gameService: GamesService, private dialog: MatDialog) { }

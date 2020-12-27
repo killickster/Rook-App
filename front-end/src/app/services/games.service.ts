@@ -7,6 +7,7 @@ import { AuthService } from '../auth/auth.service';
 import {Game} from '../models/game.model'
 import {Player} from '../models/player.model'
 import{WebSocketService} from '../web-socket.service'
+import {Card} from '../gameroom/card.model'
 
 interface GameResponseData {
   host: string;
@@ -47,7 +48,7 @@ export class GamesService {
       })
     })
 
-    this.socketService.listen('game_ready').subscribe(data => {
+    this.socketService.listen('game_ready').subscribe((data: Card[]) => {
       console.log(data)
 
       this.game.subscribe(game => {
