@@ -12,6 +12,7 @@
 }
 
 .card {
+    cursor: pointer;
     top: 0;
     border-color: rgb(208, 208, 208);
     opacity: 1;
