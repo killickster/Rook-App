@@ -48,7 +48,7 @@ export class GamesService {
       })
     })
 
-    this.socketService.listen('game_ready').subscribe((data: Card[]) => {
+    this.socketService.listen('game_ready').subscribe(data => {
       console.log(data)
 
       this.game.subscribe(game => {
