@@ -1,20 +1,35 @@
 <div class="table">
-    <div class="top-player player">
-        <app-rook-card *ngFor="let card of kitty" [card]="card">
-        </app-rook-card>
-    </div>
-    <div class="flex-row">
-        <div class="left-player player">
+    <div class="player-container">
+        <div class="circle-name">MK</div>
+        <div class="top-player player">
+
+
             <app-rook-card *ngFor="let card of kitty" [card]="card">
             </app-rook-card>
+        </div>
+    </div>
+    <div class="flex-row">
+        <div class="player-container">
+            <div class="circle-name">GK</div>
+            <div class="left-player player">
+
+
+                <app-rook-card *ngFor="let card of kitty" [card]="card">
+                </app-rook-card>
+            </div>
         </div>
         <div class="kitty">
             <app-rook-card *ngFor="let card of kitty" [card]="card">
             </app-rook-card>
         </div>
-        <div class="right-player player">
-            <app-rook-card *ngFor="let card of kitty" [card]="card">
-            </app-rook-card>
+        <div class="player-container">
+            <div class="circle-name">AK</div>
+            <div class="right-player player">
+
+
+                <app-rook-card *ngFor="let card of kitty" [card]="card">
+                </app-rook-card>
+            </div>
         </div>
     </div>
 </div>

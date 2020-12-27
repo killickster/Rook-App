@@ -43,6 +43,7 @@
     display: flex;
     justify-content: center;
     width: 100%;
+    flex: 1;
 }
 
 .flex-center {
@@ -83,12 +84,27 @@
 
 .player {
     height: 72px;
-    width: 250px;
-    display: flex;
+    width: 115px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
 
 .player app-rook-card:not(:first-child) {
     margin-left: -40px!important;
+}
+
+.player-container {}
+
+.circle-name {
+    vertical-align: top;
+    width: 30px;
+    border-radius: 50%;
+    height: 30px;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    line-height: 30px;
+    background: rgb(233, 233, 233);
+    display: inline-block;
 }
