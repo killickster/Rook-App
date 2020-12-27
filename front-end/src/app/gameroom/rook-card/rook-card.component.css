@@ -7,8 +7,9 @@
     transition: 0.2s;
 }
 
-.flipped {
-    transform: rotateY(181deg);
+.face {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
 }
 
 .card {
@@ -30,7 +31,7 @@
     transform-style: preserve-3d;
 }
 
-.face {
+.faces {
     border-radius: 10px;
     position: absolute;
     top: 0;
