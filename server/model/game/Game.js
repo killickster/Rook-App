@@ -99,6 +99,10 @@ class Game{
             i++
         }
 
+        for(var i = 0; i < this.players.length; i++){
+            this.players[i].sortHand()
+        }
+
         this.bidderIndex = 0
         this.currentBidder = this.getCurrentBidder(this.bidderIndex)
 

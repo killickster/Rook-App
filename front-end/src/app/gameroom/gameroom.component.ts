@@ -16,11 +16,11 @@ import {Card} from './card.model'
 })
 export class GameroomComponent implements OnInit {
 
-  cards: Card[] = [new Card('yellow', 10, 10)]
+  cards: Card[] = [new Card('yellow', 10, 10, "flipped"), new Card('yellow', 11, null, "face")]
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
-  kitty: Card[] = [{color: 'unknown', value: null, points: null}, {color: 'unknown', value: null, points: null}, {color: 'unknown', value: null, points: null}, {color: 'unknown', value: null, points: null}, {color: 'unknown', value: null, points: null}]
+  kitty: Card[] = [{color: 'unknown', value: null, points: null, state: "flipped"}, {color: 'unknown', value: null, points: null, state: "flipped"}, {color: 'unknown', value: null, points: null, state: "flipped"}, {color: 'unknown', value: null, points: null, state: "flipped"}, {color: 'unknown', value: null, points: null, state: "flipped"}]
 
 
   constructor(private gameService: GamesService, private dialog: MatDialog) { }

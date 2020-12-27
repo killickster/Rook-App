@@ -207,6 +207,7 @@ module.exports = function(io){
 
         })
 
+
         socket.on('check_turn', async (request_data) => {
 
             console.log('checking turn')

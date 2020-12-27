@@ -62,7 +62,12 @@ export class GamesService {
 
 
     this.socketService.listen('cards').subscribe(data => {
+      console.log(data['hand'])
       this.hand.next(data['hand'])
+      var hand = []
+      for(let card of data['hand']){
+        hand.push(new Card(card['color'], card['value'], card['points'], 'face'))
+      }
 
     })
 
