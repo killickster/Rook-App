@@ -38,13 +38,18 @@
     right: 0;
     bottom: 0;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .front {
     transform: rotateY(180deg);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
 .back-card {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     position: absolute;
     top: 1rem;
     bottom: 1rem;
