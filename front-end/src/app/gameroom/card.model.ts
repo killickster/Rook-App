@@ -2,9 +2,8 @@
 
 export class Card {
 
-    public points: number | null
 
-    constructor(public color: string, public value: number, points: number | null){
+    constructor(public color: string, public value: number, public points: number | null){
     }
 
 
