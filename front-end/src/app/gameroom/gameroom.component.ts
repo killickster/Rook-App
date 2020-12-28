@@ -9,7 +9,7 @@ import { GamesService } from '../services/games.service';
 import { WebSocketService } from '../web-socket.service';
 import { BidComponent } from './bid/bid.component';
 import {Card} from './card.model';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-gameroom',
@@ -18,8 +18,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 })
 export class GameroomComponent implements OnInit {
   exchange = false;
-  cards: Card[] = [new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 11, null, "face", false, false)]
-
+  cards: Card[] = [new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 9, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('black', 4, 0, "face", false, false),new Card('yellow', 3, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('red', 8, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 11, null, "face", false, false)]
+  snack: MatSnackBarRef<any> = null;
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
@@ -110,13 +110,37 @@ export class GameroomComponent implements OnInit {
         this.cards.splice(this.cards.indexOf(card),1)
         this.kitty.push(card)
       }else{
-        this.snackBar.open("🤦‍♀️ You cannot discard pointer cards", "Dance", {
+        this.snackBar.open("🤦‍♀️ You cannot discard pointer cards", null, {
           duration: 2000,
         });
       }
 
     }
+    this.checkForDiscard()
 
+  }
+
+  checkForDiscard(){
+    if(this.kitty.length != 5){
+      console.log(this.snack)
+      if(this.snack != null){
+       this.snack.dismiss()
+      }
+      return
+    }
+    for (let card of this.kitty){
+      console.log(card)
+      if(card.points != 0 && card.points != null){
+        if(this.snack != null){
+          this.snack.dismiss()
+         }
+        return
+      }
+    }
+    this.snack = this.snackBar.open("Kitty ready to discard", "Discard Kitty", {
+      duration: 0,
+    });
+  
   }
 
 
