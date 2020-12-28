@@ -1,5 +1,5 @@
 <img src="../../../assets/img/card.gif" class="aspect-img">
-<div (click)="cardClicked()" class="card {{card.state}}">
+<div class="card {{card.state}}">
     <div class="back faces">
         <div class="back-card">
             <div class="crow"></div>
@@ -20,5 +20,7 @@
         <div class="flex-absolute-container">
             <div [style.color]="card.color" class="number_middle" [style.backgroundColor]="card.color">{{card.value}}</div>
         </div>
+
     </div>
+
 </div>

@@ -19,7 +19,7 @@
             </div>
         </div>
         <div class="kitty">
-            <app-rook-card *ngFor="let card of kitty" [card]="card">
+            <app-rook-card *ngFor="let card of kitty" [card]="card" (click)="cardClicked(card)">
             </app-rook-card>
         </div>
         <div class="player-container">
@@ -35,6 +35,6 @@
 </div>
 
 <div class="cards">
-    <app-rook-card *ngFor="let card of cards" [card]="card">
+    <app-rook-card *ngFor="let card of cards" [card]="card" (click)="cardClicked(card)">
     </app-rook-card>
 </div>
