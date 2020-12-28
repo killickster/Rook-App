@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { GamesService } from '../services/games.service';
@@ -16,7 +17,8 @@ export class HeaderComponent implements OnInit, OnDestroy{
   biddingBoxRequired = false
   bid = null
 
-  constructor(private authService: AuthService, private gameService: GamesService) { }
+
+  constructor(private authService: AuthService, private gameService: GamesService, private activatedRoute: ActivatedRoute) { }
 
 
   ngOnInit(): void {
@@ -30,14 +32,6 @@ export class HeaderComponent implements OnInit, OnDestroy{
 
     })
 
-    /*
-    this.gameService.bidRequest.subscribe((bid) => {
-      if(bid){
-        this.bidding = true
-        this.bid = bid
-      }
-    })
-    */
 
     this.loggedInSubscription = this.authService.user.subscribe(user => {
       if(user){
@@ -51,6 +45,8 @@ export class HeaderComponent implements OnInit, OnDestroy{
   ngOnDestroy(){
     this.loggedInSubscription.unsubscribe()
   }
+
+
 
   openModel(){
     this.gameService.bidRequest.next(this.bid)
