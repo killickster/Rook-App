@@ -46,6 +46,7 @@ module.exports = function(io){
 
                 const game = await new Game(game_id)
                 games.push(game)
+                console.log('addin game')
                 game.addPlayer(new Player(player_id,user.name))
 
                 socket.join(game_id)

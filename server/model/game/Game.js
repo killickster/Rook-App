@@ -1,6 +1,7 @@
 var Deck = require('./Deck')
 var Team = require('./Team')
 var Trick = require('./Trick')
+var GameStateForPlayer = require('./GameState') 
 
 
 
@@ -22,13 +23,15 @@ class Game{
         this.team1Bid = 0
         this.team2Bid = 0
         this.waitingForPlayers = true
+        this.gameStates = {}
 
     }
 
     addPlayer(player){
-
+        console.log('adding player')
         this.players.push(player)
-
+        this.gameStates[player.id] = new GameStateForPlayer(player.id, this.game_id, this.player_names, false, null, null)
+        console.log(this.gameStates[player.id])
     }
 
     formTeams(){
@@ -52,6 +55,7 @@ class Game{
         for(let item of selectedIndicies){
             if(i < 2){
                 this.team1.push(this.players[item])
+
             }else{
                 this.team2.push(this.players[item])
             }
