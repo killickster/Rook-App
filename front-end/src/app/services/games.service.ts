@@ -64,7 +64,7 @@ export class GamesService {
     this.socketService.listen('cards').subscribe(data => {
       var hand = []
       for(let card of data['hand']){
-        hand.push(new Card(card['color'], card['value'], card['points'], 'face'))
+        hand.push(new Card(card['color'], card['value'], card['points'], 'face', null, false))
       }
 
       this.hand.next(hand)
@@ -113,7 +113,7 @@ export class GamesService {
 
       var kitty = []
       for(let card of data['cards']){
-        kitty.push(new Card(card['color'], card['value'], card['points'], 'face'))
+        kitty.push(new Card(card['color'], card['value'], card['points'], 'face', false, true))
       }
       console.log(this.kitty)
 

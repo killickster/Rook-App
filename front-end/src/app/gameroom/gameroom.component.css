@@ -16,6 +16,7 @@
 
 .cards app-rook-card {
     flex: 1;
+    max-width: 230px;
 }
 
 .cards app-rook-card:hover {

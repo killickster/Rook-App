@@ -15,12 +15,12 @@ import {Card} from './card.model'
   styleUrls: ['./gameroom.component.css']
 })
 export class GameroomComponent implements OnInit {
-
-  cards: Card[] = [new Card('yellow', 10, 10, "face"), new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"),new Card('yellow', 10, 10, "face"), new Card('yellow', 11, null, "face")]
+  exchange = false;
+  cards: Card[] = [new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 11, null, "face", false, false)]
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
-  kitty: Card[] = [{color: 'unknown', value: null, points: null, state: "flipped"}, {color: 'unknown', value: null, points: null, state: "flipped"}, {color: 'unknown', value: null, points: null, state: "flipped"}, {color: 'unknown', value: null, points: null, state: "flipped"}, {color: 'unknown', value: null, points: null, state: "flipped"}]
+  kitty: Card[] = [{color: 'unknown', value: null, points: null, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
 
 
   constructor(private gameService: GamesService, private dialog: MatDialog) { }
@@ -56,7 +56,6 @@ export class GameroomComponent implements OnInit {
           this.gameService.bidDialogClosedStillBidding.next(bid)
         }
 
-        console.log('The dialog was closed');
       });
 
       this.gameService.bidding = true
@@ -66,6 +65,29 @@ export class GameroomComponent implements OnInit {
 
   ngOnDestroy(){
     this.bidSubscription.unsubscribe()
+  }
+  //sort cards in hand
+  sort(cards: Card[]){
+    cards.sort((a,b) => a.value - b.value);
+    cards.sort((a,b) => a.color.localeCompare(b.color));
+  }
+
+
+
+  //exchange cards with kitty
+  cardClicked(card: Card){
+    if(card.kitty){
+      card.kitty = false
+     this.kitty.splice(this.kitty.indexOf(card),1)
+     this.cards.push(card)
+     this.sort(this.cards)
+    }else{
+      card.kitty = true
+      this.cards.splice(this.cards.indexOf(card),1)
+      this.kitty.push(card)
+
+    }
+
   }
 
 }
