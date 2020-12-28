@@ -1,3 +1,4 @@
+import { supportsPassiveEventListeners } from '@angular/cdk/platform';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -29,8 +30,10 @@ export class GameroomComponent implements OnInit {
   ngOnInit(): void {
 
     this.gameService.hand.subscribe(hand => {
-      this.cards = hand
-      console.log(this.cards)
+
+      this.cards = this.sortHand(hand)
+
+      
     })
 
     this.gameService.kitty.subscribe(kitty => {
@@ -67,5 +70,63 @@ export class GameroomComponent implements OnInit {
   ngOnDestroy(){
     this.bidSubscription.unsubscribe()
   }
+
+
+
+  sortHand(array: Card[]){
+
+    var hand = []
+
+    var red = []
+    var green = []
+    var yellow = []
+    var black = []
+
+    var rook = null
+
+    for(let card of array){
+
+        if(card.color === 'red'){
+            red.push(card)
+        }else if(card.color === 'green'){
+            green.push(card)
+        }else if(card.color === 'yellow'){
+            yellow.push(card)
+        }else if(card.color === 'black'){
+            black.push(card)
+        }else if(card.color === 'blank'){
+            rook = card
+        }
+    }
+
+
+    red = this.sort(red)
+    black = this.sort(black)
+    green= this.sort(green)
+    yellow = this.sort(yellow)
+
+    hand = red.concat(black).concat(green).concat(yellow)
+
+    if(rook){
+        hand.push(rook)
+    }
+
+    return hand
+  }
+
+
+  sort(cards){
+    return cards.sort((a,b) => {
+        if(a.value === 1){
+            return -1
+        }else if(b.value === 1){
+            return 1 
+        }else{
+            return b.value-a.value
+        }
+    })
+}
+
+
 
 }
