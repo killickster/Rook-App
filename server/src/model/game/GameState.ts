@@ -1,7 +1,6 @@
+/*
 class GameStateForPlayer{
-    constructor(player_id, game_id, player_names, bidding, player_turn, teammate){
-        this.game_id = game_id
-        this.player_id = player_id
+    constructor( public game_id: string, public player_id: string, player_names, bidding, player_turn, teammate){
         this.player_ids = []
         this.bidding = true
         this.teammate = teammate
@@ -15,3 +14,4 @@ class GameStateForPlayer{
         this.player_names = {}
     }
 }
+*/

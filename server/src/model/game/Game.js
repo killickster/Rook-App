@@ -30,9 +30,8 @@ class Game{
     addPlayer(player){
         console.log('adding player')
         this.players.push(player)
-        this.gameStates[player.id] = new GameStateForPlayer(player.id, this.game_id, this.player_names, false, null, null)
-        console.log(this.gameStates[player.id])
     }
+
 
     formTeams(){
         var selectedIndicies = []
