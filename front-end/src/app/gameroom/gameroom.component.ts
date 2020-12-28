@@ -8,7 +8,8 @@ import { Game } from '../models/game.model';
 import { GamesService } from '../services/games.service';
 import { WebSocketService } from '../web-socket.service';
 import { BidComponent } from './bid/bid.component';
-import {Card} from './card.model'
+import {Card} from './card.model';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-gameroom',
@@ -18,22 +19,24 @@ import {Card} from './card.model'
 export class GameroomComponent implements OnInit {
   exchange = false;
   cards: Card[] = [new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 11, null, "face", false, false)]
+
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
-  kitty: Card[] = [{color: 'unknown', value: null, points: null, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
+  kitty: Card[] = [{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
 
 
-  constructor(private gameService: GamesService, private dialog: MatDialog) { }
+  constructor(private snackBar: MatSnackBar, private gameService: GamesService, private dialog: MatDialog) { }
 
 
   ngOnInit(): void {
+    this.sort(this.cards)
 
     this.gameService.hand.subscribe(hand => {
-
-      this.cards = this.sortHand(hand)
-
       
+      this.cards = hand
+      this.sort(this.cards)
+
     })
 
     this.gameService.kitty.subscribe(kitty => {
@@ -71,8 +74,25 @@ export class GameroomComponent implements OnInit {
   }
   //sort cards in hand
   sort(cards: Card[]){
-    cards.sort((a,b) => a.value - b.value);
+    cards.sort((a,b) => {
+      if(a.value === 1){
+          return -1
+      }else if(b.value === 1){
+          return 1 
+      }else{
+          return b.value-a.value
+      }})
     cards.sort((a,b) => a.color.localeCompare(b.color));
+    cards.sort((a,b) => {
+      if(a.color == "blank"){
+        return 1
+      }else if(b.color == "birdy"){
+        return -1
+      }else{
+        return 0
+      }
+    })
+
   }
 
 
@@ -85,69 +105,19 @@ export class GameroomComponent implements OnInit {
      this.cards.push(card)
      this.sort(this.cards)
     }else{
-      card.kitty = true
-      this.cards.splice(this.cards.indexOf(card),1)
-      this.kitty.push(card)
+      if(card.points == 0 || card.points == null){
+        card.kitty = true
+        this.cards.splice(this.cards.indexOf(card),1)
+        this.kitty.push(card)
+      }else{
+        this.snackBar.open("🤦‍♀️ You cannot discard pointer cards", "Dance", {
+          duration: 2000,
+        });
+      }
 
     }
 
   }
-
-
-
-  sortHand(array: Card[]){
-
-    var hand = []
-
-    var red = []
-    var green = []
-    var yellow = []
-    var black = []
-
-    var rook = null
-
-    for(let card of array){
-
-        if(card.color === 'red'){
-            red.push(card)
-        }else if(card.color === 'green'){
-            green.push(card)
-        }else if(card.color === 'yellow'){
-            yellow.push(card)
-        }else if(card.color === 'black'){
-            black.push(card)
-        }else if(card.color === 'blank'){
-            rook = card
-        }
-    }
-
-
-    red = this.sort(red)
-    black = this.sort(black)
-    green= this.sort(green)
-    yellow = this.sort(yellow)
-
-    hand = red.concat(black).concat(green).concat(yellow)
-
-    if(rook){
-        hand.push(rook)
-    }
-
-    return hand
-  }
-
-
-  sort(cards){
-    return cards.sort((a,b) => {
-        if(a.value === 1){
-            return -1
-        }else if(b.value === 1){
-            return 1 
-        }else{
-            return b.value-a.value
-        }
-    })
-}
 
 
 
