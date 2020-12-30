@@ -4,21 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon",
     "game_server": "nodemon ./routes/sockets/game_socket/setup.js",
-    "game_test": "nodemon ./routes/sockets/game_socket_tests/game_test.js"
+    "game_test": "nodemon ./routes/sockets/game_socket_tests/game_test.js",
+    "start:dev": "nodemon --exec"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.13",
     "socket.io": "^3.0.2",
     "socket.io-client": "^3.0.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.6"
+    "@types/node": "^14.14.16",
+    "nodemon": "^2.0.6",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
   }
 }

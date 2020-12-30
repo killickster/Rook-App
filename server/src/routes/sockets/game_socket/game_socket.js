@@ -1,5 +1,4 @@
-const Game = require('../../../model/game/Game')
-const Player = require('../../../model/game/Player')
+const {Game, Player, Play, MoveType} = require('../../../model/game/Game')
 const GameSchema = require('../../../model/Game')
 const User =require('../../../model/User')
 
@@ -32,7 +31,7 @@ module.exports = function(io){
             var user = await User.findOne({_id: player_id})
 
             //Check database for game
-            var game_from_database = GameSchema.findOne({_id: game_id})
+            var game_from_database = await GameSchema.findOne({_id: game_id})
             
             var game = await games.find(g => {
                 return g.id === game_id
@@ -44,15 +43,16 @@ module.exports = function(io){
                 socket.emit('declined', "this game already exists")
             }else{
 
-                const game = await new Game(game_id)
+                const game = new Game(game_id, game_from_database.numberOfPlayers)
+
+                console.log(game)
                 games.push(game)
-                game.addPlayer(new Player(player_id,user.name))
+
+                var gameState = game.move(new Play(MoveType.ADD_PLAYER, player_id, new Player(player_id, user.name)))
 
                 socket.join(game_id)
 
-
-
-                return socket.emit("success", "game is created")
+                return socket.emit("updated_game_state", gameState)
             }
 
 
@@ -61,6 +61,7 @@ module.exports = function(io){
 
         socket.on('join_game', async (request_data) => {
 
+            console.log('joinin game')
             const {player_id, game_id} = request_data
 
             //query database to see if player exists
@@ -70,7 +71,8 @@ module.exports = function(io){
             //Check database for game
              console.log(games)
             var game = await games.find(g => {
-                return g.id === game_id
+                console.log(g.game_id)
+                return g.game_id === game_id
             })
 
             if(!game){
@@ -78,51 +80,32 @@ module.exports = function(io){
                 return socket.emit("declined", "no such game")
             }
 
-            var gameFull = game.players.length === game.numberOfPlayers
+            var matches = game.players.filter(player => {
+                if(player === null){
+                    return false
+                }else{
+                    return (player.player_id === player_id)
+                }
+            })
 
-            if(gameFull){
-                console.log('game full')
-                return socket.emit("declined", "this room is full")
-            }
-
-            var containsPlayer = await game.players.find(p => {return p.id === player_id})
-            console.log(containsPlayer)
-            if(containsPlayer){
+            console.log(matches)
+            if(matches.length > 0){
                 console.log('rejected')
 
                 return socket.emit("declined", "this player is already in the game")
             }else{
 
-                await game.addPlayer(new Player(player_id,user.name))
+                if(game.numberOfPlayersJoined < game.numberOfPlayers){
 
-                socket.join(game_id)
+                    var gameState = await game.move(new Play(MoveType.ADD_PLAYER, player_id, new Player(player_id, user.name)))
 
-                console.log('new player joined')
+                    socket.join(game_id)
 
-                io.of('games/socket').to(game_id).emit("new_player", {playerName: user.name})
+                    console.log('new player joined')
 
-                if(game.players.length === game.numberOfPlayers){
-
-                    game.formTeams()
-
-                    console.log('game')
-
-                    var team1 = game.team1.map(player => {
-                        return player.name
-                    })
-
-                    var team2 = game.team2.map(player => {
-                        return player.name
-                    })
-                    console.log(team1)
-                    console.log(team2)
-
-
-                    game.deal(5)
-
-                    io.of('games/socket').in(game_id).emit("game_ready", {team1: team1, team2: team2})
-
+                    io.of('games/socket').to(game_id).emit("updated_game_state", gameState)
                 }
+
 
                 return socket.emit("success", "you were added to the game")
             }

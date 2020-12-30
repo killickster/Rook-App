@@ -8,11 +8,14 @@ import { Game } from '../models/game.model';
 import { GamesService } from '../services/games.service';
 import { WebSocketService } from '../web-socket.service';
 import { BidComponent } from './bid/bid.component';
-import {Card} from './card.model';
 import {MatSnackBar, MatSnackBarRef, MAT_SNACK_BAR_DATA} from '@angular/material/snack-bar';
 import { ActionBarComponent } from './action-bar/action-bar.component';
 import { SnackData} from './snack-data';
 import { RookAction } from './rook-action';
+import {Card} from '../services/models/card.model';
+import {RoundState} from '../services/models/round-stage.model';
+import {Color} from '../services/models/color.model';
+
 
 @Component({
   selector: 'app-gameroom',
@@ -20,27 +23,45 @@ import { RookAction } from './rook-action';
   styleUrls: ['./gameroom.component.css']
 })
 export class GameroomComponent implements OnInit {
-  exchange = false;
-  cards: Card[] = [new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 9, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('black', 4, 0, "face", false, false),new Card('yellow', 3, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('red', 8, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 11, null, "face", false, false)]
   snack: MatSnackBarRef<any> = null;
   snackMove: MatSnackBarRef<any> = null;
+  cards: Card[] = [new Card(Color.BLACK, 1, 15, 15, "face", false), new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),]
+  yourTurn: boolean = false
+  gameStage: RoundState
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
-  kitty: Card[] = [{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
+  kitty: Card[] = [new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),]
+  //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
 
 
   constructor(private snackBar: MatSnackBar, private gameService: GamesService, private dialog: MatDialog) { }
 
 
   ngOnInit(): void {
-    this.sort(this.cards)
 
-    this.gameService.hand.subscribe(hand => {
-      
-      this.cards = hand
-      this.sort(this.cards)
+    this.gameService.gameState.subscribe(game => {
+      if(game){
 
+        this.gameService.yourIndex.subscribe(index => {
+          
+          
+          var round = game['rounds'][game['currentRoundIndex']]
+
+          this.cards = round.hands[index] 
+          this.sort(this.cards) 
+
+          this.gameStage = game['rounds'][game['currentRoundIndex']].roundState
+
+          this.yourTurn = game['currentPlayer'] === index ? true : false
+
+          this.kitty = round.kitty 
+
+
+
+
+        })
+      }
     })
 
     this.gameService.kitty.subscribe(kitty => {
@@ -86,12 +107,10 @@ export class GameroomComponent implements OnInit {
       }else{
           return b.value-a.value
       }})
-    cards.sort((a,b) => a.color.localeCompare(b.color));
+    cards.sort((a,b) => {return a.color-b.color});
     cards.sort((a,b) => {
-      if(a.color == "blank"){
+      if(a.color == Color.UNDETERMINED){
         return 1
-      }else if(b.color == "birdy"){
-        return -1
       }else{
         return 0
       }
@@ -101,7 +120,7 @@ export class GameroomComponent implements OnInit {
 
 
 
-  //exchange cards with kitty
+
   cardClicked(card: Card){
     if(card.kitty){
       card.kitty = false
@@ -142,9 +161,10 @@ export class GameroomComponent implements OnInit {
       }
     }
     //display custom snackBar for discard
-    this.snackInput(new SnackData("Kitty ready to discard", 'bid'))
+    this.snackInput(new SnackData("Kitty ready to discard", 'discard'))
 
   }
+
 
   //call when you needing a little dialog for input (bidding, discarding) Just use normal snackBar for game advice
   snackInput(snackData: SnackData){
@@ -162,6 +182,7 @@ export class GameroomComponent implements OnInit {
 
   }
  
+
 
 
 

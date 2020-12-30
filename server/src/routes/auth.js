@@ -2,19 +2,12 @@ const bcrypt = require('bcrypt')
 const router = require('express').Router()
 const User = require('../model/User')
 const jwt = require('jsonwebtoken')
-const {registerValidation, loginValidation} = require('../validation')
 
 
 //Register
 router.post('/register', async (req,res) => {
 
 
-    //validate data
-    const {error} = registerValidation(req.body)
-
-    if(error){
-        return res.status(400).send(error.details[0].message)
-    }
 
     //Check if user exists already
     const emailExists = await User.findOne({email: req.body.email})
@@ -62,11 +55,7 @@ router.post('/register', async (req,res) => {
 router.post('/login', async (req,res) =>{
 
     //validate data
-    const {error} = loginValidation(req.body)
 
-    if(error){
-        return res.status(400).send(error.details[0].message)
-    }
 
     //Check if user exists
     const user = await User.findOne({email: req.body.email})

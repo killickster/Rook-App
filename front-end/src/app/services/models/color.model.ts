@@ -1,0 +1,1 @@
+export enum Color {RED, BLACK, YELLOW, GREEN, UNDETERMINED}
