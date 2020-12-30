@@ -1,4 +1,4 @@
 export class Player{
 
-    constructor(public playerId: number, public name: string, public numberOfCards: number){}
+    constructor(public player_id: string, public player_name: string){}
 }

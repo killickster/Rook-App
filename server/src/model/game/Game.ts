@@ -30,7 +30,7 @@ export class Game{
         this.currentRoundIndex = 0
     }
 
-    addPlayer(player: Player){
+    async addPlayer(player: Player){
 
         if(this.numberOfPlayers === this.numberOfPlayersJoined){
             throw("GAME_FULL")
@@ -68,7 +68,7 @@ export class Game{
     }
 
 
-    move(play: Play){
+    async move(play: Play){
 
         if(!this.validateMove(play)){
             throw('INVALID_MOVE')
@@ -76,7 +76,7 @@ export class Game{
 
         switch(play.moveType){
             case MoveType.ADD_PLAYER:
-                this.addPlayer(play.payload)
+                await this.addPlayer(play.payload)
                 return this.getGameStateFor(play.player_id)
             case MoveType.BID:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].submitBid(play.payload)
@@ -126,6 +126,8 @@ export class Game{
     getGameStateFor(id: string){
         var index: number | null = null
         for(var i = 0; i< this.players.length; i++){
+            console.log(this.players[i])
+            console.log(id)
             if(this.players[i] !== null && this.players[i].player_id === id){
                 index = i
             }
@@ -335,7 +337,7 @@ export class Player{
 }
 
 
-export enum MoveType {ADD_PLAYER ,BID, DISCARD ,PLAY, SET_TRUMP}
+export enum MoveType {ADD_PLAYER ,BID, DISCARD ,PLAY, SET_TRUMP, INITALIZE_GAME}
 
 
 export class Play {

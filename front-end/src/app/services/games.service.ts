@@ -5,9 +5,11 @@ import { BehaviorSubject, Subject, throwError } from 'rxjs';
 import { catchError, tap} from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 import {Game} from '../models/game.model'
-import {Player} from '../models/player.model'
+import {Play} from './models/play.model'
 import{WebSocketService} from '../web-socket.service'
 import {Card} from '../services/models/card.model'
+import { MoveType } from './models/move-type.model';
+import { Player } from '../models/player.model';
 
 interface GameResponseData {
   host: string;
@@ -37,7 +39,9 @@ export class GamesService {
   constructor(private http: HttpClient, private authService: AuthService, private socketService: WebSocketService, private router: Router) {
 
 
-    this.socketService.listen('updated_game_state').subscribe(data => {
+    this.socketService.listen('game_state').subscribe(data => {
+
+      console.log(data)
 
       this.gameState.next(data)
     })
@@ -65,10 +69,27 @@ export class GamesService {
     })
 
 
+    this.socketService.listen('game_state_changed').subscribe(data => {
+
+      this.game.subscribe(game => {
+        this.authService.user.subscribe(user => {
+
+          setTimeout(() => {
+            this.socketService.emit('get_game_state', {game_id: game.id, player_id: user.id})
+          }, 3000)
+
+        })
+
+      })
+
+    })
+
+
     this.game.subscribe(game => {
       console.log('joined ame')
       if(game ){
         this.router.navigate(['/gameroom/', game.id])
+        this.socketService.emit('get_game_state', {game_id: game.id})
       }
     })
 
@@ -76,12 +97,14 @@ export class GamesService {
       this.authService.user.subscribe(user => {
 
         for(let game of games){
-          console.log(game['playerIds'])
+          
           for(let id of game['playerIds']){
 
             if( id === user.id){
 
-              this.socketService.emit('get_game_state', {player_id: user.id, game_id: game.id})
+              this.game.next(game)
+
+              this.socketService.emit('get_game_state', {game_id: game.id})
 
             }
           }
@@ -126,7 +149,7 @@ export class GamesService {
       this.game.next(game)
 
       this.authService.user.subscribe((user) =>{
-        this.socketService.emit('initalize_game', {player_id: user.id, game_id : game.id})
+        this.socketService.emit('play', {player_id: user.id, game_id : game.id, play: new Play(MoveType.INITALIZE_GAME , user.id, new Player(user.id, user.name))})
       })
     })).subscribe(resData => {
       this.gamesChanged.next(this.games)
@@ -157,7 +180,7 @@ export class GamesService {
 
       this.authService.user.subscribe((user) =>{
         console.log(user)
-        this.socketService.emit('join_game', {player_id: user.id, game_id : changedGame.id})
+        this.socketService.emit('play', {player_id: user.id, game_id : changedGame.id, play: new Play(MoveType.ADD_PLAYER, user.id, new Player(user.id, user.name))})
       })
 
     })).subscribe( changedGame => {
