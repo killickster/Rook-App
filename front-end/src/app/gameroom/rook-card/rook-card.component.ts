@@ -1,6 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, Input, OnInit } from '@angular/core';
-import { Card } from '../card.model';
+import { Card } from '../../services/models/card.model';
+import {Color} from '../../services/models/color.model'
 
 @Component({
   selector: 'app-rook-card',
@@ -10,10 +11,28 @@ import { Card } from '../card.model';
 })
 export class RookCardComponent implements OnInit {
   @Input() card: Card;
+  color: string
 
   constructor() { }
 
   ngOnInit(): void {
+
+    switch(this.card.color){
+      case Color.BLACK:
+        this.color = 'black'
+        break
+      case Color.RED:
+        this.color = 'red'
+        break;
+      case Color.YELLOW:
+        this.color = 'yellow'
+        break;
+      case Color.GREEN:
+        this.color = 'green'
+        break;
+    }
+
+    console.log(this.color)
   }
 
   cardClicked() {

@@ -7,7 +7,7 @@ import { AuthService } from '../auth/auth.service';
 import {Game} from '../models/game.model'
 import {Player} from '../models/player.model'
 import{WebSocketService} from '../web-socket.service'
-import {Card} from '../gameroom/card.model'
+import {Card} from '../services/models/card.model'
 
 interface GameResponseData {
   host: string;
@@ -24,39 +24,59 @@ export class GamesService {
   games: Game[] = []
   errorMessage: Subject<string> = new Subject<string>()
   game: BehaviorSubject<Game> = new BehaviorSubject<Game>(null)
-  hand: Subject<any> = new Subject<any>()
+  hand: Subject<Card[]> = new Subject<Card[]>()
   bidRequest: Subject<any> = new Subject<any>()
   bidDialogClosedStillBidding: Subject<any> = new Subject<any>()
   bidding: boolean = false
   kitty: Subject<any> = new Subject<any>()
-  yourIndex: number
+  yourIndex: BehaviorSubject<number> = new BehaviorSubject<number>(null) 
+  gameState: BehaviorSubject<any> = new BehaviorSubject<any>(null)
+  
 
 
   constructor(private http: HttpClient, private authService: AuthService, private socketService: WebSocketService, private router: Router) {
 
 
     this.socketService.listen('updated_game_state').subscribe(data => {
-      console.log(data)
 
-      var players = data['players']
+      this.gameState.next(data)
+
+      
 
 
 
-      this.authService.user.subscribe(user => {
-        console.log(players)
-        console.log(user.id)
-        for(let i = 0 ; i < players.length; i++){
-          if(players[i] !== null && players[i].player_id === user.id){
-            this.yourIndex = i
-          }
-         }
+
+
     })
 
-    console.log(this.yourIndex)
-    
-      console.log(data['rounds'][data['currentRoundIndex']].hands[this.yourIndex])
+     this.gameState.subscribe(data => {
+
+      if(data){
+
+        this.yourIndex.subscribe(index => {
+          if(index === null){
+            console.log(data)
+            var players = data['players']
+                this.authService.user.subscribe(user => {
+                  for(let i = 0 ; i < players.length; i++){
+                    if(players[i] !== null && players[i].player_id === user.id){
+                      this.yourIndex.next(i)
+                    }
+                  }
+              })
+          }
+        })
+      }
 
 
+    })
+
+
+    this.game.subscribe(game => {
+      console.log('joined ame')
+      if(game ){
+        this.router.navigate(['/gameroom/', game.id])
+      }
     })
 
     this.socketService.listen('new_player').subscribe(data => {
@@ -90,7 +110,6 @@ export class GamesService {
     this.socketService.listen('cards').subscribe(data => {
       var hand = []
       for(let card of data['hand']){
-        hand.push(new Card(card['color'], card['value'], card['points'], 'face', null, false))
       }
 
       this.hand.next(hand)
@@ -139,7 +158,7 @@ export class GamesService {
 
       var kitty = []
       for(let card of data['cards']){
-        kitty.push(new Card(card['color'], card['value'], card['points'], 'face', false, true))
+        //kitty.push(new Card(card['color'], card['value'], card['points'], 'face', false, true))
       }
       console.log(this.kitty)
 

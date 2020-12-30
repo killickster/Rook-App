@@ -10,39 +10,39 @@ export class Deck{
         for(var i = 1; i <= 14; i++){
 
             if(i === 1){
-                this.cards.push(new Card(Color.RED, i, this.getPoints(i), 15))
+                this.cards.push(new Card(Color.RED, i, this.getPoints(i), 15, 'flipped', false, false))
             }else{
-                this.cards.push(new Card(Color.RED, i, this.getPoints(i), i))
+                this.cards.push(new Card(Color.RED, i, this.getPoints(i), i, 'flipped', false, false))
             }
 
         }
 
         for(var i = 1; i <= 14; i++){
             if(i === 1){
-                this.cards.push(new Card(Color.YELLOW, i, this.getPoints(i), 15))
+                this.cards.push(new Card(Color.YELLOW, i, this.getPoints(i), 15, 'flipped', false, false))
             }else{
-                this.cards.push(new Card(Color.YELLOW, i, this.getPoints(i), i))
+                this.cards.push(new Card(Color.YELLOW, i, this.getPoints(i), i, 'flipped', false, false))
             }
         }
 
         for(var i = 1; i <= 14; i++){
             if(i === 1){
-                this.cards.push(new Card(Color.GREEN, i, this.getPoints(i), 15))
+                this.cards.push(new Card(Color.GREEN, i, this.getPoints(i), 15, 'flipped', false, false))
             }else{
-                this.cards.push(new Card(Color.GREEN, i, this.getPoints(i), i))
+                this.cards.push(new Card(Color.GREEN, i, this.getPoints(i), i, 'flipped', false, false))
             }
         }
 
         for(var i = 1; i <= 14; i++){
             if(i === 1){
-                this.cards.push(new Card(Color.BLACK, i, this.getPoints(i), 15))
+                this.cards.push(new Card(Color.BLACK, i, this.getPoints(i), 15, 'flipped', false, false))
             }else{
-                this.cards.push(new Card(Color.BLACK, i, this.getPoints(i), i))
+                this.cards.push(new Card(Color.BLACK, i, this.getPoints(i), i, 'flipped', false, false))
             }
         }
 
         //Add rook card
-        this.rook = new Card(Color.UNDETERMINED, 0, 20, 0)
+        this.rook = new Card(Color.UNDETERMINED, 0, 20, 0, 'flipped', false, false)
         this.cards.push(this.rook);
     }
 
@@ -90,7 +90,7 @@ export class Deck{
 export enum Color {RED, BLACK, YELLOW, GREEN, UNDETERMINED}
 
 export class Card{
-    constructor(public color: Color, public value: number, public points: number, public power: number){
+    constructor(public color: Color, public value: number, public points: number, public power: number, public state: 'face' | 'flipped', public exchange: boolean, public kitty: boolean){
     }
 }
 

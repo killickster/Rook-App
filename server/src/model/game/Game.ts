@@ -77,16 +77,16 @@ export class Game{
         switch(play.moveType){
             case MoveType.ADD_PLAYER:
                 this.addPlayer(play.payload)
-                return this
+                return this.getGameStateFor(play.player_id)
             case MoveType.BID:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].submitBid(play.payload)
-                return this
+                return this.getGameStateFor(play.player_id)
             case MoveType.DISCARD:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].setNewHand(play.payload)
-                return this
+                return this.getGameStateFor(play.player_id)
             case MoveType.SET_TRUMP:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].selectTrump(play.payload)
-                return this
+                return this.getGameStateFor(play.player_id)
             case MoveType.PLAY:
                 var index = this.rounds[this.currentRoundIndex].submitPlay(play.payload)
                 if(this.currentPlayer !== null && index === false){
@@ -107,7 +107,7 @@ export class Game{
                     this.rounds[this.currentRoundIndex].roundState = RoundState.DONE
                 }
 
-                return this
+                return this.getGameStateFor(play.player_id)
 
         }
 
@@ -120,6 +120,31 @@ export class Game{
         }else{
             return true
         }
+
+    }
+
+    getGameStateFor(id: string){
+        var index: number | null = null
+        for(var i = 0; i< this.players.length; i++){
+            if(this.players[i] !== null && this.players[i].player_id === id){
+                index = i
+            }
+        }
+
+        if(index){
+            var clone = {...this}
+
+            var cards = clone.rounds[this.currentRoundIndex].hands[index]
+
+            for(let card of cards){
+                card.state = 'face'
+            }
+
+            return clone
+        }else{
+            return false
+        }
+
 
     }
 
