@@ -9,7 +9,10 @@ import { GamesService } from '../services/games.service';
 import { WebSocketService } from '../web-socket.service';
 import { BidComponent } from './bid/bid.component';
 import {Card} from './card.model';
-import {MatSnackBar, MatSnackBarRef} from '@angular/material/snack-bar';
+import {MatSnackBar, MatSnackBarRef, MAT_SNACK_BAR_DATA} from '@angular/material/snack-bar';
+import { ActionBarComponent } from './action-bar/action-bar.component';
+import { SnackData} from './snack-data';
+import { RookAction } from './rook-action';
 
 @Component({
   selector: 'app-gameroom',
@@ -20,6 +23,7 @@ export class GameroomComponent implements OnInit {
   exchange = false;
   cards: Card[] = [new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 9, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('black', 4, 0, "face", false, false),new Card('yellow', 3, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('red', 8, 0, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false),new Card('yellow', 10, 10, "face", false, false), new Card('yellow', 11, null, "face", false, false)]
   snack: MatSnackBarRef<any> = null;
+  snackMove: MatSnackBarRef<any> = null;
   bidForm: FormGroup
   game: Game
   bidSubscription: Subscription
@@ -123,8 +127,8 @@ export class GameroomComponent implements OnInit {
   checkForDiscard(){
     if(this.kitty.length != 5){
       console.log(this.snack)
-      if(this.snack != null){
-       this.snack.dismiss()
+      if(this.snackMove != null){
+       this.snackMove.dismiss()
       }
       return
     }
@@ -132,16 +136,33 @@ export class GameroomComponent implements OnInit {
       console.log(card)
       if(card.points != 0 && card.points != null){
         if(this.snack != null){
-          this.snack.dismiss()
+          this.snackMove.dismiss()
          }
         return
       }
     }
-    this.snack = this.snackBar.open("Kitty ready to discard", "Discard Kitty", {
-      duration: 0,
-    });
-  
+    //display custom snackBar for discard
+    this.snackInput(new SnackData("Kitty ready to discard", 'bid'))
+
   }
+
+  //call when you needing a little dialog for input (bidding, discarding) Just use normal snackBar for game advice
+  snackInput(snackData: SnackData){
+    this.snackMove = this.snackBar.openFromComponent(ActionBarComponent, {
+      duration:0,
+      data: snackData
+    })
+    //subscribe to get the payload back from snackBar custom component
+    this.snackMove.instance.action.subscribe((data: RookAction) => {
+      // handle submission here Depends on action taken
+      alert(data.action + " : "+data.payload)
+      this.snackMove.instance.action.unsubscribe()
+      this.snackMove.dismiss()
+    })
+
+  }
+ 
+
 
 
 

@@ -1,0 +1,19 @@
+.snack-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.snack-actions {
+    align-items: center;
+    display: flex;
+}
+
+.snack-message {
+    flex: 1;
+    align-items: center;
+    display: flex;
+}
+
+.mr {
+    margin-right: .5em;
+}
