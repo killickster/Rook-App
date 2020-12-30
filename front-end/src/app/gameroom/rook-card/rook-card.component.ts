@@ -31,8 +31,6 @@ export class RookCardComponent implements OnInit {
         this.color = 'green'
         break;
     }
-
-    console.log(this.color)
   }
 
   cardClicked() {

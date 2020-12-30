@@ -19,6 +19,59 @@ module.exports = function(io){
 
         console.log('hey')
 
+        socket.on('get_game_state', async (game_data) => {
+
+            console.log('joinin game')
+            const {player_id, game_id} = game_data 
+
+            //query database to see if player exists
+            //get player_name from database
+            var user = await User.findOne({_id: player_id})
+
+            //Check database for game
+             console.log(games)
+            var game = await games.find(g => {
+                console.log(g.game_id)
+                return g.game_id === game_id
+            })
+
+            if(!game){
+                console.log('no such game')
+                return socket.emit("declined", "no such game")
+            }
+
+            var matches = game.players.filter(player => {
+                if(player === null){
+                    return false
+                }else{
+                    return (player.player_id === player_id)
+                }
+            })
+
+            console.log(matches)
+            if(matches.length > 0){
+                console.log('rejected')
+
+                return socket.emit("declined", "this player is already in the game")
+            }else{
+
+                if(game.numberOfPlayersJoined < game.numberOfPlayers){
+
+                    var gameState = await game.move(new Play(MoveType.ADD_PLAYER, player_id, new Player(player_id, user.name)))
+
+                    socket.join(game_id)
+
+                    console.log('new player joined')
+
+                    io.of('games/socket').to(game_id).emit("updated_game_state", gameState)
+                }
+
+
+                return socket.emit("success", "you were added to the game")
+            }
+
+        })
+
 
 
         socket.on('initalize_game', async (game_data) => {

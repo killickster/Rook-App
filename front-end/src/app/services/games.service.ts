@@ -40,13 +40,6 @@ export class GamesService {
     this.socketService.listen('updated_game_state').subscribe(data => {
 
       this.gameState.next(data)
-
-      
-
-
-
-
-
     })
 
      this.gameState.subscribe(data => {
@@ -79,91 +72,25 @@ export class GamesService {
       }
     })
 
-    this.socketService.listen('new_player').subscribe(data => {
-      this.game.subscribe(game => {
-        console.log(this.games)
-        for(var i = 0 ; i < this.games.length; i++){
-          if(this.games[i].id === game.id){
-            this.authService.user.subscribe(user => {
-              if(user.name !== data['playerName']){
-                this.games[i].playerNames.push(data['playerName'])
-              }
-            })
+    this.gamesChanged.subscribe(games => {
+      this.authService.user.subscribe(user => {
+
+        for(let game of games){
+          console.log(game['playerIds'])
+          for(let id of game['playerIds']){
+
+            if( id === user.id){
+
+              this.socketService.emit('get_game_state', {player_id: user.id, game_id: game.id})
+
+            }
           }
         }
       })
-    })
-
-    this.socketService.listen('game_ready').subscribe(data => {
-      console.log(data)
-
-      this.game.subscribe(game => {
-        this.router.navigate(['/gameroom/', game.id])
-          this.authService.user.subscribe((user) =>{
-            this.socketService.emit('get_cards', {player_id: user.id, game_id : game.id})
-          })
-      })
 
     })
 
 
-    this.socketService.listen('cards').subscribe(data => {
-      var hand = []
-      for(let card of data['hand']){
-      }
-
-      this.hand.next(hand)
-
-    })
-
-    this.socketService.listen('bid_request').subscribe(data => {
-     console.log(data) 
-      this.bidRequest.next(80)      //Start bid at 80
-     console.log('bid request') 
-     this.bidding = true
-    })
-
-
-    this.socketService.listen('bid').subscribe(data => {
-      const nextBidder = data['nextBidder']
-      const bid = data['bid']
-      const player = data['player']
-      console.log(bid)
-      console.log(player)
-      this.authService.user.subscribe(user=> {
-        if(user.id === nextBidder){
-          this.bidRequest.next(bid)
-          console.log(user.id)
-        }
-      })
-    })
-
-    this.socketService.listen('bid_completed').subscribe(data => {
-      console.log('bid completed')
-      const winnerId = data["id"]
-
-      this.authService.user.subscribe(user => {
-        if(user.id === winnerId){
-          console.log('you are the winner')
-          this.game.subscribe(game => {
-            this.socketService.emit('get_kitty', {player_id: user.id, game_id : game.id})
-          })
-
-        }
-      })
-    })
-
-
-    this.socketService.listen('kitty').subscribe(data => {
-
-      var kitty = []
-      for(let card of data['cards']){
-        //kitty.push(new Card(card['color'], card['value'], card['points'], 'face', false, true))
-      }
-      console.log(this.kitty)
-
-      this.kitty.next(kitty)
-    })
 
    }
 

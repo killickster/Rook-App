@@ -47,7 +47,7 @@ export class GameroomComponent implements OnInit {
           this.cards = round.hands[index] 
           this.sort(this.cards) 
 
-          this.gameStage = game['rounds'][game['currentRoundIndex']].roundState
+          this.gameStage = round.roundState
 
           this.yourTurn = game['currentPlayer'] === index ? true : false
 

@@ -28,7 +28,8 @@ router.post('/game', verifyToken, verifyNotHost, async (req,res) => {
             hostName: game.host_name,
             id: game._id,
             numberOfPlayers: game.numberOfPlayers,
-            playerNames: game.playerNames
+            playerNames: game.playerNames,
+            playerIds: game.playerIds
         }
 
 
@@ -50,7 +51,8 @@ router.get('/', verifyToken, async (req,res) => {
                 hostName: game.host_name,
                 id: game._id,
                 numberOfPlayers: game.numberOfPlayers,
-                playerNames: game.playerNames
+                playerNames: game.playerNames,
+                playerIds: game.playersIds
             }
         })
 
@@ -86,7 +88,8 @@ router.put('/game', verifyToken, verifyGame, async(req,res) => {
             hostName: savedGame.host_name,
             id: savedGame._id,
             numberOfPlayers: savedGame.numberOfPlayers,
-            playerNames: savedGame.playerNames
+            playerNames: savedGame.playerNames,
+            playerIds: savedGame.playersIds
         }
         console.log(savedGame.playerNames)
 
