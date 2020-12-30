@@ -21,6 +21,8 @@ import { BidComponent } from './gameroom/bid/bid.component'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RookCardComponent } from './gameroom/rook-card/rook-card.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { ActionBarComponent } from './gameroom/action-bar/action-bar.component';
+import {MatButtonModule} from '@angular/material/button';
 
 
 @NgModule({
@@ -34,7 +36,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     CreateGameComponent,
     GameroomComponent,
     BidComponent,
-    RookCardComponent
+    RookCardComponent,
+    ActionBarComponent
   ],
   entryComponents:[
     BidComponent
@@ -49,7 +52,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     BrowserAnimationsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatButtonModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true},

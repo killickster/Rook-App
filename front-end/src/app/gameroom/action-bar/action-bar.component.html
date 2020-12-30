@@ -1,0 +1,8 @@
+<div class="snack-container">
+    <div class="snack-message">{{message}}</div>
+    <div class="snack-actions">
+        <button *ngIf='discard' (click)="emitAction('discard', null)" mat-raised-button color="primary">Discard</button>
+        <button class="mr" (click)="emitAction('bid', 90)" *ngIf='bid' mat-raised-button color="primary">Bid</button>
+        <button *ngIf='bid' (click)="emitAction('bid', 0)" mat-raised-button color="accent">Pass</button>
+    </div>
+</div>
