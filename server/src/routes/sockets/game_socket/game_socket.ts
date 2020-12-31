@@ -38,6 +38,11 @@ module.exports = function(io: any){
 
             console.log('getting game')
 
+            if(!socket.rooms.has(game_id)){
+                console.log('joining back')
+                socket.join(game_id)
+            }
+
             var gameState = game.getGameStateFor(player_id)
 
             socket.emit('game_state',gameState)
@@ -99,6 +104,14 @@ module.exports = function(io: any){
                         return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
                     })
 
+                }else if(play.moveType === MoveType.BID){
+                   
+                    var play = new Play(play.moveType, play.player_id, play.payload)
+
+                    game.move(play).then((index: any) => {
+
+                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                    })
                 }
 
 

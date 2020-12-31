@@ -16,11 +16,12 @@ import { GameroomComponent } from './gameroom/gameroom.component'
 const appRoutes: Routes = [
     {path: '', redirectTo: 'games', pathMatch: 'full'},
     {path: 'games', component: GamesComponent, canActivate: [AuthGuardService], children: [
-        {path: 'create', component: CreateGameComponent}
+        {path: 'create', component: CreateGameComponent},
     ]},
     {path: 'register', component: RegisterComponent},
     {path: 'login', component: LoginComponent},
-    {path: 'gameroom/:id', component: GameroomComponent}
+    {path: 'gameroom/:id', component: GameroomComponent, canActivate: [AuthGuardService]}
+
 ]
 
 @NgModule({

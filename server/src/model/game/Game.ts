@@ -135,8 +135,7 @@ export class Game{
 
     getGameStateFor(id: string){
         var index: number | null = null
-        console.log('id')
-        console.log(id)
+
         for(var i = 0; i< this.players.length; i++){
             if(this.players[i] !== null && this.players[i].player_id === id){
                 index = i
@@ -147,10 +146,18 @@ export class Game{
         if(index !== null){
             var clone = JSON.parse(JSON.stringify(this))
 
-            var cards = clone.rounds[this.currentRoundIndex].hands[index]
+            var round = clone.rounds[this.currentRoundIndex]
+
+            var cards = round.hands[index]
 
             for(let card of cards){
                 card.state = 'face'
+            }
+
+            if(round.kitty && round.roundState === RoundState.DISCARDING && this.currentPlayer && this.players[this.currentPlayer].player_id === id){
+                for(let card of round.kitty){
+                    card.state = 'face'
+                }
             }
 
             return clone

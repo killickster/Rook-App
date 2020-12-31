@@ -75,9 +75,6 @@ export class GameroomComponent implements OnInit {
           this.cards = this.hands[0] 
           this.sort(this.cards) 
 
-          console.log(this.playerNames)
-
-
           if(this.gameStage === RoundState.BIDDING && this.yourTurn){
             this.snackInput(new SnackData("", 'bid', round.bid))
           }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
