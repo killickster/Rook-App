@@ -60,8 +60,6 @@ export class GameroomComponent implements OnInit {
 
           var numberOfPlayers = players.length
 
-          var difference = numberOfPlayers - index - 2
-
           for(var i = 0; i < players.length; i++){
             if(players[(i+index)%numberOfPlayers]){
               
