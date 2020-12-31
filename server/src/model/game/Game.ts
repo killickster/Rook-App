@@ -79,8 +79,6 @@ export class Game{
 
         return new Promise((resolve, reject) => {
 
-            console.log('play')
-
         if(!this.validateMove(play)){
             throw('INVALID_MOVE')
         }
@@ -91,7 +89,7 @@ export class Game{
                 return resolve(this.addPlayer(play.payload))
             case MoveType.BID:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].submitBid(play.payload)
-                return this.getGameStateFor(play.player_id)
+                return resolve(this.currentPlayer)
             case MoveType.DISCARD:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].setNewHand(play.payload)
                 return this.getGameStateFor(play.player_id)
@@ -138,9 +136,6 @@ export class Game{
     getGameStateFor(id: string){
         var index: number | null = null
         for(var i = 0; i< this.players.length; i++){
-            console.log('id')
-            console.log(this.players[i])
-            console.log(id)
             if(this.players[i] !== null && this.players[i].player_id === id){
                 index = i
             }

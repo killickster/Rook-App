@@ -83,10 +83,13 @@ export class GamesService {
 
 
     this.game.subscribe(game => {
-      console.log('joined ame')
       if(game ){
-        this.router.navigate(['/gameroom/', game.id])
-        this.socketService.emit('get_game_state', {game_id: game.id})
+
+        this.authService.user.subscribe(user => {
+          this.router.navigate(['/gameroom/', game.id])
+          this.socketService.emit('get_game_state', {game_id: game.id, player_id: user.id})
+        })
+
       }
     })
 

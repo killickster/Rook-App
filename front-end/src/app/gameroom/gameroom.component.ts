@@ -57,6 +57,11 @@ export class GameroomComponent implements OnInit {
 
           this.kitty = round.kitty 
 
+          if(this.gameStage === RoundState.BIDDING && this.yourTurn){
+            this.snackInput(new SnackData("Bid", 'bid'))
+          }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
+          }
+
 
 
 
@@ -122,24 +127,30 @@ export class GameroomComponent implements OnInit {
 
 
   cardClicked(card: Card){
-    if(card.kitty){
-      card.kitty = false
-     this.kitty.splice(this.kitty.indexOf(card),1)
-     this.cards.push(card)
-     this.sort(this.cards)
-    }else{
-      if(card.points == 0 || card.points == null){
-        card.kitty = true
-        this.cards.splice(this.cards.indexOf(card),1)
-        this.kitty.push(card)
-      }else{
-        this.snackBar.open("🤦‍♀️ You cannot discard pointer cards", null, {
-          duration: 2000,
-        });
-      }
 
+    if(this.yourTurn && this.gameStage === RoundState.DISCARDING){
+
+      if(card.kitty){
+        card.kitty = false
+      this.kitty.splice(this.kitty.indexOf(card),1)
+      this.cards.push(card)
+      this.sort(this.cards)
+      }else{
+        if(card.points == 0 || card.points == null){
+          card.kitty = true
+          this.cards.splice(this.cards.indexOf(card),1)
+          this.kitty.push(card)
+        }else{
+          this.snackBar.open("🤦‍♀️ You cannot discard pointer cards", null, {
+            duration: 2000,
+          });
+        }
+
+      }
+      this.checkForDiscard()
+      
     }
-    this.checkForDiscard()
+
 
   }
 
@@ -161,7 +172,7 @@ export class GameroomComponent implements OnInit {
       }
     }
     //display custom snackBar for discard
-    this.snackInput(new SnackData("Kitty ready to discard", 'discard'))
+
 
   }
 
