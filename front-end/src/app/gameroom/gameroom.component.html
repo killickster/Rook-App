@@ -1,20 +1,20 @@
 <div class="table">
     <div class="player-container">
-        <div class="circle-name">MK</div>
+        <div class="circle-name">{{playerNames[2]}}</div>
         <div class="top-player player">
 
 
-            <app-rook-card *ngFor="let card of kitty" [card]="card">
+            <app-rook-card *ngFor="let card of hands[2]" [card]="card">
             </app-rook-card>
         </div>
     </div>
     <div class="flex-row">
         <div class="player-container">
-            <div class="circle-name">GK</div>
+            <div class="circle-name">{{playerNames[1]}}</div>
             <div class="left-player player">
 
 
-                <app-rook-card *ngFor="let card of kitty" [card]="card">
+                <app-rook-card *ngFor="let card of hands[1]" [card]="card">
                 </app-rook-card>
             </div>
         </div>
@@ -23,11 +23,10 @@
             </app-rook-card>
         </div>
         <div class="player-container">
-            <div class="circle-name">AK</div>
+            <div class="circle-name">{{playerNames[3]}}</div>
             <div class="right-player player">
 
-
-                <app-rook-card *ngFor="let card of kitty" [card]="card">
+                <app-rook-card *ngFor="let card of hands[3]" [card]="card">
                 </app-rook-card>
             </div>
         </div>

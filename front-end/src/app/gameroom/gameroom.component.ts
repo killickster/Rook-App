@@ -32,6 +32,8 @@ export class GameroomComponent implements OnInit {
   game: Game
   bidSubscription: Subscription
   kitty: Card[] = [new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),]
+  playerNames = [null, null, null, null]
+  hands: Card[][] = [null, null, null, null]
   //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
 
 
@@ -48,18 +50,40 @@ export class GameroomComponent implements OnInit {
           
           var round = game['rounds'][game['currentRoundIndex']]
 
-          this.cards = round.hands[index] 
-          this.sort(this.cards) 
-
           this.gameStage = round.roundState
 
           this.yourTurn = game['currentPlayer'] === index ? true : false
 
           this.kitty = round.kitty 
 
+          var players = game.players
+
+          var numberOfPlayers = players.length
+
+          var difference = numberOfPlayers - index - 2
+
+          for(var i = 0; i < players.length; i++){
+            if(players[(i+index)%numberOfPlayers]){
+              
+              this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
+
+            }
+
+            this.hands[i] = (round.hands[(i+index)%numberOfPlayers])
+
+
+          }
+
+          this.cards = this.hands[0] 
+          this.sort(this.cards) 
+
+          console.log(this.playerNames)
+
+
           if(this.gameStage === RoundState.BIDDING && this.yourTurn){
             this.snackInput(new SnackData("Bid", 'bid'))
           }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
+
           }
 
 

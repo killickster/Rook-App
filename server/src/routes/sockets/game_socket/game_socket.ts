@@ -96,7 +96,7 @@ module.exports = function(io: any){
 
                         console.log('joined game done')
 
-                        return io.of('games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
                     })
 
                 }
