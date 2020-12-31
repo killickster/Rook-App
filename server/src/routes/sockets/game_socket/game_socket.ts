@@ -51,6 +51,7 @@ module.exports = function(io: any){
 
         socket.on('play', async (game_data: any) => {
 
+            
             var play: typeof Play = game_data.play
             var player_id = play.player_id
             var game_id: string = game_data.game_id
@@ -105,6 +106,8 @@ module.exports = function(io: any){
                     })
 
                 }else if(play.moveType === MoveType.BID){
+
+                    console.log('bidding')
                    
                     var play = new Play(play.moveType, play.player_id, play.payload)
 
@@ -112,6 +115,8 @@ module.exports = function(io: any){
 
                         return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
                     })
+                }else if(play.moveType === MoveType.DISCARD){
+
                 }
 
 

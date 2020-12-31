@@ -92,7 +92,7 @@ export class Game{
                 return resolve(this.currentPlayer)
             case MoveType.DISCARD:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].setNewHand(play.payload)
-                return this.getGameStateFor(play.player_id)
+                return resolve(this.getGameStateFor(play.player_id))
             case MoveType.SET_TRUMP:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].selectTrump(play.payload)
                 return this.getGameStateFor(play.player_id)

@@ -15,6 +15,8 @@ import { RookAction } from './rook-action';
 import {Card} from '../services/models/card.model';
 import {RoundState} from '../services/models/round-stage.model';
 import {Color} from '../services/models/color.model';
+import { Play } from '../services/models/play.model';
+import { MoveType } from '../services/models/move-type.model';
 
 
 @Component({
@@ -29,7 +31,7 @@ export class GameroomComponent implements OnInit {
   yourTurn: boolean = false
   gameStage: RoundState
   bidForm: FormGroup
-  game: Game
+  game_id: string
   bidSubscription: Subscription
   kitty: Card[] = [new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),]
   playerNames = [null, null, null, null]
@@ -37,17 +39,18 @@ export class GameroomComponent implements OnInit {
   //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
 
 
-  constructor(private snackBar: MatSnackBar, private gameService: GamesService, private dialog: MatDialog) { }
+  constructor(private snackBar: MatSnackBar, private gameService: GamesService, private authService: AuthService, private dialog: MatDialog, private socketService: WebSocketService) { }
 
 
   ngOnInit(): void {
 
     this.gameService.gameState.subscribe(game => {
+
       if(game){
 
         this.gameService.yourIndex.subscribe(index => {
           
-          
+         this.game_id = game.game_id 
           var round = game['rounds'][game['currentRoundIndex']]
 
           this.gameStage = round.roundState
@@ -205,7 +208,12 @@ export class GameroomComponent implements OnInit {
     //subscribe to get the payload back from snackBar custom component
     this.snackMove.instance.action.subscribe((data: RookAction) => {
       // handle submission here Depends on action taken
-      alert(data.action + " : "+data.payload)
+      this.authService.user.subscribe(user => {
+
+        this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.BID, user.id, data.payload)})
+      })
+
+
       this.snackMove.instance.action.unsubscribe()
       this.snackMove.dismiss()
     })

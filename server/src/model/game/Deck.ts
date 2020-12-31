@@ -127,6 +127,7 @@ export function shuffleAndDeal(deck: Deck, numberInKitty: number, numberOfPlayer
         const card = deck.cards.pop()
         if(card){
             if(indiciesToSelectForKitty.includes(i)){
+                card.kitty = true
                 kitty.push(card)
             }else{
                 hands[playerTracker%numberOfPlayers].push(card)
