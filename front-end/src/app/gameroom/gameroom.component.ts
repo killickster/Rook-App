@@ -30,10 +30,12 @@ export class GameroomComponent implements OnInit {
   cards: Card[] = [new Card(Color.BLACK, 1, 15, 15, "face", false), new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),]
   yourTurn: boolean = false
   gameStage: RoundState
+  playing = true;
   bidForm: FormGroup
   game_id: string
   bidSubscription: Subscription
   kitty: Card[] = [new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),]
+  playedCards: Card[]  = [new Card(Color.GREEN, 4,0, 4, "face", true),]
   playerNames = [null, null, null, null]
   hands: Card[][] = [null, null, null, null]
   //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]

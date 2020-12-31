@@ -12,6 +12,7 @@
     display: flex;
     align-content: center;
     margin-top: 20px;
+    position: relative;
 }
 
 .cards app-rook-card {
@@ -45,6 +46,12 @@
     justify-content: center;
     width: 100%;
     flex: 1;
+}
+
+.playing-table {
+    display: flex;
+    flex: 1;
+    position: relative;
 }
 
 .flex-center {
@@ -89,6 +96,26 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+}
+
+.left-player {
+    position: relative;
+}
+
+.played-card {
+    position: absolute;
+    height: 168px;
+    bottom: -117px;
+    left: 57px;
+    transform: scale(.7);
+}
+
+.played-card-bottom {
+    position: absolute;
+    height: 168px;
+    top: -176px;
+    padding-right: 0px;
 }
 
 .player app-rook-card:not(:first-child) {
