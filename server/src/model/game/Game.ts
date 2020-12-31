@@ -1,3 +1,4 @@
+import { resolve } from "path"
 import { Color } from "./Deck"
 
 var {Deck, shuffleAndDeal, Card} = require('./Deck')
@@ -30,8 +31,7 @@ export class Game{
         this.currentRoundIndex = 0
     }
 
-    async addPlayer(player: Player){
-
+    addPlayer(player: Player){
         if(this.numberOfPlayers === this.numberOfPlayersJoined){
             throw("GAME_FULL")
         }
@@ -43,32 +43,43 @@ export class Game{
         while(!playerIsAssigned){
             var index: number= Math.floor(Math.random() * this.numberOfPlayers)
             
-            if(!this.players[index]){
+            if(this.players[index] === null){
                 this.players[index] = player
                 playerIsAssigned = true
+
+                if(this.numberOfPlayersJoined === this.numberOfPlayers){
+
+                    if(this.numberOfPlayers === 4){
+
+                        this.players[0].addTeammate(this.players[2])
+                        this.players[1].addTeammate(this.players[3])
+                        this.players[2].addTeammate(this.players[0])
+                        this.players[3].addTeammate(this.players[1])
+                    }
+
+                    this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
+
+                    this.currentPlayer = 0
+                }
+
+                console.log(this.players)
+
+                return index
             }
         }
 
         //Assign teammates
-        if(this.numberOfPlayersJoined === this.numberOfPlayers){
 
-            if(this.numberOfPlayers === 4){
-
-                this.players[0].addTeammate(this.players[2])
-                this.players[1].addTeammate(this.players[3])
-                this.players[2].addTeammate(this.players[0])
-                this.players[3].addTeammate(this.players[1])
-            }
-
-            this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
-
-            this.currentPlayer = 0
-        }
 
     }
 
 
-    async move(play: Play){
+    move(play: Play){
+
+
+        return new Promise((resolve, reject) => {
+
+            console.log('play')
 
         if(!this.validateMove(play)){
             throw('INVALID_MOVE')
@@ -76,8 +87,8 @@ export class Game{
 
         switch(play.moveType){
             case MoveType.ADD_PLAYER:
-                await this.addPlayer(play.payload)
-                return this.getGameStateFor(play.player_id)
+                console.log('add player')
+                return resolve(this.addPlayer(play.payload))
             case MoveType.BID:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].submitBid(play.payload)
                 return this.getGameStateFor(play.player_id)
@@ -110,6 +121,7 @@ export class Game{
                 return this.getGameStateFor(play.player_id)
 
         }
+    })
 
     }
 
@@ -126,6 +138,7 @@ export class Game{
     getGameStateFor(id: string){
         var index: number | null = null
         for(var i = 0; i< this.players.length; i++){
+            console.log('id')
             console.log(this.players[i])
             console.log(id)
             if(this.players[i] !== null && this.players[i].player_id === id){
@@ -133,7 +146,7 @@ export class Game{
             }
         }
 
-        if(index){
+        if(index !== null){
             var clone = {...this}
 
             var cards = clone.rounds[this.currentRoundIndex].hands[index]

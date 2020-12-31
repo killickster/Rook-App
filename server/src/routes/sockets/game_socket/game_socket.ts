@@ -33,10 +33,10 @@ module.exports = function(io: any){
             if(!game){
                 console.log('no such game')
                 return socket.emit("declined", "no such game")
+            
             }
 
-            console.log(game.players)
-            console.log(player_id)
+            console.log('getting game')
 
             var gameState = game.getGameStateFor(player_id)
 
@@ -70,11 +70,16 @@ module.exports = function(io: any){
 
                 games.push(game)
 
-                await game.move(new Play(MoveType.ADD_PLAYER, player_id, new Player(player_id, user.name)))
+                game.move(new Play(MoveType.ADD_PLAYER, player_id, new Player(player_id, user.name))).then((index: any) => {
 
-                socket.join(game_id)
+                    console.log('initalizing game done')
 
-                return socket.emit("game_state_changed")
+                    socket.join(game_id)
+
+                    return socket.emit("game_state_changed")
+
+                })
+
 
             }else{
 
@@ -87,12 +92,12 @@ module.exports = function(io: any){
 
                     var play = new Play(play.moveType, play.player_id, new Player(play.payload.player_id, play.payload.player_name))
 
-                    var gameState = await game.move(play)
+                    game.move(play).then((index: any) => {
 
-                    console.log('game state')
-                    console.log(gameState)
+                        console.log('joined game done')
 
-                    return io.of('games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                        return io.of('games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                    })
 
                 }
 

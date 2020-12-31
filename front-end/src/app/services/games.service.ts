@@ -73,10 +73,7 @@ export class GamesService {
 
       this.game.subscribe(game => {
         this.authService.user.subscribe(user => {
-
-          setTimeout(() => {
             this.socketService.emit('get_game_state', {game_id: game.id, player_id: user.id})
-          }, 3000)
 
         })
 
