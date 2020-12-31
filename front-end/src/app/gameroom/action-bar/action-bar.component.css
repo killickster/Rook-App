@@ -17,3 +17,39 @@
 .mr {
     margin-right: .5em;
 }
+
+.current_bid {
+    font-weight: 500;
+    color: white;
+    font-size: 30px;
+    width: 50px;
+    display: inline-block;
+}
+
+.add {
+    background-image: url("src/assets/img/add_circle_outline-24px.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.subtract {
+    cursor: pointer;
+    background-image: url("src/assets/img/remove_circle_outline-24px.svg");
+    width: 30px;
+    height: 30px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: inline-block;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+.bid-flex {
+    flex: 1;
+    align-items: center;
+    display: flex;
+}

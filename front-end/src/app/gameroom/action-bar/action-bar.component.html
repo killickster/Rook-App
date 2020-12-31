@@ -1,5 +1,14 @@
 <div class="snack-container">
-    <div class="snack-message">{{message}}</div>
+    <div class="snack-message">
+        <div *ngIf='bid' class="bid-flex">
+            <span class="current_bid"> 
+            {{data.payload}}
+            </span>
+            <span class="subtract" (click)="decrementBid()"></span><span class="add" (click)="incrementBid()"></span>
+        </div>
+        {{message}}
+
+    </div>
     <div class="snack-actions">
         <button *ngIf='discard' (click)="emitAction('discard', null)" mat-raised-button color="primary">Discard</button>
         <button class="mr" (click)="emitAction('bid', 90)" *ngIf='bid' mat-raised-button color="primary">Bid</button>

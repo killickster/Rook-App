@@ -20,12 +20,17 @@ export class ActionBarComponent {
   bid = (this.data.action === 'bid')
   discard = (this.data.action === "discard")
 
-
+  decrementBid(){
+    this.data.payload -= 5
+  }
+  incrementBid(){
+    this.data.payload +=5
+  }
 
   emitAction(action: string, payload: any){
     //'bid' | 'discard'
     if(action == 'bid'){
-      this.action.next(new RookAction('bid', payload))
+      this.action.next(new RookAction('bid', this.data.payload))
     }else if(action == 'discard'){
       this.action.next(new RookAction('discard', payload))
     }
