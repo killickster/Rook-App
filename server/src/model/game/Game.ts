@@ -135,8 +135,7 @@ export class Game{
 
     getGameStateFor(id: string){
         var index: number | null = null
-        console.log('id')
-        console.log(id)
+        
         for(var i = 0; i< this.players.length; i++){
             if(this.players[i] !== null && this.players[i].player_id === id){
                 index = i
