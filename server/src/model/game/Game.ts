@@ -1,7 +1,6 @@
 import { resolve } from "path"
-import { Color } from "./Deck"
 
-var {Deck, shuffleAndDeal, Card} = require('./Deck')
+var {Deck, shuffleAndDeal, Card, Color} = require('./Deck')
 const GameSchema = require('../../model/Game')
 const User =require('../../model/User')
 
@@ -15,6 +14,7 @@ export class Game{
     public rounds: Round[]
     public currentRoundIndex: number
     public currentPlayer: number | null
+    public gameFinished = false
 
     constructor(public game_id: string, public numberOfPlayers: number){
         this.numberOfPlayersJoined = 0
@@ -62,8 +62,6 @@ export class Game{
                     this.currentPlayer = 0
                 }
 
-                console.log(this.players)
-
                 return index
             }
         }
@@ -78,6 +76,9 @@ export class Game{
 
 
         return new Promise((resolve, reject) => {
+
+            console.log('players')
+            console.log(this.players)
 
         if(!this.validateMove(play)){
             throw('INVALID_MOVE')
@@ -95,11 +96,11 @@ export class Game{
                 return resolve(this.getGameStateFor(play.player_id))
             case MoveType.SET_TRUMP:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].selectTrump(play.payload)
-                return this.getGameStateFor(play.player_id)
+                return resolve(this.getGameStateFor(play.player_id))
             case MoveType.PLAY:
                 var index = this.rounds[this.currentRoundIndex].submitPlay(play.payload)
                 if(this.currentPlayer !== null && index === false){
-                    this.currentPlayer = (this.currentPlayer+1)/this.numberOfPlayers
+                    this.currentPlayer = (this.currentPlayer+1)%this.numberOfPlayers
                 }else if(index !== null && index !== false){
                     this.currentPlayer = index
                 }
@@ -113,10 +114,27 @@ export class Game{
                 }
 
                 if(roundDone){
-                    this.rounds[this.currentRoundIndex].roundState = RoundState.DONE
+                    this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
+                    var points = this.rounds[this.currentRoundIndex].calculatePoints()
+                    for(var i = 0; i < points.length; i++){
+                        this.players[i].addPoints(points[i])
+                        this.players[i].teammate.addPoints(points[i])
+
+                        if(this.players[i].points > 500){
+                            this.gameFinished = true
+
+                            return resolve('finished')
+                        }
+                    }
+
+                
+
+                    this.rounds.push(new Round(this.numberOfPlayers))
+                    this.currentRoundIndex++
+                    this.currentPlayer = this.rounds.length % this.numberOfPlayers
                 }
 
-                return this.getGameStateFor(play.player_id)
+                return resolve(this.getGameStateFor(play.player_id))
 
         }
     })
@@ -154,7 +172,7 @@ export class Game{
                 card.state = 'face'
             }
 
-            if(round.kitty && round.roundState === RoundState.DISCARDING && this.currentPlayer && this.players[this.currentPlayer].player_id === id){
+            if(round.roundState === RoundState.DISCARDING && this.currentPlayer != null && this.players[this.currentPlayer].player_id === id){
                 for(let card of round.kitty){
                     card.state = 'face'
                 }
@@ -183,8 +201,9 @@ class Round{
     public bidder: number
     public bidWinner: number | null = null
     public bidders: number[]
-    public trump: Color
+    public trump: typeof Color
     public tricks: Trick[]
+    public deck: typeof Deck
 
     constructor(private numberOfPlayers: number){
         this.bid = 75
@@ -214,7 +233,7 @@ class Round{
                 return el !== this.bidders[this.bidder]
             })
 
-            this.bidder = (this.bidder+1)%this.bidders.length
+            this.bidder = (this.bidder)%this.bidders.length
         }
 
         if(this.bidders.length === 1){
@@ -226,6 +245,10 @@ class Round{
 
 
     setNewHand(cards: typeof Card[]){
+
+        for(let card of cards){
+            card.state = 'flipped'
+        }
         var indexOfBidWinner = this.bidders[0]
         this.hands[indexOfBidWinner]  = cards
         this.kitty = null
@@ -233,32 +256,65 @@ class Round{
         return indexOfBidWinner
     }
 
-    selectTrump(color: Color){
+    selectTrump(color: typeof Color){
         var indexOfBidWinner = this.bidders[0]
         this.trump = color
         this.roundState = RoundState.PLAYING
+        this.tricks.push(new Trick(this.trump))
+
+        for(let hand of this.hands){
+            for(let card of hand){
+                if(card.color === Color.UNDETERMINED){
+                    card.color = color
+                }
+            }
+        }
+
         return (indexOfBidWinner + 1) % this.numberOfPlayers
     }
 
-    submitPlay(play: any){
-        var card =  play.cards
-        var index = play.index
-
-        if(this.tricks.length > 0 && this.tricks[this.tricks.length-1].cards.length < 4){
-            var trickDone = this.tricks[this.tricks.length].submitCard(card, index)
-            if(trickDone){
-                return this.tricks[this.tricks.length].winnerIndex
+    calculatePoints(){
+        var points = [0,0,0,0]
+        for(let trick of this.tricks){
+            for(let card of trick.cards){
+                if(trick.winnerIndex !== null){
+                    points[trick.winnerIndex] += card.points
+                }
             }
         }
-        else{
-            this.tricks.push(new Trick(card, index, this.trump))
+
+        return points
+    }
+
+    submitPlay(play: any){
+        var card =  play.card
+        var index = play.index
+
+
+        if(this.tricks.length > 0){
+
+            var trick = this.tricks[this.tricks.length-1]
+
+            this.hands[index] = this.hands[index].filter(c => {
+                return !(c.color === card.color && c.value === card.value)
+            })
+
+            if(trick.color === null){
+                trick.initalize(card, index)
+            }else{
+                var trickDone = this.tricks[this.tricks.length-1].submitCard(card, index)
+
+                if(trickDone !== false){
+                    var winner = this.tricks[this.tricks.length-1].winnerIndex
+                    this.tricks.push(new Trick(this.trump))
+                    console.log('winner')
+                    console.log(winner)
+                    return winner
+                }
+
+            }
+
         }
-
-        this.hands[index] = this.hands[index].filter(c => {
-            return !(c.color === card.color && c.value === card.value)
-        })
-
-
 
         return false
     }
@@ -273,13 +329,16 @@ class Round{
 class Trick{
 
     public cards: typeof Card | null[] = [null, null, null, null] 
-    public color: Color
-    public trumpColor: Color
-    public winnerIndex: number | null
+    public color: typeof Color | null = null
+    public winnerIndex: number | null = null
 
-    constructor(card: typeof Card, index: number, trumpColor: Color){
+    constructor(public trumpColor: typeof Color){
+
+    }
+
+
+    initalize(card: typeof Card, index: number){
         this.color = card.color
-        this.trumpColor = trumpColor
         this.cards[index] = card
         this.winnerIndex = null
     }
@@ -295,7 +354,7 @@ class Trick{
         }
 
         if(allDone){
-            this.calculateWinner()
+            return this.calculateWinner()
         }
 
         return allDone
@@ -310,19 +369,25 @@ class Trick{
 
             if(indexOfBestCard === -1){
                 indexOfBestCard = i
-            }else if(this.cards[i].color === this.trumpColor && this.cards[indexOfBestCard] === this.trumpColor && this.cards[i].power > this.cards[indexOfBestCard].power){
+            }else if(this.cards[i].color === this.trumpColor && this.cards[indexOfBestCard].color === this.trumpColor && this.cards[i].power > this.cards[indexOfBestCard].power){
                 indexOfBestCard = i
-            }else if(this.cards[i].color === this.trumpColor && this.cards[indexOfBestCard] !== this.trumpColor){
+            }else if(this.cards[i].color === this.trumpColor && this.cards[indexOfBestCard].color !== this.trumpColor){
                 indexOfBestCard = i
-            }else if(this.cards[i].color === this.color && this.cards[indexOfBestCard] == this.color && this.cards[i].power > this.cards[indexOfBestCard]){
+            }else if(this.cards[i].color === this.color && this.cards[indexOfBestCard].color == this.color && this.cards[i].power > this.cards[indexOfBestCard].power){
                 indexOfBestCard = i
-            }else if(this.cards[i].color === this.color && this.cards[indexOfBestCard] !== this.color){
+            }else if(this.cards[i].color === this.color && this.cards[indexOfBestCard].color !== this.color && this.cards[indexOfBestCard].color !== this.trumpColor){
                 indexOfBestCard = i
             }
             
         }
 
         this.winnerIndex = indexOfBestCard
+
+        console.log('best card')
+        console.log(indexOfBestCard)
+        console.log(this.cards)
+
+        return indexOfBestCard
     }
 
 
@@ -351,6 +416,10 @@ export class Player{
 
     addTeammate(player: Player){
         this.teammate = player.player_id
+    }
+
+    addPoints(points: number){
+        this.points += points
     }
 }
 

@@ -36,10 +36,8 @@ module.exports = function(io: any){
             
             }
 
-            console.log('getting game')
 
             if(!socket.rooms.has(game_id)){
-                console.log('joining back')
                 socket.join(game_id)
             }
 
@@ -51,7 +49,7 @@ module.exports = function(io: any){
 
         socket.on('play', async (game_data: any) => {
 
-            
+
             var play: typeof Play = game_data.play
             var player_id = play.player_id
             var game_id: string = game_data.game_id
@@ -116,6 +114,36 @@ module.exports = function(io: any){
                         return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
                     })
                 }else if(play.moveType === MoveType.DISCARD){
+
+                    console.log('discarding')
+
+                    var play = new Play(play.moveType, play.player_id, play.payload)
+
+                    game.move(play).then((index: any) => {
+
+                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                    })
+
+
+                }else if(play.moveType === MoveType.SET_TRUMP){
+
+                    console.log('choosing trump')
+
+                    var play = new Play(play.moveType, play.player_id, play.payload)
+
+                    game.move(play).then((index: any) => {
+
+                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                    })
+                }else if(play.moveType === MoveType.PLAY){
+                    console.log('playing')
+
+                    var play = new Play(play.moveType, play.player_id, play.payload)
+
+                    game.move(play).then((index: any) => {
+
+                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                    })
 
                 }
 

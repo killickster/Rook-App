@@ -55,6 +55,8 @@ export class AuthService {
   autoLogin(){
     const userData: {name: string, id: string, token: string, expiration: string} = JSON.parse(localStorage.getItem('userData'))
 
+    console.log(userData)
+
     if(!userData){
       return
     }
@@ -98,6 +100,10 @@ export class AuthService {
     const expirationDate = new Date(+data['exp'])
 
     const user = new User(name, id, token, expirationDate)
+
+   
+    localStorage.setItem('userData', JSON.stringify(user))
+
     this.user.next(user)
     const expirationDuration = (+expirationDate*1000) - Date.now()
     this.autoLogout(expirationDuration)

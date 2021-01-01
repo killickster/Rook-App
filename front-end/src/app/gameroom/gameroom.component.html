@@ -6,8 +6,8 @@
 
             <app-rook-card *ngFor="let card of hands[2]" [card]="card">
             </app-rook-card>
-            <div class="played-card">
-                <app-rook-card *ngFor="let card of playedCards" [card]="card" (click)="cardClicked(card)">
+            <div *ngIf="playing && playedCards[2] !== null" class="played-card">
+                <app-rook-card [card]="playedCards[2]" (click)="cardClicked(card)">
                 </app-rook-card>
             </div>
         </div>
@@ -20,8 +20,8 @@
 
                 <app-rook-card *ngFor="let card of hands[1]" [card]="card">
                 </app-rook-card>
-                <div class="played-card">
-                    <app-rook-card *ngFor="let card of playedCards" [card]="card" (click)="cardClicked(card)">
+                <div *ngIf="playing && playedCards[1] !== null" class="played-card">
+                    <app-rook-card [card]="playedCards[1]" (click)="cardClicked(card)">
                     </app-rook-card>
                 </div>
             </div>
@@ -39,8 +39,8 @@
 
                 <app-rook-card *ngFor="let card of hands[3]" [card]="card">
                 </app-rook-card>
-                <div class="played-card">
-                    <app-rook-card *ngFor="let card of playedCards" [card]="card" (click)="cardClicked(card)">
+                <div *ngIf="playing && playedCards[3] !== null" class="played-card">
+                    <app-rook-card [card]="playedCards[3]" (click)="cardClicked(card)">
                     </app-rook-card>
                 </div>
             </div>
@@ -49,8 +49,8 @@
 </div>
 
 <div class="cards">
-    <div class="played-card-bottom">
-        <app-rook-card *ngFor="let card of playedCards" [card]="card" (click)="cardClicked(card)">
+    <div *ngIf="playing && playedCards[0] !== null" class="played-card-bottom">
+        <app-rook-card [card]="playedCards[0]" (click)="cardClicked(card)">
         </app-rook-card>
     </div>
     <app-rook-card *ngFor="let card of cards" [card]="card" (click)="cardClicked(card)">

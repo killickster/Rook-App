@@ -17,6 +17,7 @@ import {RoundState} from '../services/models/round-stage.model';
 import {Color} from '../services/models/color.model';
 import { Play } from '../services/models/play.model';
 import { MoveType } from '../services/models/move-type.model';
+import { delay } from 'rxjs/operators';
 
 
 @Component({
@@ -27,17 +28,21 @@ import { MoveType } from '../services/models/move-type.model';
 export class GameroomComponent implements OnInit {
   snack: MatSnackBarRef<any> = null;
   snackMove: MatSnackBarRef<any> = null;
+  turn: MatSnackBarRef<any> = null
   cards: Card[] = [new Card(Color.BLACK, 1, 15, 15, "face", false), new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),]
   yourTurn: boolean = false
   gameStage: RoundState
-  playing = true;
   bidForm: FormGroup
   game_id: string
   bidSubscription: Subscription
   kitty: Card[] = [new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),]
-  playedCards: Card[]  = [new Card(Color.GREEN, 4,0, 4, "face", true),]
+  playedCards: Card[]  = [null, null, null, null]
   playerNames = [null, null, null, null]
   hands: Card[][] = [null, null, null, null]
+  playing = false
+  trump: Color | null = null
+  index: number
+  currentTrickColor: Color
   //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
 
 
@@ -51,6 +56,10 @@ export class GameroomComponent implements OnInit {
       if(game){
 
         this.gameService.yourIndex.subscribe(index => {
+
+          this.index = index
+
+          console.log(index)
           
          this.game_id = game.game_id 
           var round = game['rounds'][game['currentRoundIndex']]
@@ -65,31 +74,111 @@ export class GameroomComponent implements OnInit {
 
           var numberOfPlayers = players.length
 
-          for(var i = 0; i < players.length; i++){
-            if(players[(i+index)%numberOfPlayers]){
-              
-              this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
+          var playCards = round.tricks.pop()
 
+          
+          var d = true
+
+          if(playCards){
+            this.currentTrickColor = playCards.color
+            playCards = playCards.cards
+
+
+            for(let card of playCards){
+              if(card !== null){
+                d = false
+              }
+            }
+          }
+
+          d = d && round.tricks.length !== 0
+
+          if(d){
+            playCards = round.tricks[round.tricks.length - 1].cards
+          }
+
+
+
+          var isLeading = true 
+
+
+        for(var i = 0; i < players.length; i++){
+          if(players[(i+index)%numberOfPlayers]){
+            if(playCards && playCards[(i+index)%numberOfPlayers] !== null){
+              isLeading = false
+              this.playedCards[i] = playCards[(i+index)%numberOfPlayers]  
+            }else{
+              this.playedCards[i] = null
             }
 
-            this.hands[i] = (round.hands[(i+index)%numberOfPlayers])
-
-
+            this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
           }
+          this.hands[i] = (round.hands[(i+index)%numberOfPlayers])
+        }
+
+        if(d){
+          isLeading = true
+        }
+
+        console.log(this.playedCards)
+
 
           this.cards = this.hands[0] 
           this.sort(this.cards) 
+
+
 
           if(this.gameStage === RoundState.BIDDING && this.yourTurn){
             this.snackInput(new SnackData("", 'bid', round.bid +5))
           }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
 
+          }else if(this.gameStage === RoundState.CHOOSING_TRUMP && this.yourTurn){
+
+            this.snackBar.open("Select a card to indicate trump", null, {
+              duration: 2000,
+            });
+          }else if(this.gameStage === RoundState.PLAYING){
+            this.playing = true
+
+
+
+            if(this.trump === null){
+              var color: Color = round['trump']
+
+              this.trump = color
+
+              if(color === Color.BLACK){
+                this.snackBar.open("Trump is set to black", null, {
+                  duration: 2000,
+                });
+              }else if(color === Color.GREEN){
+                this.snackBar.open("Trump is set to green", null, {
+                  duration: 2000,
+                });
+              }else if(color === Color.YELLOW){
+                this.snackBar.open("Trump is set to yellow", null, {
+                  duration: 2000,
+                });
+              }else if(color == Color.RED){
+                this.snackBar.open("Trump is set to red" , null, {
+                  duration: 2000,
+                });
+              }
+
+            }
+
+
+
+
+
+          if(this.yourTurn && isLeading){
+            this.turn = this.snackBar.open("You Lead", null, {
+              duration: 0,
+            });
           }
 
-
-
-
-        })
+          }
+      })
       }
     })
 
@@ -122,6 +211,9 @@ export class GameroomComponent implements OnInit {
 
     })
   }
+
+
+
 
   ngOnDestroy(){
     this.bidSubscription.unsubscribe()
@@ -173,6 +265,45 @@ export class GameroomComponent implements OnInit {
       }
       this.checkForDiscard()
       
+    }else if(this.gameStage === RoundState.CHOOSING_TRUMP && this.yourTurn){
+
+
+        this.authService.user.subscribe(user => {
+          this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.SET_TRUMP, user.id, card.color)})
+        })
+
+    }else if(this.gameStage === RoundState.PLAYING && this.yourTurn){
+
+      var hasTrickColor = false
+
+      if(this.turn !== null){
+        this.turn.dismiss()
+      }
+
+
+      for(let c of this.cards){
+        if(c.color === this.currentTrickColor){
+          hasTrickColor = true
+        }
+      }
+
+      if(hasTrickColor && card.color !== this.currentTrickColor){
+          this.snackBar.open("You must follow suit if you can", null, {
+            duration: 2000,
+          });
+        
+      }else{
+          
+          this.authService.user.subscribe(user => {
+            this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.PLAY, user.id, {card: card, index: this.index})})
+          })
+
+
+
+      }
+
+
+
     }
 
 
@@ -197,6 +328,10 @@ export class GameroomComponent implements OnInit {
     }
     //display custom snackBar for discard
 
+    this.snackInput(new SnackData("Would you like to discard?", 'discard', null))
+
+
+
 
   }
 
@@ -210,10 +345,17 @@ export class GameroomComponent implements OnInit {
     //subscribe to get the payload back from snackBar custom component
     this.snackMove.instance.action.subscribe((data: RookAction) => {
       // handle submission here Depends on action taken
-      this.authService.user.subscribe(user => {
+      if(data.action === 'bid'){
+        this.authService.user.subscribe(user => {
+          this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.BID, user.id, data.payload)})
+        })
+      }else if(data.action === 'discard'){
+        console.log('discarding')
+        this.authService.user.subscribe(user => {
+          this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.DISCARD, user.id, this.cards)})
+        })
+      }
 
-        this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.BID, user.id, data.payload)})
-      })
 
 
       this.snackMove.instance.action.unsubscribe()
