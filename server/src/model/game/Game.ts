@@ -152,11 +152,13 @@ export class Game{
 
 
 
+                        for(var i = 0; i < this.players.length; i++){
 
-                        if(this.players[i].points > 500){
-                            this.gameFinished = true
+                            if(this.players[i].points > 500){
+                                this.gameFinished = true
 
-                            return resolve('finished')
+                                return resolve('finished')
+                            }
                         }
 
                 

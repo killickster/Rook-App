@@ -54,6 +54,7 @@ export class GamesService {
           if(index === null){
             console.log(data)
             var players = data['players']
+            if(players){
                 this.authService.user.subscribe(user => {
                   if(user !== null){
                     for(let i = 0 ; i < players.length; i++){
@@ -63,6 +64,7 @@ export class GamesService {
                     }
                   }
               })
+            }
           }
         })
       }
