@@ -29,7 +29,7 @@ app.use('/api/user', authRoute)
 app.use('/api/posts', postRoute)
 app.use('/api/games', gameRoute)
 
-server.listen(3000, () => {console.log("Server is up and running")})
+server.listen(3000, 'micah.local', () => {console.log("Server is up and running")})
 
 
 const io = require('socket.io')(server, {

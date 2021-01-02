@@ -29,6 +29,7 @@ export class Game{
         this.rounds = []
         this.rounds.push(new Round(numberOfPlayers))
         this.currentRoundIndex = 0
+        this.rounds[this.currentRoundIndex].setFirstBidder(0)
     }
 
     addPlayer(player: Player){
@@ -89,7 +90,11 @@ export class Game{
                 console.log('add player')
                 return resolve(this.addPlayer(play.payload))
             case MoveType.BID:
+                console.log("current player before")
+                console.log(this.currentPlayer)
                 this.currentPlayer = this.rounds[this.currentRoundIndex].submitBid(play.payload)
+                console.log("current player")
+                console.log(this.currentPlayer)
                 return resolve(this.currentPlayer)
             case MoveType.DISCARD:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].setNewHand(play.payload)
@@ -163,10 +168,14 @@ export class Game{
 
                 
 
-                    this.rounds.push(new Round(this.numberOfPlayers))
-                    this.currentRoundIndex++
-                    this.currentPlayer = this.rounds.length % this.numberOfPlayers
-                    this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
+                    if(this.currentPlayer !== null){
+                        this.rounds.push(new Round(this.numberOfPlayers))
+                        this.currentRoundIndex++
+                        this.currentPlayer = this.rounds.length % this.numberOfPlayers
+                        this.rounds[this.currentRoundIndex].setFirstBidder(this.currentPlayer)
+                        this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
+                    }
+
                 }
 
                 return resolve(this.getGameStateFor(play.player_id))
@@ -233,7 +242,7 @@ class Round{
     public hands: typeof Card[][]
     public roundState: RoundState
     public bid: number
-    public bidder: number
+    public bidder: number = 0
     public bidWinner: number | null = null
     public bidders: number[]
     public trump: typeof Color
@@ -242,8 +251,7 @@ class Round{
 
     constructor(private numberOfPlayers: number){
         this.bid = 75
-        this.bidder = 0
-        const {kitty, hands} = shuffleAndDeal(new Deck(), 5, this.numberOfPlayers)  //5 in kitty for 4 man
+        const {kitty, hands} = shuffleAndDeal(new Deck(), 1, this.numberOfPlayers)  //5 in kitty for 4 man
         this.kitty = kitty
         this.hands = hands
         this.roundState = RoundState.WAITING_ON_PLAYERS
@@ -253,6 +261,10 @@ class Round{
         }
         this.trump = Color.UNDETERMINED
         this.tricks = []
+    }
+
+    setFirstBidder(currentPlayer: number){
+        this.bidder = currentPlayer
     }
 
 

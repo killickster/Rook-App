@@ -345,7 +345,7 @@ export class GameroomComponent implements OnInit {
   }
 
   checkForDiscard(){
-    if(this.kitty.length != 5){
+    if(this.kitty.length != 1){
       console.log(this.snack)
       if(this.snackMove != null){
        this.snackMove.dismiss()
