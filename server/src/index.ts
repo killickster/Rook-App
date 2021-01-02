@@ -34,7 +34,7 @@ server.listen(3000, () => {console.log("Server is up and running")})
 
 const io = require('socket.io')(server, {
     cors: {
-        origin:'http://localhost:4200',
+        origin:'http://micah.local:4200',
         method:["GET", "POST"]
     }
 })

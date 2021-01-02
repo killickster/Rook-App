@@ -151,7 +151,7 @@ export class GamesService {
 
   fetchGames(){
 
-    return this.http.get<Game[]>('http://localhost:3000/api/games').pipe(catchError(this.handleErrors), tap(games => {
+    return this.http.get<Game[]>('api/games').pipe(catchError(this.handleErrors), tap(games => {
       this.games = games
     })).subscribe(resData => {
       this.gamesChanged.next(this.games)
@@ -162,7 +162,7 @@ export class GamesService {
   }
 
   addGame(numberOfPlayers: number){
-    return this.http.post<Game>('http://localhost:3000/api/games/game', {numberOfPlayers: numberOfPlayers}).pipe(catchError(this.handleErrors), tap(game => {
+    return this.http.post<Game>('api/games/game', {numberOfPlayers: numberOfPlayers}).pipe(catchError(this.handleErrors), tap(game => {
       this.games.push(game)
       this.game.next(game)
 
@@ -186,7 +186,7 @@ export class GamesService {
 
     this.game.next(game)
 
-    return this.http.put<Game>('http://localhost:3000/api/games/game', {game_id: game.id}).pipe(catchError(this.handleErrors), tap(changedGame => {
+    return this.http.put<Game>('api/games/game', {game_id: game.id}).pipe(catchError(this.handleErrors), tap(changedGame => {
 
     for(var i = 0 ; i < this.games.length; i++){
       if(this.games[i].id === changedGame.id){

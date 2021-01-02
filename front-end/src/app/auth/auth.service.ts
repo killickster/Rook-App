@@ -29,7 +29,7 @@ export class AuthService {
 
   signup(username: string, email: string, password: string){
 
-    return this.http.post('http://localhost:3000/api/user/register', 
+    return this.http.post('api/user/register', 
     {
       name: username,
       email: email,
@@ -40,7 +40,7 @@ export class AuthService {
 
   signin(email: string, password: string){
 
-    return this.http.post<AuthResponseData>('http://localhost:3000/api/user/login',{
+    return this.http.post<AuthResponseData>('api/user/login',{
       email: email,
       password: password
     }).pipe(catchError(this.handleErrors), tap(resData => {
