@@ -116,22 +116,48 @@ export class Game{
                 if(roundDone){
                     console.log('round is done')
                     var points = this.rounds[this.currentRoundIndex].calculatePoints()
+                    var team1Points = 0
+                    var team2Points = 0
                     for(var i = 0; i < points.length; i++){
-                        this.players[i].addPoints(points[i])
-                        var teammate_id = this.players[i].teammate
 
-                        for(let player of this.players){
-                            if(player.id === teammate_id){
-                                player.addPoints(points[i])
+
+                        if(i%2 === 0){
+                            team1Points += points[i]
+                        }else{
+                            team2Points += points[i]
+                        }
+                    }
+
+                        var bid = this.rounds[this.currentRoundIndex].bid
+                        var bidder = this.rounds[this.currentRoundIndex].bidders[0]
+
+                        if(bidder % 2 === 0){
+                           if(team1Points < bid){
+                            team1Points = -bid 
+                           }
+                        }else{
+                            if(team2Points < bid){
+                                team2Points = -bid
                             }
                         }
+
+                        for(var i = 0; i < this.players.length; i++){
+                            if(i%2 == 0){
+                                this.players[i].addPoints(team1Points)
+                            }else{
+                                this.players[i].addPoints(team2Points)
+                            }
+                        }
+
+
+
+
 
                         if(this.players[i].points > 500){
                             this.gameFinished = true
 
                             return resolve('finished')
                         }
-                    }
 
                 
 

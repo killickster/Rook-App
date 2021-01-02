@@ -39,6 +39,7 @@ export class GameroomComponent implements OnInit {
   playedCards: Card[]  = [null, null, null, null]
   playerNames = [null, null, null, null]
   hands: Card[][] = [null, null, null, null]
+  points = [0,0,0,0]
   playing = false
   trump: Color | null = null
   index: number
@@ -72,6 +73,8 @@ export class GameroomComponent implements OnInit {
 
           var players = game.players
 
+
+
           var numberOfPlayers = players.length
 
           console.log('tricks')
@@ -104,16 +107,17 @@ export class GameroomComponent implements OnInit {
             playCards = round.tricks[round.tricks.length - 2].cards
           }
 
+          var isLeading = d
 
 
-          var isLeading = true 
+
 
 
 
 
         var timeout = 0
 
-        if(game.rounds.length > 1 && d && round.tricks.length === 0){
+        if(game.rounds.length > 1 && d && round.tricks.length === 0 && round.bidders.length === 4 && round.bid === 75){
 
           this.cards = []
           this.hands = [[], [], [], []]
@@ -129,13 +133,9 @@ export class GameroomComponent implements OnInit {
 
           this.playing = true
 
-        }else if(this.gameStage == RoundState.BIDDING){
+        }else if(!(this.gameStage === RoundState.PLAYING)){
           this.playing = false
 
-        }
-
-        if(delay){
-          isLeading = true
         }
 
           setTimeout(() => {
@@ -144,19 +144,21 @@ export class GameroomComponent implements OnInit {
             for(var i = 0; i < players.length; i++){
               if(players[(i+index)%numberOfPlayers]){
                 if(playCards && playCards[(i+index)%numberOfPlayers] !== null){
-                  isLeading = false
                   this.playedCards[i] = playCards[(i+index)%numberOfPlayers]  
                 }else{
                   this.playedCards[i] = null
                 }
 
                 this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
+                this.points[i] = players[(i+index)%numberOfPlayers].points
               }
               this.hands[i] = (round.hands[(i+index)%numberOfPlayers])
+
+            }
               this.cards = this.hands[0]
               this.sort(this.cards)
-            }
 
+            console.log(this.points)
 
           if(this.gameStage === RoundState.BIDDING && this.yourTurn){
             this.snackInput(new SnackData("", 'bid', round.bid +5))
