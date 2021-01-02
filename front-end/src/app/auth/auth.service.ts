@@ -7,7 +7,6 @@ import { stringify } from '@angular/compiler/src/util';
 import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode'
 import { GamesService } from '../services/games.service';
-import { Game } from '../models/game.model';
 
 export interface AuthResponseData{
   token: string,
@@ -117,6 +116,8 @@ export class AuthService {
 
   private handleErrors(errorRes: HttpErrorResponse){
     let errorMessage = errorRes.error
+
+    console.log(errorRes)
 
     console.log(errorRes)
 

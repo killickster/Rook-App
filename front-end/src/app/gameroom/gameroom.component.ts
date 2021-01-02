@@ -51,6 +51,8 @@ export class GameroomComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.gameService.fetchGames()     //Incase of refresh fetches games then checks if your in any of them then sends you to gameroom
+
     this.gameService.gameState.subscribe(game => {
 
       if(game){
@@ -68,14 +70,17 @@ export class GameroomComponent implements OnInit {
 
           this.yourTurn = game['currentPlayer'] === index ? true : false
 
-          this.kitty = round.kitty 
-
           var players = game.players
 
           var numberOfPlayers = players.length
 
-          var playCards = round.tricks.pop()
+          console.log('tricks')
+          if(round.tricks.length > 0){
+            console.log(round.tricks[0])
+          }
 
+
+          var playCards = round.tricks[round.tricks.length-1]
           
           var d = true
 
@@ -91,10 +96,12 @@ export class GameroomComponent implements OnInit {
             }
           }
 
-          d = d && round.tricks.length !== 0
+          var delay = d && round.tricks.length > 1
 
-          if(d){
-            playCards = round.tricks[round.tricks.length - 1].cards
+          console.log(round.tricks)
+
+          if(delay){
+            playCards = round.tricks[round.tricks.length - 2].cards
           }
 
 
@@ -102,30 +109,53 @@ export class GameroomComponent implements OnInit {
           var isLeading = true 
 
 
-        for(var i = 0; i < players.length; i++){
-          if(players[(i+index)%numberOfPlayers]){
-            if(playCards && playCards[(i+index)%numberOfPlayers] !== null){
-              isLeading = false
-              this.playedCards[i] = playCards[(i+index)%numberOfPlayers]  
-            }else{
-              this.playedCards[i] = null
-            }
 
-            this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
-          }
-          this.hands[i] = (round.hands[(i+index)%numberOfPlayers])
+
+        var timeout = 0
+
+        if(game.rounds.length > 1 && d && round.tricks.length === 0){
+
+          this.cards = []
+          this.hands = [[], [], [], []]
+          this.kitty = []
+          this.playing = true
+          var indexOfTrick = game.rounds[game.rounds.length - 2].tricks.length
+
+          console.log('hi')
+          console.log(game.rounds[game.rounds.length - 2].tricks[indexOfTrick-2].cards)
+          this.playedCards = game.rounds[game.rounds.length - 2].tricks[indexOfTrick-2].cards
+
+          timeout = 5000
+
+          this.playing = true
+
+        }else if(this.gameStage == RoundState.BIDDING){
+          this.playing = false
+
         }
 
-        if(d){
+        if(delay){
           isLeading = true
         }
 
-        console.log(this.playedCards)
+          setTimeout(() => {
+            this.kitty = round.kitty
+            this.playing = false
+            for(var i = 0; i < players.length; i++){
+              if(players[(i+index)%numberOfPlayers]){
+                if(playCards && playCards[(i+index)%numberOfPlayers] !== null){
+                  isLeading = false
+                  this.playedCards[i] = playCards[(i+index)%numberOfPlayers]  
+                }else{
+                  this.playedCards[i] = null
+                }
 
-
-          this.cards = this.hands[0] 
-          this.sort(this.cards) 
-
+                this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
+              }
+              this.hands[i] = (round.hands[(i+index)%numberOfPlayers])
+              this.cards = this.hands[0]
+              this.sort(this.cards)
+            }
 
 
           if(this.gameStage === RoundState.BIDDING && this.yourTurn){
@@ -171,13 +201,16 @@ export class GameroomComponent implements OnInit {
 
 
 
-          if(this.yourTurn && isLeading){
-            this.turn = this.snackBar.open("You Lead", null, {
-              duration: 0,
-            });
+            if(this.yourTurn && isLeading){
+              this.turn = this.snackBar.open("You Lead", null, {
+                duration: 0,
+              });
+            }
           }
 
-          }
+          },timeout)
+
+
       })
       }
     })

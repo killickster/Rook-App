@@ -48,24 +48,31 @@ export class GamesService {
 
      this.gameState.subscribe(data => {
 
-      if(data){
+      if(data !== null){
 
         this.yourIndex.subscribe(index => {
           if(index === null){
             console.log(data)
             var players = data['players']
                 this.authService.user.subscribe(user => {
-                  for(let i = 0 ; i < players.length; i++){
-                    if(players[i] !== null && players[i].player_id === user.id){
-                      this.yourIndex.next(i)
+                  if(user !== null){
+                    for(let i = 0 ; i < players.length; i++){
+                      if(players[i] !== null && players[i].player_id === user.id){
+                        this.yourIndex.next(i)
+                      }
                     }
                   }
               })
           }
         })
       }
+    })
 
-
+    this.authService.user.subscribe(user => {
+      if(user === null){
+        this.game.next(null)
+        this.gamesChanged.next(null)
+      }
     })
 
 
@@ -83,11 +90,15 @@ export class GamesService {
 
 
     this.game.subscribe(game => {
-      if(game ){
+      if(game !== null){
 
         this.authService.user.subscribe(user => {
-          this.router.navigate(['/gameroom/', game.id])
-          this.socketService.emit('get_game_state', {game_id: game.id, player_id: user.id})
+
+          if(user !== null){
+            this.router.navigate(['/gameroom/', game.id])
+            this.socketService.emit('get_game_state', {game_id: game.id, player_id: user.id})
+          }
+
         })
 
       }
@@ -96,18 +107,23 @@ export class GamesService {
     this.gamesChanged.subscribe(games => {
       this.authService.user.subscribe(user => {
 
-        for(let game of games){
-          
-          for(let id of game['playerIds']){
+        if(user !== null){
 
-            if( id === user.id){
+          for(let game of games){
+            
+            for(let id of game['playerIds']){
 
-              this.game.next(game)
+              if( id === user.id){
 
-              this.socketService.emit('get_game_state', {game_id: game.id})
+                this.game.next(game)
 
+                this.socketService.emit('get_game_state', {game_id: game.id})
+
+              }
             }
           }
+
+
         }
       })
 

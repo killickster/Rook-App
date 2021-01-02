@@ -18,19 +18,10 @@ export class HeaderComponent implements OnInit, OnDestroy{
   bid = null
 
 
-  constructor(private authService: AuthService, private gameService: GamesService, private activatedRoute: ActivatedRoute) { }
+  constructor(private authService: AuthService) { }
 
 
   ngOnInit(): void {
-
-    this.gameService.bidDialogClosedStillBidding.subscribe(bid => {
-      
-      if(bid){
-        this.biddingBoxRequired = true
-        this.bid = bid
-      }
-
-    })
 
 
     this.loggedInSubscription = this.authService.user.subscribe(user => {
@@ -46,12 +37,6 @@ export class HeaderComponent implements OnInit, OnDestroy{
     this.loggedInSubscription.unsubscribe()
   }
 
-
-
-  openModel(){
-    this.gameService.bidRequest.next(this.bid)
-    this.biddingBoxRequired = false
-  }
 
 
   logout(){

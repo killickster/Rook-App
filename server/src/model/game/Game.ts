@@ -114,11 +114,17 @@ export class Game{
                 }
 
                 if(roundDone){
-                    this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
+                    console.log('round is done')
                     var points = this.rounds[this.currentRoundIndex].calculatePoints()
                     for(var i = 0; i < points.length; i++){
                         this.players[i].addPoints(points[i])
-                        this.players[i].teammate.addPoints(points[i])
+                        var teammate_id = this.players[i].teammate
+
+                        for(let player of this.players){
+                            if(player.id === teammate_id){
+                                player.addPoints(points[i])
+                            }
+                        }
 
                         if(this.players[i].points > 500){
                             this.gameFinished = true
@@ -132,6 +138,7 @@ export class Game{
                     this.rounds.push(new Round(this.numberOfPlayers))
                     this.currentRoundIndex++
                     this.currentPlayer = this.rounds.length % this.numberOfPlayers
+                    this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
                 }
 
                 return resolve(this.getGameStateFor(play.player_id))
