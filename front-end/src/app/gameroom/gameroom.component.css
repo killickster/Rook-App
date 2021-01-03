@@ -126,13 +126,16 @@
 
 .circle-name {
     vertical-align: top;
-    width: 30px;
-    border-radius: 50%;
-    height: 30px;
+    border-radius: 3px;
+    padding: 4px;
+    border: 2px solid rgb(200, 200, 200);
     font-weight: bold;
     font-size: 12px;
     text-align: center;
-    line-height: 30px;
     background: rgb(233, 233, 233);
     display: inline-block;
+}
+
+.current-player {
+    border: 2px solid rgb(0, 182, 0)!important;
 }
