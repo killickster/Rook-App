@@ -1,0 +1,48 @@
+.circle-button {
+    position: fixed;
+    right: 50px;
+    bottom: 50px;
+    background: rgb(233, 233, 233);
+    border-radius: 50%;
+    display: flex;
+    width: 50px;
+    height: 50px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgb(200, 200, 200);
+    cursor: pointer;
+}
+
+.circle-icon {
+    background-image: url(../../../assets/trophy.svg);
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-position: center center;
+    position: relative;
+}
+
+.info-box {
+    position: absolute;
+    bottom: 41px;
+    right: 0px;
+    background: #484848;
+    color: white;
+    border-radius: 5px;
+    padding: 15px;
+    user-select: none;
+    /* supported by Chrome and Opera */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+}
+
+.hidden {
+    display: none;
+}

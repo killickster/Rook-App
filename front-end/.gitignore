@@ -44,3 +44,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+#localhost server settings
+/src/proxy.conf.json
+/src/web-socket.service.ts

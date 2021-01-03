@@ -23,6 +23,8 @@ import { RookCardComponent } from './gameroom/rook-card/rook-card.component';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { ActionBarComponent } from './gameroom/action-bar/action-bar.component';
 import {MatButtonModule} from '@angular/material/button';
+import { InfoSnackComponent } from './gameroom/info-snack/info-snack.component';
+
 
 
 @NgModule({
@@ -37,7 +39,8 @@ import {MatButtonModule} from '@angular/material/button';
     GameroomComponent,
     BidComponent,
     RookCardComponent,
-    ActionBarComponent
+    ActionBarComponent,
+    InfoSnackComponent
   ],
   entryComponents:[
     BidComponent
