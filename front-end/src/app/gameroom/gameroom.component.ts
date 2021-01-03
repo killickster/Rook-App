@@ -44,6 +44,8 @@ export class GameroomComponent implements OnInit {
   trump: Color | null = null
   index: number
   currentTrickColor: Color
+
+  currentPlayerIndex: number;
   //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
 
 
@@ -70,6 +72,11 @@ export class GameroomComponent implements OnInit {
           this.gameStage = round.roundState
 
           this.yourTurn = game['currentPlayer'] === index ? true : false
+
+          console.log('current player')
+          console.log(game['currentPlayer'])
+
+          this.currentPlayerIndex = (game['currentPlayer']+index)%4
 
           var players = game.players
 

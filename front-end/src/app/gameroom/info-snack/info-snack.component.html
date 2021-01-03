@@ -1,0 +1,7 @@
+<div class="circle-button" (click)='openInfo()'>
+    <div class="circle-icon">
+        <div class="info-box" [ngClass]="{'hidden': !visible}">
+            <ng-content></ng-content>
+        </div>
+    </div>
+</div>
