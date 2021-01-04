@@ -9,6 +9,8 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { GamesComponent } from './games/games.component';
 import {DisplayPipe} from './games/game-display.pipe'
+import {BidDisplayPipe} from './gameroom/bid-display.pipe'
+import {TableColorPipe} from './gameroom/score-table.pipe'
 import {RoutingModule} from './router.module';
 import { RegisterComponent} from './auth/register/register.component';
 import { LoginComponent } from './auth/login/login.component';
@@ -33,6 +35,8 @@ import { InfoSnackComponent } from './gameroom/info-snack/info-snack.component';
     HeaderComponent,
     GamesComponent,
     DisplayPipe,
+    BidDisplayPipe,
+    TableColorPipe,
     RegisterComponent,
     LoginComponent,
     CreateGameComponent,

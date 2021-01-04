@@ -6,7 +6,7 @@ module.exports = async function(req,res,next){
 
         const game = await Game.findOne({host_id: req.user._id})
 
-        if(game){
+        if(game && !game.finished){
             return res.status(400).send('HOSTING_ALREADY')
         }
         next()

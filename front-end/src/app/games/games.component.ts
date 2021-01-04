@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Game} from '../models/game.model'
 import {GamesService} from '../services/games.service'
-import {tap} from 'rxjs/operators'
 
 @Component({
   selector: 'app-games',
@@ -36,6 +35,9 @@ export class GamesComponent implements OnInit {
 
 
   joinGame(game){
-    this.gameService.joinGame(game)
+    if(!game.finished){
+      this.gameService.joinGame(game)
+    }
+
   }
 }

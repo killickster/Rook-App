@@ -148,11 +148,15 @@ export class Game{
 
                         for(var i = 0; i < this.players.length; i++){
                             if(i%2 == 0){
+                                this.rounds[this.currentRoundIndex].points[i] = team1Points
                                 this.players[i].addPoints(team1Points)
                             }else{
+                                this.rounds[this.currentRoundIndex].points[i] = team2Points
                                 this.players[i].addPoints(team2Points)
                             }
                         }
+
+                        
 
 
 
@@ -248,10 +252,11 @@ class Round{
     public trump: typeof Color
     public tricks: Trick[]
     public deck: typeof Deck
+    public points: number[] = [0, 0, 0, 0]
 
     constructor(private numberOfPlayers: number){
         this.bid = 75
-        const {kitty, hands} = shuffleAndDeal(new Deck(), 1, this.numberOfPlayers)  //5 in kitty for 4 man
+        const {kitty, hands} = shuffleAndDeal(new Deck(), 5, this.numberOfPlayers)  //5 in kitty for 4 man
         this.kitty = kitty
         this.hands = hands
         this.roundState = RoundState.WAITING_ON_PLAYERS
@@ -272,7 +277,7 @@ class Round{
 
         if(bid >= this.bid + 5){
             this.bid = bid
-            this.bidWinner = this.bidder
+            this.bidWinner = this.bidders[this.bidder]
             
             this.bidder = (this.bidder+1)%this.bidders.length
         }else{

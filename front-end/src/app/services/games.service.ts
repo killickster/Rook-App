@@ -48,41 +48,55 @@ export class GamesService {
 
      this.gameState.subscribe(data => {
 
-      if(data !== null){
+        if(data !== null){
 
-        this.yourIndex.subscribe(index => {
-          if(index === null){
-            console.log(data)
-            var players = data['players']
-            if(players){
-                this.authService.user.subscribe(user => {
-                  if(user !== null){
-                    for(let i = 0 ; i < players.length; i++){
-                      if(players[i] !== null && players[i].player_id === user.id){
-                        this.yourIndex.next(i)
+          this.yourIndex.subscribe(index => {
+            if(index === null){
+              console.log(data)
+              var players = data['players']
+              if(players){
+                  this.authService.user.subscribe(user => {
+                    if(user !== null){
+                      for(let i = 0 ; i < players.length; i++){
+                        if(players[i] !== null && players[i].player_id === user.id){
+                          this.yourIndex.next(i)
+                        }
                       }
                     }
-                  }
-              })
+                })
+              }
             }
-          }
-        })
-      }
+          })
+        }
+
+
+
     })
 
     this.authService.user.subscribe(user => {
       if(user === null){
         this.game.next(null)
         this.gamesChanged.next(null)
+        this.yourIndex.next(null)
       }
     })
 
 
     this.socketService.listen('game_state_changed').subscribe(data => {
 
+      const finished = data['finished']
+      console.log('finished')
+      console.log(finished)
+
       this.game.subscribe(game => {
         this.authService.user.subscribe(user => {
             this.socketService.emit('get_game_state', {game_id: game.id, player_id: user.id})
+
+            if(finished){
+              this.socketService.emit('game_done', {game_id: game.id, player_id: user.id})
+              this.game.next(null)
+              this.gameState.next(null)
+            }
 
         })
 
@@ -112,17 +126,23 @@ export class GamesService {
         if(user !== null){
 
           for(let game of games){
-            
-            for(let id of game['playerIds']){
 
-              if( id === user.id){
+            if(!game['finished']){
 
-                this.game.next(game)
+              for(let id of game['playerIds']){
 
-                this.socketService.emit('get_game_state', {game_id: game.id})
+                if( id === user.id){
 
+                  this.game.next(game)
+
+                  this.socketService.emit('get_game_state', {game_id: game.id})
+
+                }
               }
+
             }
+            
+
           }
 
 

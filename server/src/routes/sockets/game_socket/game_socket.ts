@@ -142,7 +142,15 @@ module.exports = function(io: any){
 
                     game.move(play).then((index: any) => {
 
-                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                        console.log(index)
+
+                        if(index === 'finished'){
+                            return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id, finished: true})
+                        }else{
+                            return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id, finished: false})
+                        }
+
+
                     })
 
                 }
@@ -153,6 +161,58 @@ module.exports = function(io: any){
 
 
         })
+
+
+    socket.on('game_done', async (game_data: any) => {
+
+     const {player_id, game_id} = game_data 
+
+        //query database to see if player exists
+        //get player_name from database
+        var user = await User.findOne({_id: player_id})
+
+        console.log('disconnecting socket')
+
+        var game_from_database = await GameSchema.findOne({_id: game_id})
+
+        var game = await games.find(g => {
+            return g.game_id === game_id
+        })
+
+        console.log('game')
+        console.log(game)
+        console.log('plyaer')
+        console.log(user)
+
+        //Check database for game
+        socket.disconnect()
+
+        if(!game.finished){
+
+            game_from_database.finished = true
+
+            var max = -Infinity
+
+            for(let player of game.players){
+                if(player.points > max){
+                    max = player.points
+                }
+            };
+
+            var idsOfWinners = []
+
+            for(let i = 0; i < game.players.length; i++){
+                if(game.players[i].points === max){
+                    idsOfWinners.push(game.players[i].player_id)
+                }
+            }
+
+            game_from_database.winners = idsOfWinners
+        }
+
+        await game_from_database.save()
+
+    })
 
     })
 

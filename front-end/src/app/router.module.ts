@@ -7,6 +7,7 @@ import { LoginComponent } from './auth/login/login.component'
 import {AuthGuardService} from './auth/auth-guard.service'
 import { CreateGameComponent } from './games/create-game/create-game.component'
 import { GameroomComponent } from './gameroom/gameroom.component'
+import {GameroomGaurdService} from './gameroom/gameroom-gaurd.service'
 
 
 
@@ -20,7 +21,7 @@ const appRoutes: Routes = [
     ]},
     {path: 'register', component: RegisterComponent},
     {path: 'login', component: LoginComponent},
-    {path: 'gameroom/:id', component: GameroomComponent, canActivate: [AuthGuardService]}
+    {path: 'gameroom/:id', component: GameroomComponent, canActivate: [AuthGuardService, GameroomGaurdService]}
 
 ]
 

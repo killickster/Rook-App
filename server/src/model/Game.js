@@ -22,6 +22,13 @@ const gameSchema = new mongoose.Schema({
     numberOfPlayers:{
         type: Number,
         required: true
+    },
+    finished:{
+        type: Boolean,
+        required: true
+    },
+    winners:{
+        type: [mongoose.Schema.Types.ObjectId]
     }
 })
 

@@ -14,15 +14,18 @@
     <a style="cursor: pointer;" class="list-group-item row">
         <div class="col-sm-4">
             <div >Game: {{game.id}}</div>
-            <button class="btn btn-primary" [class.disabled]="slectedGame && game.id === selectedGame.id" (click)="joinGame(game)">Join</button>
+            <button class="btn btn-primary" [class.disabled]="(slectedGame && game.id === selectedGame.id) || game.finished" (click)="joinGame(game)">Join</button>
         </div>
         <div class="col-sm-4">
             <div class="list-group">
                 <li class="list-group-item" *ngFor="let player of game.playerNames">{{player}}</li>
             </div>
         </div>
-        <div class="col-sm-4">
+        <div *ngIf="!game.finished" class="col-sm-4">
             {{game.numberOfPlayers - game.playerNames.length | display}}
+        </div>
+        <div *ngIf="game.finished" class="col-sm-4">
+            This Game is no longer active
         </div>
     </a>
 </div>

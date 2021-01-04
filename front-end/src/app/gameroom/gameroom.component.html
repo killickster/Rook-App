@@ -57,6 +57,25 @@
     </app-rook-card>
 </div>
 
-<app-info-snack>testing you can change it
-    <p>test</p>
+<app-info-snack [ngClass]="{'current-player': currentPlayerIndex === 0}" >
+    <table>
+        <tr>
+            <th>We</th>
+            <th>They</th>
+            <th>Bid</th>
+            <th>Er</th>
+            <th>trump</th>
+        </tr>
+
+        <tr *ngFor="let round of rounds">
+            <td>{{round.points[this.index]}}</td>
+            <td>{{round.points[(this.index+1)%numberOfPlayers]}}</td>
+            <td>{{round.bid === 75 ? "80" : round.bid}}</td>
+            <td>{{round.bidWinner | bidDisplay : index : playerNames}}</td>
+            <td>
+                <div [ngStyle]="{'background-color': round.trump | tableColor}" class="dot"></div>
+
+            </td>
+        </tr>
+    </table>
 </app-info-snack>

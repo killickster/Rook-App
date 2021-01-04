@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subscribable, Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { Router} from '@angular/router';
 import { Game } from '../models/game.model';
 import { GamesService } from '../services/games.service';
 import { WebSocketService } from '../web-socket.service';
@@ -29,13 +30,14 @@ export class GameroomComponent implements OnInit {
   snack: MatSnackBarRef<any> = null;
   snackMove: MatSnackBarRef<any> = null;
   turn: MatSnackBarRef<any> = null
-  cards: Card[] = [new Card(Color.BLACK, 1, 15, 15, "face", false), new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),new Card(Color.RED, 3,0, 3, "face", false),]
+  trumpSnackBar: MatSnackBarRef<any> = null
+  cards: Card[] 
   yourTurn: boolean = false
   gameStage: RoundState
   bidForm: FormGroup
   game_id: string
   bidSubscription: Subscription
-  kitty: Card[] = [new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),new Card(Color.GREEN, 4,0, 4, "face", true),]
+  kitty: Card[] 
   playedCards: Card[]  = [null, null, null, null]
   playerNames = [null, null, null, null]
   hands: Card[][] = [null, null, null, null]
@@ -44,12 +46,14 @@ export class GameroomComponent implements OnInit {
   trump: Color | null = null
   index: number
   currentTrickColor: Color
+  numberOfPlayers: number
+  rounds = []
 
   currentPlayerIndex: number;
   //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
 
 
-  constructor(private snackBar: MatSnackBar, private gameService: GamesService, private authService: AuthService, private dialog: MatDialog, private socketService: WebSocketService) { }
+  constructor(private snackBar: MatSnackBar, private router: Router, private gameService: GamesService, private authService: AuthService, private dialog: MatDialog, private socketService: WebSocketService) { }
 
 
   ngOnInit(): void {
@@ -58,96 +62,97 @@ export class GameroomComponent implements OnInit {
 
     this.gameService.gameState.subscribe(game => {
 
-      if(game){
+      if(game && game !== null){
 
-        this.gameService.yourIndex.subscribe(index => {
+          this.gameService.yourIndex.subscribe(index => {
 
-          this.index = index
+            console.log(game)
+            this.index = index
 
-          console.log(index)
+            console.log(index)
+
+
+            this.rounds = game.rounds
+
+            
+            this.game_id = game.game_id 
           
-         this.game_id = game.game_id 
-          var round = game['rounds'][game['currentRoundIndex']]
+            var round = game['rounds'][game['currentRoundIndex']]
 
-          this.gameStage = round.roundState
+            this.gameStage = round.roundState
 
-          this.yourTurn = game['currentPlayer'] === index ? true : false
+            this.yourTurn = game['currentPlayer'] === index ? true : false
 
-          console.log('current player')
-          console.log(game['currentPlayer'])
+            console.log('current player')
+            console.log(game['currentPlayer']-index+4)
+            console.log('index')
+            console.log(index)
 
-          this.currentPlayerIndex = (game['currentPlayer']+index)%4
+            this.numberOfPlayers = game['numberOfPlayers']
 
-          var players = game.players
-
-
-
-          var numberOfPlayers = players.length
-
-          console.log('tricks')
-          if(round.tricks.length > 0){
-            console.log(round.tricks[0])
-          }
-
-
-          var playCards = round.tricks[round.tricks.length-1]
+            this.currentPlayerIndex = (game['currentPlayer']-index+4)%this.numberOfPlayers
           
-          var d = true
 
-          if(playCards){
-            this.currentTrickColor = playCards.color
-            playCards = playCards.cards
+            var players = game.players
 
 
-            for(let card of playCards){
-              if(card !== null){
-                d = false
+
+
+
+            var numberOfPlayers = players.length
+
+            console.log('tricks')
+            if(round.tricks.length > 0){
+              console.log(round.tricks[0])
+            }
+
+
+            var playCards = round.tricks[round.tricks.length-1]
+            
+            var d = true
+
+            if(playCards){
+              this.currentTrickColor = playCards.color
+              playCards = playCards.cards
+
+
+              for(let card of playCards){
+                if(card !== null){
+                  d = false
+                }
               }
             }
-          }
 
-          var delay = d && round.tricks.length > 1
+            var delay = d && round.tricks.length > 1
 
-          console.log(round.tricks)
+            console.log(round.tricks)
 
-          if(delay){
-            playCards = round.tricks[round.tricks.length - 2].cards
-          }
+            if(delay){
+              playCards = round.tricks[round.tricks.length - 2].cards
+            }
 
-          var isLeading = d
-
+            var isLeading = d
 
 
 
 
 
 
-        var timeout = 0
 
-        if(game.rounds.length > 1 && d && round.tricks.length === 0 && round.bidders.length === 4 && round.bid === 75){
+          var timeout = 0
 
-          this.cards = []
-          this.hands = [[], [], [], []]
-          this.kitty = []
-          this.playing = true
-          var indexOfTrick = game.rounds[game.rounds.length - 2].tricks.length
+          if(game.rounds.length > 1 && d && round.tricks.length === 0 && round.bidders.length === 4 && round.bid === 75){
 
-          console.log('hi')
-          console.log(game.rounds[game.rounds.length - 2].tricks[indexOfTrick-2].cards)
-          this.playedCards = game.rounds[game.rounds.length - 2].tricks[indexOfTrick-2].cards
+            this.cards = []
+            this.hands = [[], [], [], []]
+            this.kitty = []
+            this.playing = true
+            var indexOfTrick = game.rounds[game.rounds.length - 2].tricks.length
 
-          timeout = 5000
+            console.log('hi')
+            console.log(game.rounds[game.rounds.length - 2].tricks[indexOfTrick-2].cards)
+            var playCards = game.rounds[game.rounds.length - 2].tricks[indexOfTrick-2].cards
 
-          this.playing = true
-
-        }else if(!(this.gameStage === RoundState.PLAYING)){
-          this.playing = false
-
-        }
-
-          setTimeout(() => {
-            this.kitty = round.kitty
-            this.playing = false
             for(var i = 0; i < players.length; i++){
               if(players[(i+index)%numberOfPlayers]){
                 if(playCards && playCards[(i+index)%numberOfPlayers] !== null){
@@ -155,73 +160,115 @@ export class GameroomComponent implements OnInit {
                 }else{
                   this.playedCards[i] = null
                 }
-
-                this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
-                this.points[i] = players[(i+index)%numberOfPlayers].points
               }
-              this.hands[i] = (round.hands[(i+index)%numberOfPlayers])
-
             }
-              this.cards = this.hands[0]
-              this.sort(this.cards)
+            timeout = 5000
+            this.trump = null
 
-            console.log(this.points)
-
-          if(this.gameStage === RoundState.BIDDING && this.yourTurn){
-            this.snackInput(new SnackData("", 'bid', round.bid +5))
-          }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
-
-          }else if(this.gameStage === RoundState.CHOOSING_TRUMP && this.yourTurn){
-
-            this.snackBar.open("Select a card to indicate trump", null, {
-              duration: 2000,
-            });
-          }else if(this.gameStage === RoundState.PLAYING){
             this.playing = true
 
+          }else if(!(this.gameStage === RoundState.PLAYING)){
+            this.playing = false
 
-
-            if(this.trump === null){
-              var color: Color = round['trump']
-
-              this.trump = color
-
-              if(color === Color.BLACK){
-                this.snackBar.open("Trump is set to black", null, {
-                  duration: 2000,
-                });
-              }else if(color === Color.GREEN){
-                this.snackBar.open("Trump is set to green", null, {
-                  duration: 2000,
-                });
-              }else if(color === Color.YELLOW){
-                this.snackBar.open("Trump is set to yellow", null, {
-                  duration: 2000,
-                });
-              }else if(color == Color.RED){
-                this.snackBar.open("Trump is set to red" , null, {
-                  duration: 2000,
-                });
-              }
-
-            }
-
-
-
-
-
-            if(this.yourTurn && isLeading){
-              this.turn = this.snackBar.open("You Lead", null, {
-                duration: 0,
-              });
-            }
           }
 
-          },timeout)
+            setTimeout(() => {
+              this.kitty = round.kitty
+              this.playing = false
+              for(var i = 0; i < players.length; i++){
+                if(players[(i+index)%numberOfPlayers]){
+                  if(playCards && playCards[(i+index)%numberOfPlayers] !== null){
+                    this.playedCards[i] = playCards[(i+index)%numberOfPlayers]  
+                  }else{
+                    this.playedCards[i] = null
+                  }
+
+                  this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
+                  this.points[i] = players[(i+index)%numberOfPlayers].points
+                }
+                this.hands[i] = (round.hands[(i+index)%numberOfPlayers])
+
+              }
+                this.cards = this.hands[0]
+                this.sort(this.cards)
+
+              console.log(this.points)
+
+            if(this.gameStage === RoundState.BIDDING && this.yourTurn){
+              this.snackInput(new SnackData("", 'bid', round.bid +5))
+            }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
+
+            }else if(this.gameStage === RoundState.CHOOSING_TRUMP && this.yourTurn){
+
+              var trumpSnackBar = this.snackBar.open("Select a card to indicate trump", null, {
+                duration: 0,
+              });
+            }else if(this.gameStage === RoundState.PLAYING){
+              this.playing = true
 
 
-      })
-      }
+
+              if(this.trump === null){
+                var color: Color = round['trump']
+
+                this.trump = color
+
+                if(color === Color.BLACK){
+                  this.snackBar.open("Trump is set to black", null, {
+                    duration: 2000,
+                  });
+                }else if(color === Color.GREEN){
+                  this.snackBar.open("Trump is set to green", null, {
+                    duration: 2000,
+                  });
+                }else if(color === Color.YELLOW){
+                  this.snackBar.open("Trump is set to yellow", null, {
+                    duration: 2000,
+                  });
+                }else if(color == Color.RED){
+                  this.snackBar.open("Trump is set to red" , null, {
+                    duration: 2000,
+                  });
+                }
+
+              }
+
+
+
+
+
+              if(this.yourTurn && isLeading){
+                this.turn = this.snackBar.open("You Lead", null, {
+                  duration: 0,
+                });
+              }
+            }
+
+            },timeout)
+
+
+        })
+        }else if(game === null){
+
+          setTimeout(()=> {
+            this.playedCards = [null, null, null, null]
+            this.currentPlayerIndex = null
+          }, 2000)
+
+
+
+          
+
+        }
+
+        /*
+        if(game && game['gameFinished']){
+          this.authService.user.subscribe(user => {
+            this.socketService.emit("game_done",{game_id: this.game_id, player_id: user.id})
+          })
+
+        }
+        */
     })
 
     this.gameService.kitty.subscribe(kitty => {
@@ -314,6 +361,8 @@ export class GameroomComponent implements OnInit {
           this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.SET_TRUMP, user.id, card.color)})
         })
 
+        this.trumpSnackBar = null
+
     }else if(this.gameStage === RoundState.PLAYING && this.yourTurn){
 
       var hasTrickColor = false
@@ -352,7 +401,7 @@ export class GameroomComponent implements OnInit {
   }
 
   checkForDiscard(){
-    if(this.kitty.length != 1){
+    if(this.kitty.length != 5){
       console.log(this.snack)
       if(this.snackMove != null){
        this.snackMove.dismiss()

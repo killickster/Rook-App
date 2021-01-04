@@ -38,7 +38,7 @@ export class RookCardComponent implements OnInit {
         this.color = 'red'
         break;
       case Color.YELLOW:
-        this.color = 'yellow'
+        this.color = 'blue'
         break;
       case Color.GREEN:
         this.color = 'green'

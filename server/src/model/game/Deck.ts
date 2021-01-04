@@ -7,7 +7,7 @@ export class Deck{
 
         this.cards = []
 
-        for(var i = 1; i <= 2; i++){
+        for(var i = 1; i <= 14; i++){
 
             if(i === 1){
                 this.cards.push(new Card(Color.RED, i, this.getPoints(i), 15, 'flipped', false, false))
@@ -17,7 +17,7 @@ export class Deck{
 
         }
 
-        for(var i = 1; i <= 2; i++){
+        for(var i = 1; i <= 14; i++){
             if(i === 1){
                 this.cards.push(new Card(Color.YELLOW, i, this.getPoints(i), 15, 'flipped', false, false))
             }else{
@@ -25,7 +25,7 @@ export class Deck{
             }
         }
 
-        for(var i = 1; i <= 2; i++){
+        for(var i = 1; i <= 14; i++){
             if(i === 1){
                 this.cards.push(new Card(Color.GREEN, i, this.getPoints(i), 15, 'flipped', false, false))
             }else{
@@ -33,7 +33,7 @@ export class Deck{
             }
         }
 
-        for(var i = 1; i <= 2; i++){
+        for(var i = 1; i <= 14; i++){
             if(i === 1){
                 this.cards.push(new Card(Color.BLACK, i, this.getPoints(i), 15, 'flipped', false, false))
             }else{
