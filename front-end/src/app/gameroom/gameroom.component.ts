@@ -91,7 +91,6 @@ export class GameroomComponent implements OnInit {
           
             var round = game['rounds'][game['currentRoundIndex']]
 
-<<<<<<< HEAD
             var misdeals = round.misdeals
 
             console.log('misdeals')
@@ -111,10 +110,6 @@ export class GameroomComponent implements OnInit {
                 duration: 2000,
               });
             }
-=======
-
-
->>>>>>> aa8728b3c347de1cbce5b1c887e0cc638a617151
 
             this.gameStage = round.roundState
 
