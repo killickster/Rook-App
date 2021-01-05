@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Game } from 'src/app/models/game.model';
 import { GamesService } from 'src/app/services/games.service';
+import {MatDialogRef} from '@angular/material/dialog'
 
 @Component({
   selector: 'app-create-game',
@@ -15,7 +16,7 @@ export class CreateGameComponent implements OnInit {
   myForm: FormGroup
   errorMessage: string
 
-  constructor(private gameService: GamesService, private fb: FormBuilder) { }
+  constructor(private gameService: GamesService, private fb: FormBuilder, private dialogRef: MatDialogRef<CreateGameComponent>) { }
 
   ngOnInit(): void {
 
@@ -34,6 +35,7 @@ export class CreateGameComponent implements OnInit {
       if(formValue.numberOfPlayers === 4){
         this.gameService.addGame(formValue.numberOfPlayers, formValue.name)
         this.createdGame = true
+        this.dialogRef.close()
       }else{
         this.errorMessage = "We only support four player games at the moment"
       }

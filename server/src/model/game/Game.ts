@@ -60,6 +60,7 @@ export class Game{
 
                     this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
 
+
                     this.currentPlayer = 0
                 }
 
@@ -80,6 +81,14 @@ export class Game{
 
             console.log('players')
             console.log(this.players)
+
+        if(play.moveType === MoveType.CORRECTING_MISDEAL){
+            if(this.rounds[this.currentRoundIndex].hasBid[play.payload] === false){
+                this.rounds[this.currentRoundIndex].redeal(play.payload.index)
+            }
+
+            return resolve(this.currentPlayer)
+        }
 
         if(!this.validateMove(play)){
             throw('INVALID_MOVE')
@@ -177,6 +186,7 @@ export class Game{
                         this.currentRoundIndex++
                         this.currentPlayer = this.rounds.length % this.numberOfPlayers
                         this.rounds[this.currentRoundIndex].setFirstBidder(this.currentPlayer)
+
                         this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
                     }
 
@@ -253,12 +263,16 @@ class Round{
     public tricks: Trick[]
     public deck: typeof Deck
     public points: number[] = [0, 0, 0, 0]
+    public misdeals: number[]
+    public hasBid: boolean[] = [false, false, false, false]
+    public misdealsClaimed: number[] = []
 
     constructor(private numberOfPlayers: number){
         this.bid = 75
-        const {kitty, hands} = shuffleAndDeal(new Deck(), 5, this.numberOfPlayers)  //5 in kitty for 4 man
+        const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), 5, this.numberOfPlayers)  //5 in kitty for 4 man
         this.kitty = kitty
         this.hands = hands
+        this.misdeals = misdeals
         this.roundState = RoundState.WAITING_ON_PLAYERS
         this.bidders = []
         for(var i = 0; i < this.numberOfPlayers; i++){
@@ -272,11 +286,20 @@ class Round{
         this.bidder = currentPlayer
     }
 
+    redeal(index: number){
+        const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), 5, this.numberOfPlayers)  //5 in kitty for 4 man
+        this.kitty = kitty
+        this.hands = hands
+        this.misdeals = misdeals
+        this.misdealsClaimed.push(index)
+    }
+
 
     submitBid(bid: number){
 
         if(bid >= this.bid + 5){
             this.bid = bid
+            this.hasBid[this.bidders[this.bidder]] = true
             this.bidWinner = this.bidders[this.bidder]
             
             this.bidder = (this.bidder+1)%this.bidders.length
@@ -476,7 +499,7 @@ export class Player{
 }
 
 
-export enum MoveType {ADD_PLAYER ,BID, DISCARD ,PLAY, SET_TRUMP, INITALIZE_GAME}
+export enum MoveType {ADD_PLAYER ,BID, DISCARD ,PLAY, SET_TRUMP, INITALIZE_GAME, CORRECTING_MISDEAL}
 
 
 export class Play {

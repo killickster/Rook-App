@@ -19,6 +19,7 @@ export class ActionBarComponent {
   message = this.data.message;
   bid = (this.data.action === 'bid')
   discard = (this.data.action === "discard")
+  redeal = (this.data.action === "redeal")
   startingBid = this.data.payload
 
   decrementBid(){
@@ -36,8 +37,8 @@ export class ActionBarComponent {
       this.action.next(new RookAction('bid', payload))
     }else if(action == 'discard'){
       this.action.next(new RookAction('discard', payload))
+    }else if(action === 'redeal'){
+      this.action.next(new RookAction('redeal', payload))
     }
-    
-    
   }
 }

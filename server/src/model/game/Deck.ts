@@ -48,6 +48,8 @@ export class Deck{
 
     getPoints(value: number){
 
+        return 0
+
         var points = 0
         if(value === 1){
             points = 15
@@ -140,7 +142,20 @@ export function shuffleAndDeal(deck: Deck, numberInKitty: number, numberOfPlayer
 
     }
 
-    return {'kitty': kitty, 'hands': hands}
+    var misdealIndecies = []
+    for(let i = 0; i < hands.length; i++){
+        var misdeal = true
+        for(let card of hands[i]){
+            if(card.points !== 0){
+                misdeal = false
+            }
+        }
+        if(misdeal){
+            misdealIndecies.push(i)
+        }
+    }
+
+    return {'kitty': kitty, 'hands': hands, 'misdeals': misdealIndecies}
 
 
 }

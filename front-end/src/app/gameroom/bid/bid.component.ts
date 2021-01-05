@@ -29,7 +29,6 @@ export class BidComponent implements OnInit {
     console.log(this.bidForm.value['bid'])
 
     if(this.bidForm.value['bid'] > this.data.bid && this.bidForm.value['bid'] % 5 == 0){
-      this.game.submitBid(this.bidForm.value['bid'])
       this.dialogRef.close()
     }
 
@@ -38,7 +37,6 @@ export class BidComponent implements OnInit {
 
   pass(){
     this.game.bidding = false
-    this.game.submitBid(0)
     this,this.dialogRef.close()
   }
 

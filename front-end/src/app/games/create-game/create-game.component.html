@@ -1,5 +1,13 @@
 
 <form [formGroup]="myForm" (ngSubmit)="enterGame()" class="form-flex">
+
+    <div *ngIf="errorMessage" class="row">
+        <div class="col-sm-6">
+            <div class="alert alert-danger">
+                {{errorMessage}}
+            </div>
+        </div>
+    </div>
     <div class="row top">
         <div class="col-sm">
             <mat-form-field>

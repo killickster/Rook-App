@@ -30,6 +30,8 @@ export class GameroomComponent implements OnInit {
   snack: MatSnackBarRef<any> = null;
   snackMove: MatSnackBarRef<any> = null;
   turn: MatSnackBarRef<any> = null
+  misdealSnackBar: any = null
+  misdeal: MatSnackBarRef<any> = null
   trumpSnackBar: MatSnackBarRef<any> = null
   cards: Card[] 
   yourTurn: boolean = false
@@ -78,6 +80,26 @@ export class GameroomComponent implements OnInit {
             this.game_id = game.game_id 
           
             var round = game['rounds'][game['currentRoundIndex']]
+
+            var misdeals = round.misdeals
+
+            console.log('misdeals')
+            console.log(misdeals)
+
+            var misdeal = false
+            console.log('hasbid')
+
+            console.log(round.hasBid[index])
+            console.log('includes')
+            console.log(misdeals.includes(index))
+            if(misdeals.includes(index) && round.hasBid[index] === false){
+              this.misdealSnackBar = this.snackInput(new SnackData('Would you like a redeal?', 'redeal', null))
+              misdeal = true
+            }else if(misdeals.includes(index)){
+              this.misdealSnackBar = this.snackBar.open("You have already bid! You cannot call a misdeal anymore!", null, {
+                duration: 2000,
+              });
+            }
 
             this.gameStage = round.roundState
 
@@ -195,7 +217,16 @@ export class GameroomComponent implements OnInit {
               console.log(this.points)
 
             if(this.gameStage === RoundState.BIDDING && this.yourTurn){
-              this.snackInput(new SnackData("", 'bid', round.bid +5))
+              console.log('misdeal')
+              console.log(this.misdealSnackBar)
+              console.log(misdeal)
+              if(misdeal && this.misdealSnackBar !== null){
+                this.misdealSnackBar.afterDismissed().subscribe(() => {
+                  this.snackInput(new SnackData("", 'bid', round.bid +5))
+                })
+              }else{
+                this.snackInput(new SnackData("", 'bid', round.bid +5))
+              }
             }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
 
             }else if(this.gameStage === RoundState.CHOOSING_TRUMP && this.yourTurn){
@@ -207,6 +238,7 @@ export class GameroomComponent implements OnInit {
               this.playing = true
 
 
+              var timeout = 0
 
               if(this.trump === null){
                 var color: Color = round['trump']
@@ -215,33 +247,38 @@ export class GameroomComponent implements OnInit {
 
                 if(color === Color.BLACK){
                   this.snackBar.open("Trump is set to black", null, {
-                    duration: 2000,
+                    duration: 5000,
                   });
                 }else if(color === Color.GREEN){
                   this.snackBar.open("Trump is set to green", null, {
-                    duration: 2000,
+                    duration: 5000,
                   });
                 }else if(color === Color.YELLOW){
-                  this.snackBar.open("Trump is set to yellow", null, {
-                    duration: 2000,
+                  this.snackBar.open("Trump is set to blue", null, {
+                    duration: 5000,
                   });
                 }else if(color == Color.RED){
                   this.snackBar.open("Trump is set to red" , null, {
-                    duration: 2000,
+                    duration: 5000,
                   });
                 }
 
+                timeout = 5000
+
               }
 
 
 
 
+              setTimeout(() => {
+                if(this.yourTurn && isLeading){
+                  this.turn = this.snackBar.open("You Lead", null, {
+                    duration: 0,
+                  });
+                }
+              }, timeout)
 
-              if(this.yourTurn && isLeading){
-                this.turn = this.snackBar.open("You Lead", null, {
-                  duration: 0,
-                });
-              }
+
             }
 
             },timeout)
@@ -445,6 +482,13 @@ export class GameroomComponent implements OnInit {
         this.authService.user.subscribe(user => {
           this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.DISCARD, user.id, this.cards)})
         })
+      }else if(data.action === 'redeal'){
+        if(data.payload){
+          this.authService.user.subscribe(user => {
+            this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.CORRECTING_MISDEAL, user.id, this.index)})
+          })
+        }
+
       }
 
 

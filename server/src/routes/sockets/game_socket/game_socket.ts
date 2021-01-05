@@ -153,6 +153,16 @@ module.exports = function(io: any){
 
                     })
 
+                }else if(play.moveType === MoveType.CORRECTING_MISDEAL){
+                    console.log('correcting misdeal')
+
+                    var play = new Play(play.moveType, play.player_id, play.payload)
+
+                    game.move(play).then((index: any) => {
+
+                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                    })
+
                 }
 
 

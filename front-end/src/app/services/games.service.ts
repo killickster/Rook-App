@@ -84,6 +84,7 @@ export class GamesService {
 
     this.socketService.listen('game_state_changed').subscribe(data => {
 
+      if(data){
       const finished = data['finished']
       console.log('finished')
       console.log(finished)
@@ -101,6 +102,7 @@ export class GamesService {
         })
 
       })
+    }
 
     })
 
@@ -151,21 +153,6 @@ export class GamesService {
 
     })
 
-
-
-   }
-
-
-   submitBid(bid){
-
-    this.bidding = false
-
-      this.game.subscribe(game => {
-          this.authService.user.subscribe((user) =>{
-            this.socketService.emit('bid_submit', {player_id: user.id, game_id : game.id, bid: bid})
-          })
-      })
-
    }
 
 
@@ -181,8 +168,8 @@ export class GamesService {
 
   }
 
-  addGame(numberOfPlayers: number){
-    return this.http.post<Game>('api/games/game', {numberOfPlayers: numberOfPlayers}).pipe(catchError(this.handleErrors), tap(game => {
+  addGame(numberOfPlayers: number, name: string){
+    return this.http.post<Game>('api/games/game', {numberOfPlayers: numberOfPlayers, name: name}).pipe(catchError(this.handleErrors), tap(game => {
       this.games.push(game)
       this.game.next(game)
 
