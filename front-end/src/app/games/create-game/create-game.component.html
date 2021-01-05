@@ -1,11 +1,27 @@
-<p>create-game works!</p>
 
-<div class="row">
-    <div class="col-sm-6">
-        <p>{{numberOfPlayers}}</p>
-        <button class="btn btn-success" (click)="increment()">+</button>
-        <button class="btn btn-danger" (click)="decrement()">-</button>
+<form [formGroup]="myForm" (ngSubmit)="enterGame()" class="form-flex">
+    <div class="row top">
+        <div class="col-sm">
+            <mat-form-field>
+                <input matInput placeholder="Game Name" formControlName="name">
+            </mat-form-field>
+        </div>
     </div>
-    <button class="btn btn-primary" (click)="enterGame()" routerLink="/games">Submit</button>
-</div>
+    <div class="row flex-row">
+        <div class="col-sm wrap">
+            <mat-dialog-content>
+                <mat-form-field class='w-100' >
+                    <input type="number" autocomplete="off" placeholder="Number of Players"  matInput formControlName="numberOfPlayers">
+                </mat-form-field>
+            </mat-dialog-content>
+        </div>
+    </div>
+
+    <div class="row flex-row">
+        <div class="col-sm-2 wrap">
+            <button mat-button class="btn btn-primary" color="primary" type="submit" [disabled]="myForm.invalid">Create Game</button>
+        </div>
+    </div>
+
+</form>
 

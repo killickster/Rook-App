@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {Game} from '../models/game.model'
 import {GamesService} from '../services/games.service'
+import {MatDialog} from '@angular/material/dialog'
+import { CreateGameComponent } from './create-game/create-game.component';
 
 @Component({
   selector: 'app-games',
@@ -12,18 +14,17 @@ export class GamesComponent implements OnInit {
   games: Game[]
   selectedGame: Game
   errorMessage: string = ''
-  constructor(private gameService: GamesService) { }
+  dialogRef: any
+  constructor(private gameService: GamesService, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     
     this.games = this.gameService.games
-
-    this.gameService.game.subscribe((game) => {
-      this.selectedGame
-    })
+    this.sortGames()
 
     this.gameService.gamesChanged.subscribe((games: Game[]) => {
       this.games = games
+      this.sortGames()
     })
 
     this.gameService.errorMessage.subscribe((msg) => {
@@ -34,10 +35,36 @@ export class GamesComponent implements OnInit {
   }
 
 
+  sortGames(){
+
+    this.games.sort((a,b) => {
+      if(a.finished && !b.finished){
+
+        return 1
+      }else if(!a.finished && b.finished){
+        return -1
+      }else{
+        return 0
+      }
+    })
+  }
+
+  openDialog(){
+    this.dialogRef = this.dialog.open(CreateGameComponent, {
+      width: '50%',
+      height: '50%'
+    })
+
+    this.dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+    })
+  }
+
+
+
   joinGame(game){
     if(!game.finished){
       this.gameService.joinGame(game)
     }
-
   }
 }
