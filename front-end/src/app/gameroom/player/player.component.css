@@ -1,0 +1,56 @@
+.played-card {
+    position: absolute;
+    height: 168px;
+    bottom: -117px;
+    left: 57px;
+    transform: scale(.7);
+}
+
+.circle-name {
+    vertical-align: top;
+    border-radius: 30px;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding: 4px;
+    border: 2px solid rgb(200, 200, 200);
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    background: rgb(233, 233, 233);
+    display: inline-block;
+}
+
+.current-player {
+    border: 2px solid rgb(77, 255, 77)!important;
+}
+
+.player {
+    height: 72px;
+    width: 115px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.top-player {
+    margin-bottom: 40px;
+}
+
+.player app-rook-card:not(:first-child) {
+    margin-left: -40px!important;
+}
+
+.name-bid {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.bid {
+    font-weight: bold;
+    text-align: center;
+}
+
+.player app-rook-card:hover {
+    transform: none;
+}

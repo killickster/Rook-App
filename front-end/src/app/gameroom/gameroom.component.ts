@@ -48,6 +48,14 @@ export class GameroomComponent implements OnInit {
   currentTrickColor: Color
   numberOfPlayers: number
   rounds = []
+  playerInfo = {
+    "playerNames" : [],
+    "playedCards" : [],
+    "currentPlaer" : null,
+    "playing" : null,
+    "hands" : [],
+    "bidWinner" : null
+  }
 
   currentPlayerIndex: number;
   //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
@@ -74,10 +82,15 @@ export class GameroomComponent implements OnInit {
 
             this.rounds = game.rounds
 
+
+
             
             this.game_id = game.game_id 
           
             var round = game['rounds'][game['currentRoundIndex']]
+
+
+
 
             this.gameStage = round.roundState
 
@@ -194,6 +207,15 @@ export class GameroomComponent implements OnInit {
 
               console.log(this.points)
 
+              this.playerInfo = {
+                "playerNames" : this.playerNames,
+                "playedCards" : this.playedCards,
+                "currentPlaer" : this.currentPlayerIndex,
+                "playing" : this.playing,
+                "hands" : this.hands,
+                "bidWinner" : (this.rounds[this.rounds.length -1].bidWinner-this.index+this.numberOfPlayers)%this.numberOfPlayers
+              }
+
             if(this.gameStage === RoundState.BIDDING && this.yourTurn){
               this.snackInput(new SnackData("", 'bid', round.bid +5))
             }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
@@ -244,6 +266,9 @@ export class GameroomComponent implements OnInit {
               }
             }
 
+                                //for rendering the player hands
+
+
             },timeout)
 
 
@@ -269,6 +294,7 @@ export class GameroomComponent implements OnInit {
 
         }
         */
+
     })
 
     this.gameService.kitty.subscribe(kitty => {

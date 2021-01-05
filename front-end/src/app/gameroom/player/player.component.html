@@ -1,0 +1,14 @@
+<div class="player-container">
+    <div class="name-bid">
+        <div class="circle-name" [ngClass]="{'current-player': currentPlayer === playerIndex}"><span *ngIf="bidWinner === currentPlayer">⭐</span> {{playerNames[playerIndex]}}</div>
+        <div class="bid">pass</div>
+    </div>
+    <div class="top-player player">
+        <app-rook-card *ngFor="let card of hands[playerIndex]" [card]="card">
+        </app-rook-card>
+        <div *ngIf="playing && playedCards[playerIndex] !== null" class="played-card">
+            <app-rook-card [card]="playedCards[playerIndex]">
+            </app-rook-card>
+        </div>
+    </div>
+</div>

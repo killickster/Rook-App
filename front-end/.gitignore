@@ -48,3 +48,4 @@ Thumbs.db
 #localhost server settings
 /src/proxy.conf.json
 /src/web-socket.service.ts
+/src/app/web-socket.service.ts

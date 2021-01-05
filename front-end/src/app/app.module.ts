@@ -26,6 +26,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import { ActionBarComponent } from './gameroom/action-bar/action-bar.component';
 import {MatButtonModule} from '@angular/material/button';
 import { InfoSnackComponent } from './gameroom/info-snack/info-snack.component';
+import { PlayerComponent } from './gameroom/player/player.component';
 
 
 
@@ -44,7 +45,8 @@ import { InfoSnackComponent } from './gameroom/info-snack/info-snack.component';
     BidComponent,
     RookCardComponent,
     ActionBarComponent,
-    InfoSnackComponent
+    InfoSnackComponent,
+    PlayerComponent,
   ],
   entryComponents:[
     BidComponent
