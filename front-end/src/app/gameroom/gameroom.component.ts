@@ -103,7 +103,7 @@ export class GameroomComponent implements OnInit {
             console.log('includes')
             console.log(misdeals.includes(index))
             if(misdeals.includes(index) && round.hasBid[index] === false){
-              this.misdealSnackBar = this.snackInput(new SnackData('Would you like a redeal?', 'redeal', null))
+              this.snackInput(new SnackData('Would you like a redeal?', 'redeal', null))
               misdeal = true
             }else if(misdeals.includes(index)){
               this.misdealSnackBar = this.snackBar.open("You have already bid! You cannot call a misdeal anymore!", null, {
@@ -236,14 +236,8 @@ export class GameroomComponent implements OnInit {
               }
 
             if(this.gameStage === RoundState.BIDDING && this.yourTurn){
-              console.log('misdeal')
-              console.log(this.misdealSnackBar)
-              console.log(misdeal)
-              if(misdeal && this.misdealSnackBar !== null){
-                this.misdealSnackBar.afterDismissed().subscribe(() => {
-                  this.snackInput(new SnackData("", 'bid', round.bid +5))
-                })
-              }else{
+
+              if(!misdeal){
                 this.snackInput(new SnackData("", 'bid', round.bid +5))
               }
             }else if(this.gameStage === RoundState.DISCARDING && this.yourTurn){
@@ -510,8 +504,20 @@ export class GameroomComponent implements OnInit {
           this.authService.user.subscribe(user => {
             this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.CORRECTING_MISDEAL, user.id, this.index)})
           })
+
+
         }
 
+          if(this.gameStage === RoundState.BIDDING && this.yourTurn){
+
+            console.log('this is your turn')
+            console.log(this.rounds[this.rounds.length-1].bid)
+            this.snackMove.instance.action.unsubscribe()
+            this.snackMove.dismiss()
+
+            this.snackInput(new SnackData("", 'bid', this.rounds[this.rounds.length - 1].bid +5))
+            return
+          }
       }
 
 
