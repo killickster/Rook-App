@@ -26,7 +26,7 @@ export class TableColorPipe implements PipeTransform{
             return 'green'
             break;
         case Color.UNDETERMINED:
-            return 'white'
+            return 'transparent'
             break;
         }
     }

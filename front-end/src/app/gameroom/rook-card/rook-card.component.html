@@ -7,18 +7,21 @@
 
     </div>
     <div class="front faces">
+        <div *ngIf="card.value == 0" class="penguin-text" [style.color]="color">B i r d</div>
+        <div *ngIf="card.value == 0" class="penguin-text penguin-text-bottom" [style.color]="color">B i r d</div>
         <a href="#0"></a>
-        <div class="top-left-content">
+        <div class="top-left-content" [ngClass]="{'left-20': card.value == 0}">
 
-            <div [style.color]="color" class="number_top_left">{{card.value}}</div>
+            <div [style.color]="color" *ngIf="card.value != 0" class="number_top_left">{{card.value}}</div>
             <div class="right-of-number">
-                <div [style.color]="color" class="card_color">{{color}}</div>
+                <div class="card_color" [style.color]="color">{{color}}</div>
                 <div *ngIf="card.points" [style.backgroundColor]="color" class="number_of_points">{{card.points}}</div>
             </div>
         </div>
-        <div [style.color]="color" class="number_bottom_right">{{card.value}}</div>
+        <div *ngIf="card.value != 0" [style.color]="color" class="number_bottom_right">{{card.value}}</div>
         <div class="flex-absolute-container">
-            <div [style.color]="color" class="number_middle" [style.backgroundColor]="color">{{card.value}}</div>
+            <div *ngIf="card.value == 0" class="crow"></div>
+            <div *ngIf="card.value != 0" [style.color]="color" class="number_middle" [style.backgroundColor]="color">{{card.value}}</div>
         </div>
 
     </div>
