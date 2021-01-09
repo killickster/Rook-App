@@ -1,7 +1,11 @@
 <div class="table">
-    <app-player [playerInfo]="playerInfo" [playerIndex]=2></app-player>
+
+    <div *ngIf="playerNames.length > 3" class="top-players">
+        <app-player *ngFor="let player of topPlayers; let i = index" [playerInfo]="playerInfo" [playerIndex]="i+2" [globalIndex]="(index+i+2)%this.numberOfPlayers"></app-player>
+    </div>
+
     <div class="flex-row">
-        <app-player [playerInfo]="playerInfo" [playerIndex]=1></app-player>
+        <app-player [playerInfo]="playerInfo" [playerIndex]="1" [globalIndex]="(this.index+1)%this.numberOfPlayers"></app-player>
         <div *ngIf="playing" class="playing-table">
 
         </div>
@@ -9,7 +13,7 @@
             <app-rook-card *ngFor="let card of kitty" [card]="card" (click)="cardClicked(card)">
             </app-rook-card>
         </div>
-        <app-player [playerInfo]="playerInfo" [playerIndex]=3></app-player>
+        <app-player [playerInfo]="playerInfo" [playerIndex]="this.numberOfPlayers-1" [globalIndex]="(this.index + this.numberOfPlayers-1)%this.numberOfPlayers"></app-player>
     </div>
 </div>
 

@@ -48,8 +48,6 @@ export class Deck{
 
     getPoints(value: number){
 
-        return 0
-
         var points = 0
         if(value === 1){
             points = 15

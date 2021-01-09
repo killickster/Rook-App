@@ -15,6 +15,8 @@ export class Game{
     public currentRoundIndex: number
     public currentPlayer: number | null
     public gameFinished = false
+    public team1Indicies: number[] = []           //Used only for 4 man
+    public team2Indicies: number[] = []           //Used only for 4 man
 
     constructor(public game_id: string, public numberOfPlayers: number){
         this.numberOfPlayersJoined = 0
@@ -52,18 +54,17 @@ export class Game{
 
                     if(this.numberOfPlayers === 4){
 
-                        this.players[0].addTeammate(this.players[2])
-                        this.players[1].addTeammate(this.players[3])
-                        this.players[2].addTeammate(this.players[0])
-                        this.players[3].addTeammate(this.players[1])
+                        this.team1Indicies.push(0)
+                        this.team1Indicies.push(2)
+                        this.team1Indicies.push(1)
+                        this.team1Indicies.push(3)
                     }
+
 
                     this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
 
-
                     this.currentPlayer = 0
                 }
-
                 return index
             }
         }
@@ -83,9 +84,16 @@ export class Game{
             console.log(this.players)
 
         if(play.moveType === MoveType.CORRECTING_MISDEAL){
-            if(this.rounds[this.currentRoundIndex].hasBid[play.payload] === false){
-                this.rounds[this.currentRoundIndex].redeal(play.payload.index)
+            if(this.rounds[this.currentRoundIndex].hasBid[play.payload.index] === false){
+                this.currentPlayer = this.rounds[this.currentRoundIndex].redeal(play.payload.index)
+                console.log('correcting misdeal')
+                console.log(this.currentPlayer)
+            }else{
+                this.rounds[this.currentRoundIndex].misdeals = this.rounds[this.currentRoundIndex].misdeals.filter((index) => {
+                    return index !== play.payload.index
+                })
             }
+
 
             return resolve(this.currentPlayer)
         }
@@ -111,6 +119,9 @@ export class Game{
             case MoveType.SET_TRUMP:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].selectTrump(play.payload)
                 return resolve(this.getGameStateFor(play.player_id))
+            case MoveType.CHOOSE_PARTNER:
+                this.currentPlayer = this.rounds[this.currentRoundIndex].setTeams(play.payload);
+                return resolve(this.currentPlayer)
             case MoveType.PLAY:
                 var index = this.rounds[this.currentRoundIndex].submitPlay(play.payload)
                 if(this.currentPlayer !== null && index === false){
@@ -132,12 +143,14 @@ export class Game{
                     var points = this.rounds[this.currentRoundIndex].calculatePoints()
                     var team1Points = 0
                     var team2Points = 0
+                    var team1Indicies = this.rounds[this.currentRoundIndex].team1Indicies
+                    var team2Indicies = this.rounds[this.currentRoundIndex].team2Indicies
+
                     for(var i = 0; i < points.length; i++){
 
-
-                        if(i%2 === 0){
+                        if(team1Indicies.includes(i)){
                             team1Points += points[i]
-                        }else{
+                        }else if(team2Indicies.includes(i)){
                             team2Points += points[i]
                         }
                     }
@@ -145,21 +158,21 @@ export class Game{
                         var bid = this.rounds[this.currentRoundIndex].bid
                         var bidder = this.rounds[this.currentRoundIndex].bidders[0]
 
-                        if(bidder % 2 === 0){
+                        if(team1Indicies.includes(bidder)){
                            if(team1Points < bid){
                             team1Points = -bid 
                            }
-                        }else{
+                        }else if(team2Indicies.includes(bidder)){
                             if(team2Points < bid){
                                 team2Points = -bid
                             }
                         }
 
                         for(var i = 0; i < this.players.length; i++){
-                            if(i%2 == 0){
+                            if(team1Indicies.includes(i)){
                                 this.rounds[this.currentRoundIndex].points[i] = team1Points
                                 this.players[i].addPoints(team1Points)
-                            }else{
+                            }else if(team2Indicies.includes(i)){
                                 this.rounds[this.currentRoundIndex].points[i] = team2Points
                                 this.players[i].addPoints(team2Points)
                             }
@@ -183,11 +196,17 @@ export class Game{
 
                     if(this.currentPlayer !== null){
                         this.rounds.push(new Round(this.numberOfPlayers))
+
+                        if(this.numberOfPlayers === 4){
+                            this.rounds[this.currentRoundIndex].team1Indicies = this.team1Indicies
+                            this.rounds[this.currentRoundIndex].team2Indicies = this.team2Indicies
+                        }
+
                         this.currentRoundIndex++
                         this.currentPlayer = this.rounds.length % this.numberOfPlayers
                         this.rounds[this.currentRoundIndex].setFirstBidder(this.currentPlayer)
-
                         this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
+
                     }
 
                 }
@@ -248,7 +267,7 @@ export class Game{
 }
 
 
-export enum RoundState {WAITING_ON_PLAYERS, DISCARDING, CHOOSING_TRUMP ,BIDDING, LEADING, PLAYING, DONE}
+export enum RoundState {WAITING_ON_PLAYERS, DISCARDING, CHOOSING_TRUMP ,BIDDING, LEADING, PLAYING, CHOOSING_PARTNER,DONE}
 
 class Round{
 
@@ -262,17 +281,41 @@ class Round{
     public trump: typeof Color
     public tricks: Trick[]
     public deck: typeof Deck
-    public points: number[] = [0, 0, 0, 0]
+    public points: number[] = []
     public misdeals: number[]
-    public hasBid: boolean[] = [false, false, false, false]
+    public hasBid: boolean[] = []
     public misdealsClaimed: number[] = []
+    public starter: any = null
+    public bids: number[]= []
+    public team1Indicies: number[] = []
+    public team2Indicies: number[] = []
+    public choosenCard: any = null
 
     constructor(private numberOfPlayers: number){
         this.bid = 75
-        const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), 5, this.numberOfPlayers)  //5 in kitty for 4 man
+        var numberInKitty = 0
+        if(this.numberOfPlayers === 3){
+            numberInKitty = 6
+        }else if(this.numberOfPlayers === 4){
+            numberInKitty = 5
+        }else if(this.numberOfPlayers === 5){
+            numberInKitty = 2
+        }else{
+            numberInKitty = 3
+        }
+
+        const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), numberInKitty, this.numberOfPlayers)  //5 in kitty for 4 man
+
+        for(let i = 0; i < this.numberOfPlayers; i++){
+            this.points.push(0)
+            this.bids.push(0)
+            this.hasBid.push(false)
+        }
+
         this.kitty = kitty
-        this.hands = hands
+        this.hands = hands 
         this.misdeals = misdeals
+
         this.roundState = RoundState.WAITING_ON_PLAYERS
         this.bidders = []
         for(var i = 0; i < this.numberOfPlayers; i++){
@@ -284,15 +327,72 @@ class Round{
 
     setFirstBidder(currentPlayer: number){
         this.bidder = currentPlayer
+        this.starter = currentPlayer
     }
 
     redeal(index: number){
-        const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), 5, this.numberOfPlayers)  //5 in kitty for 4 man
+        var numberInKitty = 0
+        if(this.numberOfPlayers === 3){
+            numberInKitty = 6
+        }else if(this.numberOfPlayers === 4){
+            numberInKitty = 5
+        }else if(this.numberOfPlayers === 5){
+            numberInKitty = 2
+        }else{
+            numberInKitty = 3
+        }
+        const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), numberInKitty, this.numberOfPlayers)  //5 in kitty for 4 man
         this.kitty = kitty
+        for(let i = 0; i< this.numberOfPlayers; i++){
+            this.hasBid.push(false)
+        }
+        this.bidders = []
+        for(var i = 0; i < this.numberOfPlayers; i++){
+            this.bidders.push(i)
+        }
+        this.bid = 75
+        
         this.hands = hands
         this.misdeals = misdeals
         this.misdealsClaimed.push(index)
+        this.bidWinner = null
+        this.bidder = this.starter
+        return this.starter
     }
+
+    setTeams(payload: any){
+        const {index, card} = payload
+        this.choosenCard = card
+
+        var chosenIndex = null
+        for(var i = 0; i < this.hands.length; i++){
+            for(var c of this.hands[i]){
+                if(c.number === card.value && c.color === card.color){
+                    chosenIndex = i
+                }
+            }
+        }
+
+        this.team1Indicies.push(index)
+
+        if(chosenIndex !== null && !this.team1Indicies.includes(chosenIndex)){
+            this.team1Indicies.push(chosenIndex)
+        }
+
+
+        for(let i = 0; i < this.numberOfPlayers; i++){
+            if(i !== index && chosenIndex !== i){
+                this.team2Indicies.push(i)
+            }
+        }
+
+        this.roundState = RoundState.PLAYING
+
+        return (index+1)%this.numberOfPlayers
+
+    }
+
+    //Required for 3,5,6 player to set teams after for individual rounds
 
 
     submitBid(bid: number){
@@ -300,10 +400,12 @@ class Round{
         if(bid >= this.bid + 5){
             this.bid = bid
             this.hasBid[this.bidders[this.bidder]] = true
+            this.bids[this.bidders[this.bidder]] = bid
             this.bidWinner = this.bidders[this.bidder]
             
             this.bidder = (this.bidder+1)%this.bidders.length
         }else{
+            this.bids[this.bidders[this.bidder]] = 0
             this.bidders = this.bidders.filter((el) => {
                 return el !== this.bidders[this.bidder]
             })
@@ -334,8 +436,13 @@ class Round{
     selectTrump(color: typeof Color){
         var indexOfBidWinner = this.bidders[0]
         this.trump = color
-        this.roundState = RoundState.PLAYING
-        this.tricks.push(new Trick(this.trump))
+        if(this.numberOfPlayers === 4){
+            this.roundState = RoundState.PLAYING
+        }else{
+            this.roundState = RoundState.CHOOSING_PARTNER
+        }
+
+        this.tricks.push(new Trick(this.trump, this.numberOfPlayers))
 
         for(let hand of this.hands){
             for(let card of hand){
@@ -345,11 +452,20 @@ class Round{
             }
         }
 
-        return (indexOfBidWinner + 1) % this.numberOfPlayers
+        if(this.numberOfPlayers === 4){
+            return (indexOfBidWinner + 1) % this.numberOfPlayers
+        }else{
+            return indexOfBidWinner
+        }
+
     }
 
     calculatePoints(){
-        var points = [0,0,0,0]
+
+        var points = []
+        for(let i = 0; i < this.numberOfPlayers; i++){
+            points.push(0)
+        }
         for(let trick of this.tricks){
             for(let card of trick.cards){
                 if(trick.winnerIndex !== null){
@@ -381,7 +497,7 @@ class Round{
 
                 if(trickDone !== false){
                     var winner = this.tricks[this.tricks.length-1].winnerIndex
-                    this.tricks.push(new Trick(this.trump))
+                    this.tricks.push(new Trick(this.trump, this.numberOfPlayers))
                     console.log('winner')
                     console.log(winner)
                     return winner
@@ -403,11 +519,15 @@ class Round{
 
 class Trick{
 
-    public cards: typeof Card | null[] = [null, null, null, null] 
+    public cards: typeof Card | null[] = []
     public color: typeof Color | null = null
     public winnerIndex: number | null = null
 
-    constructor(public trumpColor: typeof Color){
+    constructor(public trumpColor: typeof Color, numberOfPlayers: number){
+
+        for(var i = 0; i < numberOfPlayers; i++){
+            this.cards.push(null)
+        }
 
     }
 
@@ -481,16 +601,10 @@ class Trick{
 
 export class Player{
 
-    public teammate: string | null
     public points: number
 
     constructor(public player_id: string, public player_name: string){
-        this.teammate = null
         this.points = 0
-    }
-
-    addTeammate(player: Player){
-        this.teammate = player.player_id
     }
 
     addPoints(points: number){
@@ -499,7 +613,7 @@ export class Player{
 }
 
 
-export enum MoveType {ADD_PLAYER ,BID, DISCARD ,PLAY, SET_TRUMP, INITALIZE_GAME, CORRECTING_MISDEAL}
+export enum MoveType {ADD_PLAYER ,BID, DISCARD ,PLAY, SET_TRUMP, INITALIZE_GAME, CHOOSE_PARTNER, CORRECTING_MISDEAL}
 
 
 export class Play {
@@ -511,117 +625,3 @@ export class Play {
 
 
 
-
-//function to randomly generate indicies to divide teams randomly
-function generateRandomIndices(numberOfPlayers: number): number[]{
-
-        var selectedIndicies: number[] = []
-        while(selectedIndicies.length < numberOfPlayers){
-            var index = Math.floor(Math.random() * numberOfPlayers)
-
-            var found = false
-            for(var i = 0; i < selectedIndicies.length; i++){
-                if(selectedIndicies[i] == index){
-                    found = true 
-                }
-            }
-            if(!found){
-                selectedIndicies.push(index)
-            }
-
-        }
-
-        return selectedIndicies
-}
-
-
-/*
-    private players: Player[]
-    private gameStage: GameStage
-    private team1: Team | null
-    private team2: Team | null
-    private currentBid: number
-    private currentBidder: Player | null
-    private numberOfPlayersJoined: number
-
-
-    constructor(public game_id: string, public numberOfPlayers: number){
-        this.numberOfPlayersJoined = 0
-        this.players = this.createPlayers(numberOfPlayers)
-        this.assignPlayersToTeams()
-        this.gameStage = GameStage.WAITING_ON_PLAYERS 
-        const {kitty, hands} = shuffleAndDeal(new Deck(), 5, numberOfPlayers)  //5 in kitty for 4 man
-
-        this.team1 = null
-        this.team2 = null
-        this.currentBid = 80
-        this.currentBidder = null
-    }
-
-    createPlayers(numberOfPlayers: number){
-        var players = []
-
-        for(var i = 0; i < numberOfPlayers; i++){
-            players.push(new Player(this.game_id, null, null, null))
-        }
-        return players
-    }
-
-    assignPlayersToTeams(){
-        var indicies = generateRandomIndices(4)
-
-        var playerOne = this.players[indicies[0]]
-        var playerTwo = this.players[indicies[1]]
-        var playerThree = this.players[indicies[2]]
-        var playerFour = this.players[indicies[3]]
-
-        playerOne.addTeammate(playerTwo)
-        playerTwo.addTeammate(playerOne)
-        playerThree.addTeammate(playerFour)
-        playerFour.addTeammate(playerThree)
-
-        this.team1 = new Team(playerOne, playerTwo)
-        this.team2 = new Team(playerThree, playerFour)
-
-    }
-
-
-
-    makeMove(play: Play){
-        switch(this.gameStage){
-            case GameStage.WAITING_ON_PLAYERS:
-                this.addPlayer(play.player_id)
-                break;
-        }
-    }
-
-
-
-    addPlayer(player_id: string){
-        this.numberOfPlayersJoined += 1
-        for(let player of this.players){
-            if(!player.player_id){
-                player.assignId(player_id)
-                break;
-            }
-        }
-
-        if(this.numberOfPlayersJoined === this.numberOfPlayers){
-            this.gameStage = GameStage.BIDDING
-        }
-
-    }
-
-
-    viewGame(){
-
-        for(let player of this.players){
-            console.log(player.player_name)
-            if(player.player_id){
-                console.log(player)
-            }
-        }
-
-    }
-
-    */

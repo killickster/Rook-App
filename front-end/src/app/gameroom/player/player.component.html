@@ -1,7 +1,7 @@
 <div class="player-container">
     <div class="name-bid">
-        <div class="circle-name" [ngClass]="{'current-player': currentPlayer === playerIndex}"><span *ngIf="bidWinner === currentPlayer">⭐</span> {{playerNames[playerIndex]}}</div>
-        <div class="bid">pass</div>
+        <div class="circle-name" [ngClass]="{'current-player': currentPlayer === playerIndex}"><span *ngIf="bidWinner === playerIndex">⭐</span> {{playerNames[playerIndex]}}</div>
+        <div class="bid">{{bids[globalIndex]}}</div>
     </div>
     <div class="top-player player">
         <app-rook-card *ngFor="let card of hands[playerIndex]" [card]="card">

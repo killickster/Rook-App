@@ -70,6 +70,7 @@ module.exports = function(io: any){
 
 
             if(play.moveType === MoveType.INITALIZE_GAME){
+
                 const game = new Game(game_id, game_from_database.numberOfPlayers)
 
                 games.push(game)
@@ -155,6 +156,16 @@ module.exports = function(io: any){
 
                 }else if(play.moveType === MoveType.CORRECTING_MISDEAL){
                     console.log('correcting misdeal')
+
+                    var play = new Play(play.moveType, play.player_id, play.payload)
+
+                    game.move(play).then((index: any) => {
+
+                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id})
+                    })
+
+                }else if(play.moveType === MoveType.CHOOSE_PARTNER){
+                    console.log('Choosing partner')
 
                     var play = new Play(play.moveType, play.player_id, play.payload)
 

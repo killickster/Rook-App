@@ -57,6 +57,7 @@ router.post('/login', async (req,res) =>{
     //validate data
 
 
+    console.log('logging in')
     //Check if user exists
     const user = await User.findOne({email: req.body.email})
 

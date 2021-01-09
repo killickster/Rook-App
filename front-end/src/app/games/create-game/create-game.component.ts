@@ -32,7 +32,7 @@ export class CreateGameComponent implements OnInit {
 
       const formValue = this.myForm.value
 
-      if(formValue.numberOfPlayers === 4){
+      if(formValue.numberOfPlayers >= 3 && formValue.numberOfPlayers <= 6){
         this.gameService.addGame(formValue.numberOfPlayers, formValue.name)
         this.createdGame = true
         this.dialogRef.close()

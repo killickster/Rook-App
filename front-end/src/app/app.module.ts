@@ -4,7 +4,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http'
 import {AuthInterceptorService} from './auth/auth-interceptor.service'
 import {GameInterceptor} from './services/game-interceptor.service'
-
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { GamesComponent } from './games/games.component';
@@ -27,7 +26,7 @@ import { ActionBarComponent } from './gameroom/action-bar/action-bar.component';
 import {MatButtonModule} from '@angular/material/button';
 import { InfoSnackComponent } from './gameroom/info-snack/info-snack.component';
 import { PlayerComponent } from './gameroom/player/player.component';
-
+import {MatSelectModule} from '@angular/material/select';
 
 
 @NgModule({
@@ -62,7 +61,8 @@ import { PlayerComponent } from './gameroom/player/player.component';
     MatFormFieldModule,
     MatInputModule,
     MatSnackBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSelectModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true},

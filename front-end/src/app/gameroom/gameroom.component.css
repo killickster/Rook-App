@@ -139,3 +139,9 @@ td {
     border-radius: 50%;
     display: inline-block;
 }
+
+.top-players {
+    display: flex;
+    width: 100%;
+    justify-content: space-around
+}

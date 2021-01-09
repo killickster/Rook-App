@@ -4,6 +4,7 @@ import { SnackData } from '../snack-data';
 import { EventEmitter } from '@angular/core';
 import { Subject } from 'rxjs';
 import {RookAction} from '../rook-action'
+import { Color } from 'src/app/services/models/color.model';
 
 @Component({
   selector: 'app-action-bar',
@@ -16,10 +17,14 @@ export class ActionBarComponent {
   //@Output() action = new EventEmitter<any>();
   constructor(@Inject(MAT_SNACK_BAR_DATA) public data: SnackData) { }
 
+  values = [1,14,13,12,11,10,9,8,7,6,5,4,3,2]
+  colors = ['red', 'blue', 'green', 'black']
   message = this.data.message;
   bid = (this.data.action === 'bid')
   discard = (this.data.action === "discard")
   redeal = (this.data.action === "redeal")
+  choosePartner = (this.data.action === "choose_partner")
+  roundInfo = (this.data.action === "round_info")
   startingBid = this.data.payload
 
   decrementBid(){
@@ -33,12 +38,37 @@ export class ActionBarComponent {
 
   emitAction(action: string, payload: any){
     //'bid' | 'discard'
+
     if(action == 'bid'){
       this.action.next(new RookAction('bid', payload))
     }else if(action == 'discard'){
       this.action.next(new RookAction('discard', payload))
     }else if(action === 'redeal'){
       this.action.next(new RookAction('redeal', payload))
+    }else if(action === 'choose_partner'){
+      if(this.values.includes(+payload.number) && this.colors.includes(payload.color)){
+
+        switch(payload.color){
+          case 'black':
+            payload.color = Color.BLACK
+            break
+          case 'red':
+            payload.color = Color.RED
+            break;
+          case 'blue':
+            payload.color = Color.YELLOW
+            break;
+          case 'green':
+            payload.color = Color.GREEN
+            break;
+      }
+
+      this.action.next(new RookAction('choose_partner', payload))
+    }
+
+
+    }else if(action === 'round_info'){
+      this.action.next(new RookAction('round_info', payload))
     }
   }
 }
