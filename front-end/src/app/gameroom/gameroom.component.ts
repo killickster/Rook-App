@@ -58,7 +58,8 @@ export class GameroomComponent implements OnInit {
     "hands" : [],
     "bidWinner" : null,
     "bids": [],
-    "roundState": null
+    "roundState": null,
+    "bidders": []
   }
   isLeading = false
   currentPlayerIndex: number;
@@ -183,7 +184,7 @@ export class GameroomComponent implements OnInit {
 
           var timeout = 0
 
-          if(game.rounds.length > 1 && d && round.tricks.length === 0 && round.bidders.length === 4 && round.bid === 75){
+          if(game.rounds.length > 1 && d && round.tricks.length === 0 && round.bidders.length === this.numberOfPlayers && round.bid === 75){
 
             this.cards = []
             this.hands = [[], [], [], []]
@@ -221,7 +222,6 @@ export class GameroomComponent implements OnInit {
                   }else{
                     this.playedCards[i] = null
                   }
-
                   this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
                   this.points[i] = players[(i+index)%numberOfPlayers].points
                 }
@@ -284,7 +284,7 @@ export class GameroomComponent implements OnInit {
                 var partnerColorString = ''
 
                 var description = ''
-                if(this.numberOfPlayers !== 4){
+                if(this.numberOfPlayers !== 4 && this.numberOfPlayers !== 3){
 
                   var choosenCard = this.rounds[this.rounds.length-1].choosenCard
                   switch(choosenCard.color){
@@ -354,7 +354,8 @@ export class GameroomComponent implements OnInit {
                 "hands" : this.hands,
                 "bidWinner" : (this.rounds[this.rounds.length -1].bidWinner-this.index+this.numberOfPlayers)%this.numberOfPlayers,
                 "bids" : round.bids,
-                "roundState": round.roundState
+                "roundState": round.roundState,
+                "bidders" : round.bidders
               }
 
 

@@ -117,11 +117,7 @@ export class Game{
                 console.log('add player')
                 return resolve(this.addPlayer(play.payload))
             case MoveType.BID:
-                console.log("current player before")
-                console.log(this.currentPlayer)
                 this.currentPlayer = this.rounds[this.currentRoundIndex].submitBid(play.payload)
-                console.log("current player")
-                console.log(this.currentPlayer)
                 return resolve(this.currentPlayer)
             case MoveType.DISCARD:
                 this.currentPlayer = this.rounds[this.currentRoundIndex].setNewHand(play.payload)
@@ -183,8 +179,14 @@ export class Game{
                                 this.rounds[this.currentRoundIndex].points[i] = team1Points
                                 this.players[i].addPoints(team1Points)
                             }else if(team2Indicies.includes(i)){
-                                this.rounds[this.currentRoundIndex].points[i] = team2Points
-                                this.players[i].addPoints(team2Points)
+                                if(this.numberOfPlayers === 3){
+                                    if(team2Points%10 === 5){
+                                        team2Points -= 5
+                                    }
+                                    this.rounds[this.currentRoundIndex].points[i] = team2Points / 2
+                                }
+                                this.players[i].addPoints(team2Points/2)
+                                
                             }
                         }
 
@@ -451,8 +453,17 @@ class Round{
     selectTrump(color: typeof Color){
         var indexOfBidWinner = this.bidders[0]
         this.trump = color
-        if(this.numberOfPlayers === 4){
+        if(this.numberOfPlayers === 4 || this.numberOfPlayers === 3){
             this.roundState = RoundState.PLAYING
+            if(this.numberOfPlayers === 3 && this.bidWinner !== null){
+                this.team1Indicies.push(this.bidWinner)
+                for(var i = 0 ; i < this.numberOfPlayers; i++){
+                    if(i !== this.bidWinner){
+                        this.team2Indicies.push(i)
+                    }
+                }
+
+            }
         }else{
             this.roundState = RoundState.CHOOSING_PARTNER
         }
@@ -467,7 +478,7 @@ class Round{
             }
         }
 
-        if(this.numberOfPlayers === 4){
+        if(this.numberOfPlayers === 4 || this.numberOfPlayers === 3){
             return (indexOfBidWinner + 1) % this.numberOfPlayers
         }else{
             return indexOfBidWinner
