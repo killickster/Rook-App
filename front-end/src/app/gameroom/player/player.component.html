@@ -1,6 +1,6 @@
 <div class="player-container">
     <div class="name-bid">
-        <div class="circle-name" [ngClass]="{'current-player': currentPlayer === playerIndex}"><span *ngIf="bidWinner === playerIndex">⭐</span> {{playerNames[playerIndex]}}</div>
+        <div *ngIf="playerNames[playerIndex] !== null" class="circle-name" [ngClass]="{'current-player': currentPlayer === playerIndex}"><span *ngIf="bidWinner === playerIndex">⭐</span> {{playerNames[playerIndex]}}</div>
         <div *ngIf="roundState" class="bid">{{this.description}}</div>
     </div>
     <div class="top-player player">
