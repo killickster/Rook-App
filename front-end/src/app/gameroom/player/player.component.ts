@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Card } from 'src/app/services/models/card.model';
+import { RoundState } from 'src/app/services/models/round-stage.model';
 
 @Component({
   selector: 'app-player',
@@ -17,6 +18,7 @@ export class PlayerComponent implements OnInit, OnChanges {
   currentPlayer: number = null;
   bidWinner: number = null;
   bids: number = null
+  roundState = null
 
   
   constructor() { }
@@ -30,6 +32,7 @@ export class PlayerComponent implements OnInit, OnChanges {
     this.currentPlayer = this.playerInfo["currentPlayer"]
     this.bidWinner = this.playerInfo["bidWinner"]
     this.bids = this.playerInfo["bids"]
+    this.roundState = this.playerInfo['roundState'] === RoundState.BIDDING
 
   }
   ngOnChanges(): void {
@@ -40,6 +43,7 @@ export class PlayerComponent implements OnInit, OnChanges {
     this.currentPlayer = this.playerInfo["currentPlayer"]
     this.bidWinner = this.playerInfo["bidWinner"]
     this.bids = this.playerInfo["bids"]
+    this.roundState = this.playerInfo['roundState'] === RoundState.BIDDING
     console.log('player index')
     console.log(this.playerIndex)
     console.log('cards')

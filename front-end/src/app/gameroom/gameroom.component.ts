@@ -58,11 +58,12 @@ export class GameroomComponent implements OnInit {
     "hands" : [],
     "bidWinner" : null,
     "bids": [],
+    "roundState": null
   }
   isLeading = false
   currentPlayerIndex: number;
   topPlayers: any = []
-  //[{color: 'green', value: 1, points: 15, state: "face", exchange: false, kitty: true}, {color: 'yellow', value: 1, points: null, state: "face", exchange: false, kitty: true}, {color: 'birdy', value: 0, points: 20, state: "face", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}, {color: 'unknown', value: null, points: null, state: "flipped", exchange: false, kitty: true}]
+  throwOutPoints = false
 
 
   constructor(private snackBar: MatSnackBar, private router: Router, private gameService: GamesService, private authService: AuthService, private dialog: MatDialog, private socketService: WebSocketService) { }
@@ -94,12 +95,12 @@ export class GameroomComponent implements OnInit {
               this.topPlayers = this.playerNames.slice(2, this.playerNames.length - 1)
             }
 
-            console.log('top players.s')
-            console.log(this.topPlayers)
-
-
-            console.log(game)
             this.index = index
+
+            this.throwOutPoints = game.throwOutPoints
+
+            console.log('throw out points')
+            console.log(this.throwOutPoints)
 
             console.log(index)
 
@@ -135,7 +136,7 @@ export class GameroomComponent implements OnInit {
 
             this.numberOfPlayers = game['numberOfPlayers']
 
-            this.currentPlayerIndex = (game['currentPlayer']-index+4)%this.numberOfPlayers
+            this.currentPlayerIndex = (game['currentPlayer']-index+this.numberOfPlayers)%this.numberOfPlayers
           
 
             var players = game.players
@@ -301,7 +302,7 @@ export class GameroomComponent implements OnInit {
                       break;
                   }
 
-                  description = "Trump is " + trumpColorString + ". The " + choosenCard.number + " of " + partnerColorString + " is the partner."
+                  description = "Trump is " + trumpColorString + ". The " + choosenCard.value + " of " + partnerColorString + " is the partner."
                   
 
                 }else{
@@ -352,7 +353,8 @@ export class GameroomComponent implements OnInit {
                 "playing" : this.playing,
                 "hands" : this.hands,
                 "bidWinner" : (this.rounds[this.rounds.length -1].bidWinner-this.index+this.numberOfPlayers)%this.numberOfPlayers,
-                "bids" : round.bids
+                "bids" : round.bids,
+                "roundState": round.roundState
               }
 
 
@@ -459,7 +461,7 @@ export class GameroomComponent implements OnInit {
       this.cards.push(card)
       this.sort(this.cards)
       }else{
-        if(card.points == 0 || card.points == null){
+        if(card.points == 0 || card.points == null || this.throwOutPoints){
           card.kitty = true
           this.cards.splice(this.cards.indexOf(card),1)
           this.kitty.push(card)
@@ -529,7 +531,7 @@ export class GameroomComponent implements OnInit {
     }
     for (let card of this.kitty){
       console.log(card)
-      if(card.points != 0 && card.points != null){
+      if(card.points != 0 && card.points != null && !this.throwOutPoints){
         if(this.snack != null){
           this.snackMove.dismiss()
          }
@@ -562,7 +564,10 @@ export class GameroomComponent implements OnInit {
       }else if(data.action === 'discard'){
         console.log('discarding')
         this.authService.user.subscribe(user => {
-          this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.DISCARD, user.id, this.cards)})
+          for(let card of this.kitty){
+            card.state = 'flipped'
+          }
+          this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.DISCARD, user.id, {hand: this.cards, kitty: this.kitty})})
         })
       }else if(data.action === 'redeal'){
         if(data.payload){

@@ -71,7 +71,9 @@ module.exports = function(io: any){
 
             if(play.moveType === MoveType.INITALIZE_GAME){
 
-                const game = new Game(game_id, game_from_database.numberOfPlayers)
+                console.log(play)
+
+                const game = new Game(game_id, game_from_database.numberOfPlayers, play.payload.lastTrick, play.payload.mostCards, play.payload.throwOutPoints)
 
                 games.push(game)
 
@@ -184,6 +186,7 @@ module.exports = function(io: any){
         })
 
 
+
     socket.on('game_done', async (game_data: any) => {
 
      const {player_id, game_id} = game_data 
@@ -235,7 +238,22 @@ module.exports = function(io: any){
 
     })
 
+        socket.on('message', async (data: any) => {
+
+           
+            const {name, user_id, message, game_id} = data
+
+            console.log('message data')
+            console.log(data)
+
+            io.of('/games/socket').in(game_id).emit('new_message', {user: name, user_id: user_id, message: message})
+
+
+        })
     })
+
+    
+
 
 
 }

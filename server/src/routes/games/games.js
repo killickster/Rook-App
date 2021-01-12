@@ -11,14 +11,18 @@ router.post('/game', verifyToken, verifyNotHost, async (req,res) => {
 
     const host = await User.findOne({_id: req.user._id})
 
-
     const newGame = new GameSchema({
+
+        name: req.body.name,
         host_id: req.user._id,
         host_name: host.name,
         players_id: [req.user._id],
         playerNames: [host.name],
         numberOfPlayers: req.body.numberOfPlayers,
-        finished: false
+        finished: false,
+        throwOutPoints: req.body.throwOutPoints,
+        lastTrick: req.body.lastTrick,
+        mostCards: req.body.mostCards
     })
 
     try{
@@ -26,11 +30,15 @@ router.post('/game', verifyToken, verifyNotHost, async (req,res) => {
         const game = await newGame.save()
 
         const returnGame = {
+            name: game.name,
             hostName: game.host_name,
             id: game._id,
             numberOfPlayers: game.numberOfPlayers,
             playerNames: game.playerNames,
-            playerIds: game.players_id
+            playerIds: game.players_id,
+            throwOutPoints: game.throwOutPoints,
+            lastTrick: game.lastTrick,
+            mostCards: game.mostCards
         }
 
 
@@ -49,12 +57,16 @@ router.get('/', verifyToken, async (req,res) => {
     try{
         let gameReturnObject = games.map(game => {
             return {
+                name: game.name,
                 hostName: game.host_name,
                 id: game._id,
                 numberOfPlayers: game.numberOfPlayers,
                 playerNames: game.playerNames,
                 playerIds: game.players_id,
-                finished: game.finished
+                finished: game.finished,
+                throwOutPoints: game.throwOutPoints,
+                lastTrick: game.lastTrick,
+                mostCards: game.mostCards
             }
         })
 

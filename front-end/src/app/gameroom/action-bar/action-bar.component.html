@@ -40,7 +40,7 @@
                 <mat-option value="14">14</mat-option>
             </mat-select>
             </mat-form-field>
-            <button type="button" mat-raised-button color='primary' (click)="emitAction('choose_partner', {color: input1.value, number: input2.value} )">Submit</button>
+            <button type="button" mat-raised-button color='primary' (click)="emitAction('choose_partner', {color: input1.value, value: input2.value} )">Submit</button>
         </div>
         <button *ngIf="roundInfo" (click)="emitAction('round_info', true)" mat-raised-button color='primary'>Ok</button>
         <button *ngIf='redeal' (click)="emitAction('redeal', true)" mat-raised-button color="primary">Yes</button>

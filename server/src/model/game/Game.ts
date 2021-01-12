@@ -17,8 +17,18 @@ export class Game{
     public gameFinished = false
     public team1Indicies: number[] = []           //Used only for 4 man
     public team2Indicies: number[] = []           //Used only for 4 man
+    public lastTrick: boolean = false             //If true then last trick is worth 10
+    public mostCards: boolean = false             //If true most cards gets 10
+    public throwOutPoints: boolean = false        //If true you can throw out points
 
-    constructor(public game_id: string, public numberOfPlayers: number){
+    constructor(public game_id: string, public numberOfPlayers: number, lastTrick: boolean, mostCards: boolean, throwOutPoints: boolean){
+
+        console.log('throw out points')
+        console.log(throwOutPoints)
+
+        this.lastTrick = lastTrick
+        this.mostCards = mostCards 
+        this.throwOutPoints = throwOutPoints
         this.numberOfPlayersJoined = 0
         this.currentPlayer = null
 
@@ -56,8 +66,8 @@ export class Game{
 
                         this.team1Indicies.push(0)
                         this.team1Indicies.push(2)
-                        this.team1Indicies.push(1)
-                        this.team1Indicies.push(3)
+                        this.team2Indicies.push(1)
+                        this.team2Indicies.push(3)
                     }
 
 
@@ -140,7 +150,7 @@ export class Game{
 
                 if(roundDone){
                     console.log('round is done')
-                    var points = this.rounds[this.currentRoundIndex].calculatePoints()
+                    var points = this.rounds[this.currentRoundIndex].calculatePoints(this.lastTrick, this.mostCards, this.throwOutPoints)
                     var team1Points = 0
                     var team2Points = 0
                     var team1Indicies = this.rounds[this.currentRoundIndex].team1Indicies
@@ -290,6 +300,7 @@ class Round{
     public team1Indicies: number[] = []
     public team2Indicies: number[] = []
     public choosenCard: any = null
+    public discarded = false
 
     constructor(private numberOfPlayers: number){
         this.bid = 75
@@ -367,7 +378,7 @@ class Round{
         var chosenIndex = null
         for(var i = 0; i < this.hands.length; i++){
             for(var c of this.hands[i]){
-                if(c.number === card.value && c.color === card.color){
+                if(c.value === card.value && c.color === card.color){
                     chosenIndex = i
                 }
             }
@@ -421,15 +432,19 @@ class Round{
     }
 
 
-    setNewHand(cards: typeof Card[]){
+    setNewHand(payload: any){
 
-        for(let card of cards){
+        const {hand, kitty} = payload
+
+        for(let card of hand){
             card.state = 'flipped'
         }
         var indexOfBidWinner = this.bidders[0]
-        this.hands[indexOfBidWinner]  = cards
-        this.kitty = null
+        this.hands[indexOfBidWinner]  = hand
+        this.kitty = kitty
         this.roundState = RoundState.CHOOSING_TRUMP
+
+        this.discarded = true
         return indexOfBidWinner
     }
 
@@ -460,19 +475,57 @@ class Round{
 
     }
 
-    calculatePoints(){
+    calculatePoints(lastTrick: boolean, mostCards: boolean, throwOutPoints: boolean){
 
         var points = []
         for(let i = 0; i < this.numberOfPlayers; i++){
             points.push(0)
         }
-        for(let trick of this.tricks){
+
+        var numberOfTricksTeam1 = 0
+        var numberOfTricksTeam2 = 0
+
+        for(let i = 0; i < this.tricks.length; i++){
+            var trick = this.tricks[i]
             for(let card of trick.cards){
                 if(trick.winnerIndex !== null){
                     points[trick.winnerIndex] += card.points
+                    if(this.team1Indicies.includes(trick.winnerIndex)){
+                        numberOfTricksTeam1++
+                    }else{
+                        numberOfTricksTeam2++
+                    }
+                    var done = false
+                    
+                    if(i === this.tricks.length-2 && throwOutPoints){
+                        var pointsInKitty = 0
+                        if(this.kitty !== null){
+                            for(let card of this.kitty){
+                                pointsInKitty += card.points
+                            }
+
+                        }
+                        points[trick.winnerIndex] += pointsInKitty
+
+                        if(lastTrick){
+                            points[trick.winnerIndex] += 10
+                        }
+                    }
                 }
             }
         }
+
+
+
+        if(mostCards){
+            if(numberOfTricksTeam1 > numberOfTricksTeam2){
+                this.points[this.team1Indicies[0]] += 10
+            }else{
+                this.points[this.team2Indicies[0]] += 10
+            }
+
+        }
+
 
         return points
     }

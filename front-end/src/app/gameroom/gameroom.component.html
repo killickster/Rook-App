@@ -4,7 +4,7 @@
         <app-player *ngFor="let player of topPlayers; let i = index" [playerInfo]="playerInfo" [playerIndex]="i+2" [globalIndex]="(index+i+2)%this.numberOfPlayers"></app-player>
     </div>
 
-    <div class="flex-row">
+    <div class="flex-row side-players">
         <app-player [playerInfo]="playerInfo" [playerIndex]="1" [globalIndex]="(this.index+1)%this.numberOfPlayers"></app-player>
         <div *ngIf="playing" class="playing-table">
 
@@ -48,3 +48,4 @@
         </tr>
     </table>
 </app-info-snack>
+<app-chat></app-chat>

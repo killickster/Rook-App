@@ -27,6 +27,8 @@ import {MatButtonModule} from '@angular/material/button';
 import { InfoSnackComponent } from './gameroom/info-snack/info-snack.component';
 import { PlayerComponent } from './gameroom/player/player.component';
 import {MatSelectModule} from '@angular/material/select';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import { ChatComponent } from './gameroom/chat/chat.component';
 
 
 @NgModule({
@@ -46,6 +48,7 @@ import {MatSelectModule} from '@angular/material/select';
     ActionBarComponent,
     InfoSnackComponent,
     PlayerComponent,
+    ChatComponent,
   ],
   entryComponents:[
     BidComponent
@@ -62,7 +65,8 @@ import {MatSelectModule} from '@angular/material/select';
     MatInputModule,
     MatSnackBarModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    MatCheckboxModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true},

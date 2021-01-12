@@ -29,14 +29,14 @@ app.use('/api/user', authRoute)
 app.use('/api/posts', postRoute)
 app.use('/api/games', gameRoute)
 
-server.listen(3000, 'micah.local',() => {console.log("Server is up and running")})
+server.listen(3000, 'localhost',() => {console.log("Server is up and running")})
 
 //var url = 'http://' + process.env.SERVER + ":4200"
 
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'http://micah.local:4200',
+        origin: 'http://localhost:4200',
         method:["GET", "POST"]
     }
 })

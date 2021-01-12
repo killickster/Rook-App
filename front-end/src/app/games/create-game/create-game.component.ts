@@ -16,24 +16,31 @@ export class CreateGameComponent implements OnInit {
   myForm: FormGroup
   errorMessage: string
 
+
   constructor(private gameService: GamesService, private fb: FormBuilder, private dialogRef: MatDialogRef<CreateGameComponent>) { }
 
   ngOnInit(): void {
 
     this.myForm = this.fb.group({
       name: ['', Validators.required],
-      numberOfPlayers: ['', Validators.required]
+      numberOfPlayers: ['', Validators.required],
+      throwOutPoints: [false],
+      mostCards: [false],
+      lastTrick: [false],
     })
   }
 
   enterGame(){
+
+      console.log(this.myForm.value)
+
 
     if(this.myForm.valid){
 
       const formValue = this.myForm.value
 
       if(formValue.numberOfPlayers >= 3 && formValue.numberOfPlayers <= 6){
-        this.gameService.addGame(formValue.numberOfPlayers, formValue.name)
+        this.gameService.addGame(formValue.numberOfPlayers, formValue.name, formValue.lastTrick, formValue.mostCards, formValue.throwOutPoints)
         this.createdGame = true
         this.dialogRef.close()
       }else{

@@ -1,5 +1,5 @@
 
-<form [formGroup]="myForm" (ngSubmit)="enterGame()" class="form-flex">
+<form [formGroup]="myForm" (ngSubmit)="enterGame()" class="form-flex ">
 
     <div *ngIf="errorMessage" class="row">
         <div class="col-sm-6">
@@ -24,12 +24,27 @@
             </mat-dialog-content>
         </div>
     </div>
+    <div>
+        <div class="row">
+            <mat-checkbox class = "tp-margin" formControlName = "lastTrick">Last Trick 10 pts</mat-checkbox>
+        </div>
+
+        <div class="row">
+            <mat-checkbox class = "tp-margin" formControlName = "mostCards">Most Cards 10 pts</mat-checkbox>
+        </div>
+        <div class="row">
+            <mat-checkbox class = "tp-margin" formControlName = "throwOutPoints">Throw Out Points Allowed</mat-checkbox>
+        </div>
+
+    </div>
 
     <div class="row flex-row">
         <div class="col-sm-2 wrap">
             <button mat-button class="btn btn-primary" color="primary" type="submit" [disabled]="myForm.invalid">Create Game</button>
         </div>
     </div>
+
+
 
 </form>
 

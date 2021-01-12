@@ -46,7 +46,7 @@ export class ActionBarComponent {
     }else if(action === 'redeal'){
       this.action.next(new RookAction('redeal', payload))
     }else if(action === 'choose_partner'){
-      if(this.values.includes(+payload.number) && this.colors.includes(payload.color)){
+      if(this.values.includes(+payload.value) && this.colors.includes(payload.color)){
 
         switch(payload.color){
           case 'black':
@@ -62,6 +62,8 @@ export class ActionBarComponent {
             payload.color = Color.GREEN
             break;
       }
+
+      payload.value = +payload.value
 
       this.action.next(new RookAction('choose_partner', payload))
     }

@@ -168,13 +168,13 @@ export class GamesService {
 
   }
 
-  addGame(numberOfPlayers: number, name: string){
-    return this.http.post<Game>('api/games/game', {numberOfPlayers: numberOfPlayers, name: name}).pipe(catchError(this.handleErrors), tap(game => {
+  addGame(numberOfPlayers: number, name: string, lastTrick: boolean, mostCards: boolean, throwOutPoints: boolean){
+    return this.http.post<Game>('api/games/game', {numberOfPlayers: numberOfPlayers, name: name, throwOutPoints: throwOutPoints, mostCards: mostCards, lastTrick: lastTrick}).pipe(catchError(this.handleErrors), tap(game => {
       this.games.push(game)
       this.game.next(game)
 
       this.authService.user.subscribe((user) =>{
-        this.socketService.emit('play', {player_id: user.id, game_id : game.id, play: new Play(MoveType.INITALIZE_GAME , user.id, new Player(user.id, user.name))})
+        this.socketService.emit('play', {player_id: user.id, game_id : game.id, play: new Play(MoveType.INITALIZE_GAME , user.id, {player: new Player(user.id, user.name),lastTrick: lastTrick, mostCards: mostCards, throwOutPoints: throwOutPoints})})
       })
     })).subscribe(resData => {
       this.gamesChanged.next(this.games)

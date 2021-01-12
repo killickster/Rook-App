@@ -2,6 +2,10 @@ const mongoose = require('mongoose')
 const User = require('./User')
 
 const gameSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
     host_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -29,6 +33,18 @@ const gameSchema = new mongoose.Schema({
     },
     winners:{
         type: [mongoose.Schema.Types.ObjectId]
+    },
+    throwOutPoints:{
+        type: Boolean,
+        required: true
+    },
+    lastTrick: {
+        type: Boolean,
+        required: true
+    },
+    mostCards: {
+        type: Boolean,
+        require: true
     }
 })
 
