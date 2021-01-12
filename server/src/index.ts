@@ -29,13 +29,22 @@ app.use('/api/user', authRoute)
 app.use('/api/posts', postRoute)
 app.use('/api/games', gameRoute)
 
+/*
+app.use(express.static(__dirname + '/../dist'))
+
+
+app.route('/*').get(function(req: any, res: any) {
+    return res.sendFile(__dirname + '/../dist/index.html');
+});
+*/
+
 server.listen(3000, 'localhost',() => {console.log("Server is up and running")})
 
 //var url = 'http://' + process.env.SERVER + ":4200"
 
-
 const io = require('socket.io')(server, {
     cors: {
+        //origin: 'https://lovely-goat-19.loca.lt',
         origin: 'http://localhost:4200',
         method:["GET", "POST"]
     }
