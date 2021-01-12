@@ -46,15 +46,17 @@
 
             </td>
         </tr>
-        
+
     </table>
     <table *ngIf="numberOfPlayers !== 4">
-        <tr>
-            <th *ngFor="let name of playerNames">{{name}}</th>
-            <th>Bid</th>
-            <th>Er</th>
-            <th>trump</th>
-        </tr>
+        <thead>
+            <tr>
+                <th *ngFor="let name of playerNames">{{name}}</th>
+                <th>Bid</th>
+                <th>Bidder</th>
+                <th>Trump</th>
+            </tr>
+        </thead>
         <tr *ngFor="let round of rounds">
             <td *ngFor="let point of round.points; let i = index">{{round.points[(this.index+i)%numberOfPlayers]}}</td>
             <td>{{round.bid === 75 ? "80" : round.bid}}</td>
@@ -67,8 +69,11 @@
         <tfoot>
             <tr>
                 <td *ngFor="let point of this.points">{{point}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
-        <tfoot>
+            <tfoot>
 
 
 

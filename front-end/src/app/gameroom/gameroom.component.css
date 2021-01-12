@@ -150,6 +150,20 @@ td {
     margin-top: 68px;
 }
 
-tfoot {
-    border-top: 1px solid white;
+thead tr {
+    border: none!important;
+}
+
+tr {
+    border-top: 1px solid rgb(119, 119, 119)
+}
+
+tfoot tr {
+    border: none;
+    border-top: 1px solid rgb(255, 255, 255);
+    font-weight: bold;
+}
+
+th {
+    font-weight: 500!important;
 }
