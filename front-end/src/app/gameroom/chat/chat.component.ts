@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/auth/user.model';
 import { GamesService } from 'src/app/services/games.service';
@@ -15,10 +15,21 @@ export class ChatComponent implements OnInit {
   messages = []
   numberOfUnreadMessages = 0
   @ViewChild('message') message: ElementRef 
+  @ViewChild('scrollbox') scrollbox: ElementRef 
+  @ViewChild('chat') chat: ElementRef 
+  @ViewChild('circle') circle: ElementRef 
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    console.log(event.target)
+    if(this.chat.nativeElement.contains(event.target)) {
+
+    } else if(this.chatOpen && !this.circle.nativeElement.contains(event.target)){
+      this.chatOpen = false;
+    }
+  }
 
 
-  constructor(private socketService: WebSocketService, private authService: AuthService, private gameService: GamesService) {
-
+  constructor(private socketService: WebSocketService, private authService: AuthService, private gameService: GamesService,private eRef: ElementRef) {
       socketService.listen('new_message').subscribe((message: any) => {
 
         this.authService.user.subscribe(user => {
@@ -31,6 +42,7 @@ export class ChatComponent implements OnInit {
               this.numberOfUnreadMessages++
             }
           }
+          this.scrollbox.nativeElement.scrollTop = this.scrollbox.nativeElement.scrollHeight
         })
 
         
@@ -41,6 +53,11 @@ export class ChatComponent implements OnInit {
   toggleChat(){
 
     this.chatOpen = !this.chatOpen
+    if(this.chatOpen){
+      setTimeout(()=>{ // this will make the execution after the above boolean has changed
+        this.message.nativeElement.focus();
+      },0);  
+    }
 
     this.numberOfUnreadMessages = 0
 

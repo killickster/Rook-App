@@ -1,18 +1,25 @@
-
-
-
 <div *ngIf="numberOfUnreadMessages > 0" [ngStyle]="{'color': 'white'}" class="square-icon">{{numberOfUnreadMessages}}</div>
+<div #circle class="circle-button" (click)="toggleChat()">
+    <div class="circle-icon">
 
-<div *ngIf="this.chatOpen" class="chat-box">
-    <div class="info-box" >
-        <p *ngFor="let message of messages" [class.me]="message.me" >{{message.me ? "you say: " : message.user + " says: "}} {{message.message}}</p>
-        <input class="message-input" type="text" (keydown)="keyDown($event)" autofocus matInput #message>
-        <button class='btn btn-primary message-submit-button' type="submit" (click)="sendMessage(message.value)">Enter</button>
     </div>
+
+
+
 </div>
 
 
-<div class="circle-button" (click)="toggleChat()">
-    <div class="circle-icon">
+<div #chat [class.show-chat]="this.chatOpen" class="info-box">
+    <div #scrollbox class="messages">
+        <div *ngFor="let message of messages" [class.me]="message.me" [class.other]="!message.me">
+            <div>
+                <div *ngIf="!message.me" class="message-title">{{message.user}}</div>
+                <div class="message">{{message.message}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="input-container">
+        <input autocomplete="off" class="message-input" type="text" (keydown)="keyDown($event)" autofocus matInput #message>
+        <button class='btn btn-primary message-submit-button' type="submit" (click)="sendMessage(message.value)">Send</button>
     </div>
 </div>
