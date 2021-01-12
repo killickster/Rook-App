@@ -4,7 +4,8 @@ import {Color} from '../services/models/color.model'
 
 
 @Pipe({
-    name: 'bidDisplay'
+    name: 'bidDisplay',
+    pure: false
 })
 
 
@@ -12,9 +13,7 @@ export class BidDisplayPipe implements PipeTransform{
     
 
     transform(bidWinner: any, index: number, players: any[]){
-        console.log('hello')
-        console.log(players[(bidWinner-index)%players.length])
-        return players[(bidWinner-index+4)%players.length]
+        return players[(bidWinner-index+players.length)%players.length]
 
     }
 }

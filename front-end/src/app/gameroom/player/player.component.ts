@@ -19,6 +19,11 @@ export class PlayerComponent implements OnInit, OnChanges {
   bidWinner: number = null;
   bids: number = null
   roundState = null
+  bid: number = 0
+  notYetBid: boolean = true
+  bidders: number[] = []
+  hasBid = false
+  description: string
 
   
   constructor() { }
@@ -33,7 +38,19 @@ export class PlayerComponent implements OnInit, OnChanges {
     this.bidWinner = this.playerInfo["bidWinner"]
     this.bids = this.playerInfo["bids"]
     this.roundState = this.playerInfo['roundState'] === RoundState.BIDDING
+    this.bid = this.bids[this.globalIndex]
+    this.bidders = this.playerInfo['bidders']
 
+    if(this.bidders.includes(this.globalIndex) && this.bid < 80){
+      this.hasBid = false
+      this.description =  "Not yet bid"
+    }else if(this.bid < 80){
+      this.description = "pass"
+    }else{
+      this.description = this.bid + ""
+    }
+
+    console.log(this.description)
   }
   ngOnChanges(): void {
     this.hands = this.playerInfo["hands"]
@@ -44,13 +61,16 @@ export class PlayerComponent implements OnInit, OnChanges {
     this.bidWinner = this.playerInfo["bidWinner"]
     this.bids = this.playerInfo["bids"]
     this.roundState = this.playerInfo['roundState'] === RoundState.BIDDING
-    console.log('player index')
-    console.log(this.playerIndex)
-    console.log('cards')
-    console.log(this.hands[this.playerIndex])
-    console.log('global index')
-    console.log(this.globalIndex)
-    console.log(this.hands)
+    this.bid = this.bids[this.globalIndex]
+    this.bidders = this.playerInfo['bidders']
+    if(this.bidders.includes(this.globalIndex) && this.bid < 80){
+      this.hasBid = false
+      this.description =  "Not yet bid"
+    }else if(this.bid < 80){
+      this.description = "pass"
+    }else{
+      this.description = this.bid + ""
+    }
   }
 
 }

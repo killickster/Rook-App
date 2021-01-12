@@ -58,7 +58,8 @@ export class GameroomComponent implements OnInit {
     "hands" : [],
     "bidWinner" : null,
     "bids": [],
-    "roundState": null
+    "roundState": null,
+    "bidders": []
   }
   isLeading = false
   currentPlayerIndex: number;
@@ -353,7 +354,8 @@ export class GameroomComponent implements OnInit {
                 "hands" : this.hands,
                 "bidWinner" : (this.rounds[this.rounds.length -1].bidWinner-this.index+this.numberOfPlayers)%this.numberOfPlayers,
                 "bids" : round.bids,
-                "roundState": round.roundState
+                "roundState": round.roundState,
+                "bidders" : round.bidders
               }
 
 
