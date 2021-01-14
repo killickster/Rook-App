@@ -43,7 +43,7 @@ server.listen(3000, 'localhost',() => {console.log("Server is up and running")})
 const io = require('socket.io')(server, {
     cors: {
         //origin: 'https://lovely-goat-19.loca.lt',
-        origin: 'https://fat-wolverine-76.loca.lt',
+        origin: 'https://ec2-52-24-67-171.us-west-2.compute.amazonaws.com:3000',
         method:["GET", "POST"]
     }
 })
