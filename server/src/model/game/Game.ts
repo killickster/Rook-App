@@ -193,7 +193,7 @@ export class Game{
                                     this.rounds[this.currentRoundIndex].points[i] = team2Points / 2
                                     this.players[i].addPoints(team2Points/2)
                                 }
-                                if(team1Points < 200){
+                                if(team2Points < 200){
                                     this.players[i].addPoints(team2Points)
                                     this.rounds[this.currentRoundIndex].points[i] = team2Points 
                                 }else{
