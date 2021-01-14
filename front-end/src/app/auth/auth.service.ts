@@ -136,6 +136,8 @@ export class AuthService {
       case 'EMAIL_EXISTS':
         message = "this email is taken"
         break
+      case 'INVALID_REGISTRATION':
+        message ="invalid registration password and username must be at least 6 characters"
 
     }
     return throwError(message)

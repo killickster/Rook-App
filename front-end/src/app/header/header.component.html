@@ -11,7 +11,6 @@
         <div class="navbar-collapse" [class.collapse]="collapsed" (window:resize)="collapsed=true">
             <ul class="nav navbar-nav">
                 <li *ngIf="authenticated" ><a style="cursor: pointer;" routerLink="/games">Games</a></li>
-                <li *ngIf="authenticated" ><a style="cursor: pointer;">Leaderboard</a></li>
                 <li *ngIf="!authenticated"><a style="cursor: pointer;" routerLink="/register">Register</a></li>
                 <li *ngIf="!authenticated"><a style="cursor: pointer;" routerLink="/login">Login</a></li>
             </ul>

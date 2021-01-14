@@ -176,17 +176,31 @@ export class Game{
 
                         for(var i = 0; i < this.players.length; i++){
                             if(team1Indicies.includes(i)){
-                                this.rounds[this.currentRoundIndex].points[i] = team1Points
-                                this.players[i].addPoints(team1Points)
+                                if(team1Points < 200){
+                                    this.rounds[this.currentRoundIndex].points[i] = team1Points
+                                    this.players[i].addPoints(team1Points)
+                                }else{
+                                    this.rounds[this.currentRoundIndex].points[i] = 300
+                                    this.players[i].addPoints(300)
+
+                                }
+
                             }else if(team2Indicies.includes(i)){
                                 if(this.numberOfPlayers === 3){
                                     if(team2Points%10 === 5){
                                         team2Points -= 5
                                     }
                                     this.rounds[this.currentRoundIndex].points[i] = team2Points / 2
+                                    this.players[i].addPoints(team2Points/2)
                                 }
-                                this.players[i].addPoints(team2Points/2)
-                                
+                                if(team1Points < 200){
+                                    this.players[i].addPoints(team2Points)
+                                    this.rounds[this.currentRoundIndex].points[i] = team2Points 
+                                }else{
+                                    this.players[i].addPoints(300)
+                                    this.rounds[this.currentRoundIndex].points[i] = 300
+
+                                }
                             }
                         }
 
@@ -506,36 +520,52 @@ class Round{
                     }else{
                         numberOfTricksTeam2++
                     }
-                    var done = false
                     
-                    if(i === this.tricks.length-2 && throwOutPoints){
-                        var pointsInKitty = 0
-                        if(this.kitty !== null){
-                            for(let card of this.kitty){
-                                pointsInKitty += card.points
-                            }
 
-                        }
-                        points[trick.winnerIndex] += pointsInKitty
-
-                        if(lastTrick){
-                            points[trick.winnerIndex] += 10
-                        }
-                    }
                 }
+
+
             }
+
+
+            if(i === this.tricks.length-2 && throwOutPoints){
+                var pointsInKitty = 0
+                if(this.kitty !== null){
+                    for(let card of this.kitty){
+                        pointsInKitty += card.points
+                    }
+
+                }
+
+                if(trick.winnerIndex !== null){
+                    console.log('points in kitty')
+                    console.log(pointsInKitty)
+                    points[trick.winnerIndex] += pointsInKitty
+
+                    if(lastTrick){
+                        points[trick.winnerIndex] += 10
+                    }
+
+                }
+
+            }
+
+
+
         }
 
 
 
         if(mostCards){
             if(numberOfTricksTeam1 > numberOfTricksTeam2){
-                this.points[this.team1Indicies[0]] += 10
+                points[this.team1Indicies[0]] += 10
             }else{
-                this.points[this.team2Indicies[0]] += 10
+                points[this.team2Indicies[0]] += 10
             }
 
         }
+
+        this.points = points
 
 
         return points

@@ -9,8 +9,7 @@ import * as io from 'socket.io-client/dist/socket.io'
 export class WebSocketService {
 
   socket: any 
-  //readonly uri = 'wss://lovely-goat-19.loca.lt/games/socket'
-  readonly uri = 'ws://localhost:3000/games/socket'
+  readonly uri = 'wss://fat-wolverine-76.loca.lt/games/socket'
 
   constructor() { 
     console.log(this.uri)

@@ -43,7 +43,7 @@ router.post('/register', async (req,res) => {
         res.send({registerd: 'true'})
 
     }catch(err){
-        res.status(400).send(err)
+        res.status(400).send('INVALID_REGISTRATION')
     }
 })
 

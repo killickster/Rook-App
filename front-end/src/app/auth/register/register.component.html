@@ -1,5 +1,13 @@
 <div class="row">
     <div class="col-sm-6 col-md-6 col-md-offset-3">
+
+        <div *ngIf="error" class="row">
+            <div class="col-sm-6">
+                <div class="alert alert-danger">
+                    {{error}}
+                </div>
+            </div>
+        </div>
         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
                 <label for="name">Username</label>
@@ -39,8 +47,8 @@
                     >
                 </div>
             </div>
-                <button class="btn btn-primary" type="submit" [class.disabled]="!signupForm.valid">Sign Up</button>
-                <button class="btn btn-primary" type="button" routerLink="/login">Swith to Sign In</button>
+                <button class="btn btn-primary auth-button" type="submit" [class.disabled]="!signupForm.valid">Sign Up</button>
+                <button class="btn btn-primary auth-button" type="button" routerLink="/login">Sign In</button>
         </form>
     </div>
 </div>

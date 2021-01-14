@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators} from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import {AuthService} from '../auth.service'
 
@@ -11,8 +12,9 @@ import {AuthService} from '../auth.service'
 export class RegisterComponent implements OnInit {
 
   signupForm: FormGroup
+  error: string
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
 
@@ -49,12 +51,17 @@ export class RegisterComponent implements OnInit {
       const password = this.signupForm.get('passwords').get('password').value
       this.authService.signup(username, email, password).subscribe(resData => {
         console.log(resData)
+        this.router.navigate(['/login'])
       }, errorRes => {
-        console.log(errorRes)
+        this.error = errorRes
       })
     }
 
     this.signupForm.reset()
+
+
+
+    this.router
 
   }
 
