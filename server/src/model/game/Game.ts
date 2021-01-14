@@ -176,21 +176,23 @@ export class Game{
 
                         for(var i = 0; i < this.players.length; i++){
                             if(team1Indicies.includes(i)){
-                                if(team1Points < 200){
-                                    this.rounds[this.currentRoundIndex].points[i] = team1Points
-                                    this.players[i].addPoints(team1Points)
-                                }else{
-                                    this.rounds[this.currentRoundIndex].points[i] = 300
-                                    this.players[i].addPoints(300)
 
+                                var p = 0
+
+                                if(this.rounds[this.currentRoundIndex].numberOfTricksTeam2 === 0){
+                                    p = 300             //Made 300
+                                }else{
+                                    p = team1Points
                                 }
+                                this.rounds[this.currentRoundIndex].points[i] = p
+                                this.players[i].addPoints(p)
 
                             }else if(team2Indicies.includes(i)){
 
                                 var p = 0
 
                                 if(this.rounds[this.currentRoundIndex].numberOfTricksTeam1 === 0 && this.numberOfPlayers === 3){
-                                    p = 300 / 2
+                                    p = 300 / 2  //divide 300 by two players
                                 }else if(this.rounds[this.currentRoundIndex].numberOfTricksTeam1 === 0){
                                     p = 300
                                 }else if(this.numberOfPlayers === 3){
