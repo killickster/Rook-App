@@ -21,6 +21,8 @@ export class GameroomGaurdService implements CanActivate{
       if(!partOfGame){
         this.router.navigate(['/games'])
       }
+
+      return true;
     }))
 
   }
