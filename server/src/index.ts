@@ -6,10 +6,8 @@ const dotenv = require('dotenv')
 const cors = require('cors')
 const game_socket = require('./routes/sockets/game_socket/game_socket')
 
-const corsOptions = {
-  };
 
-app.use(cors(corsOptions))
+app.use(cors())
 
 //Import Routes
 const authRoute = require('./routes/auth')
