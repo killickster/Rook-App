@@ -176,31 +176,37 @@ export class Game{
 
                         for(var i = 0; i < this.players.length; i++){
                             if(team1Indicies.includes(i)){
-                                if(team1Points < 200){
-                                    this.rounds[this.currentRoundIndex].points[i] = team1Points
-                                    this.players[i].addPoints(team1Points)
-                                }else{
-                                    this.rounds[this.currentRoundIndex].points[i] = 300
-                                    this.players[i].addPoints(300)
 
+                                var p = 0
+
+                                if(this.rounds[this.currentRoundIndex].numberOfTricksTeam2 === 0){
+                                    p = 300             //Made 300
+                                }else{
+                                    p = team1Points
                                 }
+                                this.rounds[this.currentRoundIndex].points[i] = p
+                                this.players[i].addPoints(p)
 
                             }else if(team2Indicies.includes(i)){
-                                if(this.numberOfPlayers === 3){
+
+                                var p = 0
+
+                                if(this.rounds[this.currentRoundIndex].numberOfTricksTeam1 === 0 && this.numberOfPlayers === 3){
+                                    p = 300 / 2  //divide 300 by two players
+                                }else if(this.rounds[this.currentRoundIndex].numberOfTricksTeam1 === 0){
+                                    p = 300
+                                }else if(this.numberOfPlayers === 3){
                                     if(team2Points%10 === 5){
                                         team2Points -= 5
                                     }
-                                    this.rounds[this.currentRoundIndex].points[i] = team2Points / 2
-                                    this.players[i].addPoints(team2Points/2)
-                                }
-                                if(team2Points < 200){
-                                    this.players[i].addPoints(team2Points)
-                                    this.rounds[this.currentRoundIndex].points[i] = team2Points 
+                                    p = team2Points/2 
                                 }else{
-                                    this.players[i].addPoints(300)
-                                    this.rounds[this.currentRoundIndex].points[i] = 300
-
+                                    p = team2Points
                                 }
+                                
+                                this.rounds[this.currentRoundIndex].points[i] = p
+                                this.players[i].addPoints(p)
+
                             }
                         }
 
@@ -317,6 +323,8 @@ class Round{
     public team2Indicies: number[] = []
     public choosenCard: any = null
     public discarded = false
+    public numberOfTricksTeam1: number = 0
+    public numberOfTricksTeam2: number = 0
 
     constructor(private numberOfPlayers: number){
         this.bid = 75
@@ -507,8 +515,8 @@ class Round{
             points.push(0)
         }
 
-        var numberOfTricksTeam1 = 0
-        var numberOfTricksTeam2 = 0
+        this.numberOfTricksTeam1 = 0
+        this.numberOfTricksTeam2 = 0
 
         for(let i = 0; i < this.tricks.length; i++){
             var trick = this.tricks[i]
@@ -516,9 +524,9 @@ class Round{
                 if(trick.winnerIndex !== null){
                     points[trick.winnerIndex] += card.points
                     if(this.team1Indicies.includes(trick.winnerIndex)){
-                        numberOfTricksTeam1++
+                        this.numberOfTricksTeam1++
                     }else{
-                        numberOfTricksTeam2++
+                        this.numberOfTricksTeam2++
                     }
                     
 
@@ -557,7 +565,7 @@ class Round{
 
 
         if(mostCards){
-            if(numberOfTricksTeam1 > numberOfTricksTeam2){
+            if(this.numberOfTricksTeam1 > this.numberOfTricksTeam2){
                 points[this.team1Indicies[0]] += 10
             }else{
                 points[this.team2Indicies[0]] += 10
