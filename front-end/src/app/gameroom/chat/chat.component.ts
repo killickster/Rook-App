@@ -53,6 +53,7 @@ export class ChatComponent implements OnInit {
   toggleChat(){
 
     this.chatOpen = !this.chatOpen
+    this.scrollbox.nativeElement.scrollTop = this.scrollbox.nativeElement.scrollHeight
     if(this.chatOpen){
       setTimeout(()=>{ // this will make the execution after the above boolean has changed
         this.message.nativeElement.focus();
