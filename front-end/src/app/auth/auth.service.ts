@@ -68,6 +68,8 @@ export class AuthService {
       const expirationDuration = (+expirationDate*1000) - Date.now()
       this.autoLogout(expirationDuration)
       this.user.next(loadedUser)
+
+      this.router.navigate(['/games'])
     }
 
 
