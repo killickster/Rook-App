@@ -22,6 +22,7 @@ const appRoutes: Routes = [
     {path: 'register', component: RegisterComponent},
     {path: 'login', component: LoginComponent},
     {path: 'gameroom/:id', component: GameroomComponent, canActivate: [AuthGuardService, GameroomGaurdService]}
+    
 
 ]
 
