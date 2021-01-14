@@ -42,7 +42,7 @@ server.listen(3000, () => {console.log("Server is up and running")})
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'http://ec2-52-24-67-171.us-west-2.compute.amazonaws.com:3000',
+        origin: 'http://ec2-52-24-67-171.us-west-2.compute.amazonaws.com',
         method:["GET", "POST"]
     }
 })

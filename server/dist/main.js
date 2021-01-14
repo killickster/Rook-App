@@ -3580,7 +3580,7 @@ __webpack_require__.r(__webpack_exports__);
 
 class WebSocketService {
     constructor() {
-        this.uri = 'ws://ec2-52-24-67-171.us-west-2.compute.amazonaws.com:3000/games/socket';
+        this.uri = 'ws://ec2-52-24-67-171.us-west-2.compute.amazonaws.com/games/socket';
         console.log(this.uri);
         this.socket = socket_io_client_dist_socket_io__WEBPACK_IMPORTED_MODULE_2__(this.uri);
     }
