@@ -3578,11 +3578,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 class WebSocketService {
     constructor() {
-        this.uri = 'ws://ec2-52-24-67-171.us-west-2.compute.amazonaws.com/games/socket';
-        console.log(this.uri);
-        this.socket = socket_io_client_dist_socket_io__WEBPACK_IMPORTED_MODULE_2__(this.uri);
+        this.uri_prod = 'ws://ec2-52-24-67-171.us-west-2.compute.amazonaws.com/games/socket';
+        this.uri_dev = 'ws://localhost:3000/games/socket';
+        if (Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["isDevMode"])()) {
+            this.socket = socket_io_client_dist_socket_io__WEBPACK_IMPORTED_MODULE_2__(this.uri_dev);
+            console.log(this.uri_dev);
+        }
+        else {
+            this.socket = socket_io_client_dist_socket_io__WEBPACK_IMPORTED_MODULE_2__(this.uri_prod);
+            console.log(this.uri_prod);
+        }
     }
     listen(eventName) {
         return new rxjs__WEBPACK_IMPORTED_MODULE_1__["Observable"]((subscriber) => {
