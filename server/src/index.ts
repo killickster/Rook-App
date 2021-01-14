@@ -36,14 +36,14 @@ app.route('/*').get(function(req: any, res: any) {
     return res.sendFile(__dirname + '/../dist/index.html');
 });
 
-server.listen(3000, 'localhost',() => {console.log("Server is up and running")})
+server.listen(3000,() => {console.log("Server is up and running")})
 
 //var url = 'http://' + process.env.SERVER + ":4200"
 
 const io = require('socket.io')(server, {
     cors: {
         //origin: 'https://lovely-goat-19.loca.lt',
-        origin: 'https://ec2-52-24-67-171.us-west-2.compute.amazonaws.com:3000',
+        origin: 'http://ec2-52-24-67-171.us-west-2.compute.amazonaws.com:3000',
         method:["GET", "POST"]
     }
 })
