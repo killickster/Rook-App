@@ -9,7 +9,7 @@ import * as io from 'socket.io-client/dist/socket.io'
 export class WebSocketService {
 
   socket: any 
-  readonly uri = 'wss://ec2-52-24-67-171.us-west-2.compute.amazonaws.com:3000'
+  readonly uri = 'ws://ec2-52-24-67-171.us-west-2.compute.amazonaws.com:3000'
 
   constructor() { 
     console.log(this.uri)
