@@ -524,9 +524,9 @@ class Round{
                 if(trick.winnerIndex !== null){
                     points[trick.winnerIndex] += card.points
                     if(this.team1Indicies.includes(trick.winnerIndex)){
-                        numberOfTricksTeam1++
+                        this.numberOfTricksTeam1++
                     }else{
-                        numberOfTricksTeam2++
+                        this.numberOfTricksTeam2++
                     }
                     
 
@@ -565,7 +565,7 @@ class Round{
 
 
         if(mostCards){
-            if(numberOfTricksTeam1 > numberOfTricksTeam2){
+            if(this.numberOfTricksTeam1 > this.numberOfTricksTeam2){
                 points[this.team1Indicies[0]] += 10
             }else{
                 points[this.team2Indicies[0]] += 10
