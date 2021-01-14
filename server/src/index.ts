@@ -38,11 +38,11 @@ app.route('/*').get(function(req: any, res: any) {
 
 server.listen(3000, () => {console.log("Server is up and running")})
 
-//var url = 'http://' + process.env.SERVER + ":4200"
+var url = process.env.SERVER
 
 const io = require('socket.io')(server, {
     cors: {
-        origin: 'http://ec2-52-24-67-171.us-west-2.compute.amazonaws.com',
+        origin: url,
         method:["GET", "POST"]
     }
 })
