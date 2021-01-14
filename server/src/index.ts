@@ -36,7 +36,7 @@ app.route('/*').get(function(req: any, res: any) {
     return res.sendFile(__dirname + '/../dist/index.html');
 });
 
-server.listen(3000, 'localhost', () => {console.log("Server is up and running")})
+server.listen(3000, () => {console.log("Server is up and running")})
 
 //var url = 'http://' + process.env.SERVER + ":4200"
 
