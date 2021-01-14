@@ -186,21 +186,25 @@ export class Game{
                                 }
 
                             }else if(team2Indicies.includes(i)){
-                                if(this.numberOfPlayers === 3){
+
+                                var p = 0
+
+                                if(this.rounds[this.currentRoundIndex].numberOfTricksTeam1 === 0 && this.numberOfPlayers === 3){
+                                    p = 300 / 2
+                                }else if(this.rounds[this.currentRoundIndex].numberOfTricksTeam1 === 0){
+                                    p = 300
+                                }else if(this.numberOfPlayers === 3){
                                     if(team2Points%10 === 5){
                                         team2Points -= 5
                                     }
-                                    this.rounds[this.currentRoundIndex].points[i] = team2Points / 2
-                                    this.players[i].addPoints(team2Points/2)
-                                }
-                                if(team2Points < 200){
-                                    this.players[i].addPoints(team2Points)
-                                    this.rounds[this.currentRoundIndex].points[i] = team2Points 
+                                    p = team2Points/2 
                                 }else{
-                                    this.players[i].addPoints(300)
-                                    this.rounds[this.currentRoundIndex].points[i] = 300
-
+                                    p = team2Points
                                 }
+                                
+                                this.rounds[this.currentRoundIndex].points[i] = p
+                                this.players[i].addPoints(p)
+
                             }
                         }
 
@@ -317,6 +321,8 @@ class Round{
     public team2Indicies: number[] = []
     public choosenCard: any = null
     public discarded = false
+    public numberOfTricksTeam1: number = 0
+    public numberOfTricksTeam2: number = 0
 
     constructor(private numberOfPlayers: number){
         this.bid = 75
@@ -507,8 +513,8 @@ class Round{
             points.push(0)
         }
 
-        var numberOfTricksTeam1 = 0
-        var numberOfTricksTeam2 = 0
+        this.numberOfTricksTeam1 = 0
+        this.numberOfTricksTeam2 = 0
 
         for(let i = 0; i < this.tricks.length; i++){
             var trick = this.tricks[i]
