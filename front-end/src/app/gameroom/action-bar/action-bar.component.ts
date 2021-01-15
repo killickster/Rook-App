@@ -25,6 +25,7 @@ export class ActionBarComponent {
   redeal = (this.data.action === "redeal")
   choosePartner = (this.data.action === "choose_partner")
   roundInfo = (this.data.action === "round_info")
+  leaveRoom = (this.data.action === "leave_room")
   startingBid = this.data.payload
 
   decrementBid(){
@@ -71,6 +72,9 @@ export class ActionBarComponent {
 
     }else if(action === 'round_info'){
       this.action.next(new RookAction('round_info', payload))
+    }else if(action === 'leave_room'){
+      this.action.next(new RookAction('leave_room', payload))
+
     }
   }
 }

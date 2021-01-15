@@ -217,16 +217,14 @@ export class Game{
 
                         for(var i = 0; i < this.players.length; i++){
 
-                            if(this.players[i].points > 500){
+                            if(this.players[i].points > 100){
                                 this.gameFinished = true
-
-                                return resolve('finished')
                             }
                         }
 
                 
 
-                    if(this.currentPlayer !== null){
+                    if(this.currentPlayer !== null && !this.gameFinished){
                         this.rounds.push(new Round(this.numberOfPlayers))
 
                         if(this.numberOfPlayers === 4){
@@ -243,7 +241,7 @@ export class Game{
 
                 }
 
-                return resolve(this.getGameStateFor(play.player_id))
+                return resolve({roundDone: roundDone, gameFinished: this.gameFinished})
 
         }
     })
@@ -341,15 +339,42 @@ class Round{
 
         const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), numberInKitty, this.numberOfPlayers)  //5 in kitty for 4 man
 
+
+
+        var numberOfCards = hands[0].length
+        var correctDeal = true
+
+        for(var i = 0 ; i < hands.length; i++){
+            if(numberOfCards !== hands[i].length){
+                correctDeal = false 
+            }
+        }
+        this.kitty = kitty
+        this.hands = hands
+        this.misdeals = misdeals
+
+        while( this.kitty !== null && (this.kitty.length !== numberInKitty || !correctDeal)){
+
+            const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), numberInKitty, this.numberOfPlayers)  //5 in kitty for 4 man
+            this.kitty = kitty
+            this.hands = hands
+            this.misdeals = misdeals
+            for(var i = 0 ; i < hands.length; i++){
+                if(numberOfCards !== hands[i].length){
+                    correctDeal = false 
+                }
+            }
+
+        }
+
+
+
         for(let i = 0; i < this.numberOfPlayers; i++){
             this.points.push(0)
             this.bids.push(0)
             this.hasBid.push(false)
         }
 
-        this.kitty = kitty
-        this.hands = hands 
-        this.misdeals = misdeals
 
         this.roundState = RoundState.WAITING_ON_PLAYERS
         this.bidders = []
@@ -377,7 +402,33 @@ class Round{
             numberInKitty = 3
         }
         const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), numberInKitty, this.numberOfPlayers)  //5 in kitty for 4 man
+
+        var numberOfCards = hands[0].length
+        var correctDeal = true
+
+        for(var i = 0 ; i < hands.length; i++){
+            if(numberOfCards !== hands[i].length){
+                correctDeal = false 
+            }
+        }
         this.kitty = kitty
+        this.hands = hands
+        this.misdeals = misdeals
+
+        while( this.kitty !== null && (this.kitty.length !== numberInKitty || !correctDeal)){
+
+            const {kitty, hands, misdeals} = shuffleAndDeal(new Deck(), numberInKitty, this.numberOfPlayers)  //5 in kitty for 4 man
+            this.kitty = kitty
+            this.hands = hands
+            this.misdeals = misdeals
+            for(var i = 0 ; i < hands.length; i++){
+                if(numberOfCards !== hands[i].length){
+                    correctDeal = false 
+                }
+            }
+
+        }
+
         for(let i = 0; i< this.numberOfPlayers; i++){
             this.hasBid.push(false)
         }
@@ -387,8 +438,7 @@ class Round{
         }
         this.bid = 75
         
-        this.hands = hands
-        this.misdeals = misdeals
+
         this.misdealsClaimed.push(index)
         this.bidWinner = null
         this.bidder = this.starter

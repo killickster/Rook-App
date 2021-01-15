@@ -48,5 +48,6 @@
         <button *ngIf='discard' (click)="emitAction('discard', null)" mat-raised-button color="primary">Discard</button>
         <button class="mr" (click)="emitAction('bid', data.payload)" *ngIf='bid' mat-raised-button color="primary">Bid</button>
         <button *ngIf='bid' (click)="emitAction('bid', 0)" mat-raised-button color="accent">Pass</button>
+        <button *ngIf='leaveRoom' (click)="emitAction('leave_room', true)" mat-raised-button color="accent">Yes</button>
     </div>
 </div>

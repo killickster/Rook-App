@@ -143,16 +143,11 @@ module.exports = function(io: any){
 
                     var play = new Play(play.moveType, play.player_id, play.payload)
 
-                    game.move(play).then((index: any) => {
+                    game.move(play).then((data: any) => {
 
-                        console.log(index)
+                        const {roundDone, gameFinished} = data
 
-                        if(index === 'finished'){
-                            return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id, finished: true})
-                        }else{
-                            return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id, finished: false})
-                        }
-
+                        return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id, finished: gameFinished, roundDone: roundDone})
 
                     })
 

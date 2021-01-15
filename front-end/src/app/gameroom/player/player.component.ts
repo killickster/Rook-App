@@ -43,7 +43,7 @@ export class PlayerComponent implements OnInit, OnChanges {
 
     if(this.bidders.includes(this.globalIndex) && this.bid < 80){
       this.hasBid = false
-      this.description =  "Not yet bid"
+      this.description =  ""
     }else if(this.bid < 80){
       this.description = "pass"
     }else{
@@ -65,7 +65,7 @@ export class PlayerComponent implements OnInit, OnChanges {
     this.bidders = this.playerInfo['bidders']
     if(this.bidders.includes(this.globalIndex) && this.bid < 80){
       this.hasBid = false
-      this.description =  "Not yet bid"
+      this.description =  ""
     }else if(this.bid < 80){
       this.description = "pass"
     }else{

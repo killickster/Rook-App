@@ -33,6 +33,7 @@ export class GamesService {
   kitty: Subject<any> = new Subject<any>()
   yourIndex: BehaviorSubject<number> = new BehaviorSubject<number>(null) 
   gameState: BehaviorSubject<any> = new BehaviorSubject<any>(null)
+  roundDone: boolean = false
   
 
 
@@ -86,8 +87,7 @@ export class GamesService {
 
       if(data){
       const finished = data['finished']
-      console.log('finished')
-      console.log(finished)
+      this.roundDone = data['roundDone']
 
       this.game.subscribe(game => {
         this.authService.user.subscribe(user => {
@@ -95,8 +95,6 @@ export class GamesService {
 
             if(finished){
               this.socketService.emit('game_done', {game_id: game.id, player_id: user.id})
-              this.game.next(null)
-              this.gameState.next(null)
             }
 
         })

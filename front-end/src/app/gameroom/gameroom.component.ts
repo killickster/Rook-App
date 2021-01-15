@@ -65,6 +65,7 @@ export class GameroomComponent implements OnInit {
   currentPlayerIndex: number;
   topPlayers: any = []
   throwOutPoints = false
+  gameDone: boolean= false
 
 
   constructor(private snackBar: MatSnackBar, private router: Router, private gameService: GamesService, private authService: AuthService, private dialog: MatDialog, private socketService: WebSocketService) { }
@@ -76,7 +77,9 @@ export class GameroomComponent implements OnInit {
 
     this.gameService.gameState.subscribe(game => {
 
-      if(game && game !== null){
+      if(game !== null){
+
+      this.gameDone = (game['gameFinished'] === true)
 
           this.gameService.yourIndex.subscribe(index => {
 
@@ -184,15 +187,18 @@ export class GameroomComponent implements OnInit {
 
           var timeout = 0
 
-          if(game.rounds.length > 1 && d && round.tricks.length === 0 && round.bidders.length === this.numberOfPlayers && round.bid === 75){
+          if(this.gameService.roundDone){
 
             this.cards = []
             this.hands = [[], [], [], []]
             this.kitty = []
             this.playing = true
-            var indexOfTrick = game.rounds[game.rounds.length - 2].tricks.length
 
-            var playCards = game.rounds[game.rounds.length - 2].tricks[indexOfTrick-2].cards
+            var subtract = this.gameDone ? 1 : 2
+
+            var indexOfTrick = game.rounds[game.rounds.length - subtract].tricks.length
+
+            var playCards = game.rounds[game.rounds.length - subtract].tricks[indexOfTrick-2].cards
 
             for(var i = 0; i < players.length; i++){
               if(players[(i+index)%numberOfPlayers]){
@@ -201,16 +207,34 @@ export class GameroomComponent implements OnInit {
                 }else{
                   this.playedCards[i] = null
                 }
+                  this.playerNames[i] = players[(i+index)%numberOfPlayers].player_name
+                  this.points[i] = players[(i+index)%numberOfPlayers].points
               }
             }
             timeout = 5000
             this.trump = null
 
 
+              //for rendering the player hands
+             this.playerInfo = {
+                "playerNames" : this.playerNames,
+                "playedCards" : this.playedCards,
+                "currentPlayer" : this.currentPlayerIndex,
+                "playing" : this.playing,
+                "hands" : this.hands,
+                "bidWinner" : (this.rounds[this.rounds.length -1].bidWinner-this.index+this.numberOfPlayers)%this.numberOfPlayers,
+                "bids" : round.bids,
+                "roundState": round.roundState,
+                "bidders" : round.bidders
+              }
+
+
           }else if(!(this.gameStage === RoundState.PLAYING)){
             this.playing = false
 
           }
+
+          if(!this.gameDone){
 
             setTimeout(() => {
               this.kitty = round.kitty
@@ -339,13 +363,13 @@ export class GameroomComponent implements OnInit {
 
 
 
-
             }
 
             console.log('bids')
             console.log(round.bids)
 
-                                //for rendering the player hands
+
+              //for rendering the player hands
              this.playerInfo = {
                 "playerNames" : this.playerNames,
                 "playedCards" : this.playedCards,
@@ -359,24 +383,25 @@ export class GameroomComponent implements OnInit {
               }
 
 
+
             },timeout)
+
+          }else{
+            this.yourTurn = false
+
+            this.snackInput(new SnackData('Would you like to leave the room', "leave_room", null))
+          }
 
 
 
 
         })
-        }else if(game === null){
-
-          setTimeout(()=> {
-            this.playedCards = [null, null, null, null]
-            this.currentPlayerIndex = null
-          }, 2000)
 
 
 
-          
 
-        }
+
+      }
 
         /*
         if(game && game['gameFinished']){
@@ -600,7 +625,12 @@ export class GameroomComponent implements OnInit {
                   duration: 0,
                 });
               }
-            }
+      }else if(data.action === 'leave_room'){
+        this.gameService.game.next(null)
+        this.index = null
+        this.playerNames = []
+        this.router.navigate(['/games'])
+      }
 
 
 
