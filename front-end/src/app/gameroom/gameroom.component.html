@@ -46,8 +46,8 @@
             <th>We</th>
             <th>They</th>
             <th>Bid</th>
-            <th>Er</th>
-            <th>trump</th>
+            <th>Bidder</th>
+            <th>Trump</th>
         </tr>
 
         <tr *ngFor="let round of rounds">
@@ -60,6 +60,16 @@
 
             </td>
         </tr>
+        <tfoot>
+            <tr>
+                <td>{{points[0]}}</td>
+                <td>{{points[1]}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        <tfoot>
+
 
     </table>
     <table *ngIf="numberOfPlayers !== 4">

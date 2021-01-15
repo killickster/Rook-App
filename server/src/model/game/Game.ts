@@ -72,6 +72,8 @@ export class Game{
 
 
                     this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
+                    this.rounds[this.currentRoundIndex].team1Indicies = this.team1Indicies
+                    this.rounds[this.currentRoundIndex].team2Indicies = this.team2Indicies
 
                     this.currentPlayer = 0
                 }
@@ -161,6 +163,18 @@ export class Game{
                         }
                     }
 
+                    console.log("team 1 points")
+                    console.log(team1Points)
+
+                    console.log("team 2 points")
+                    console.log(team1Points)
+
+                    console.log('team 1 indicies')
+                    console.log(team1Indicies)
+
+                    console.log('team 2 indicies')
+                    console.log(team2Indicies)
+
                         var bid = this.rounds[this.currentRoundIndex].bid
                         var bidder = this.rounds[this.currentRoundIndex].bidders[0]
 
@@ -227,12 +241,14 @@ export class Game{
                     if(this.currentPlayer !== null && !this.gameFinished){
                         this.rounds.push(new Round(this.numberOfPlayers))
 
+                        this.currentRoundIndex++
+
                         if(this.numberOfPlayers === 4){
                             this.rounds[this.currentRoundIndex].team1Indicies = this.team1Indicies
                             this.rounds[this.currentRoundIndex].team2Indicies = this.team2Indicies
                         }
 
-                        this.currentRoundIndex++
+
                         this.currentPlayer = this.rounds.length % this.numberOfPlayers
                         this.rounds[this.currentRoundIndex].setFirstBidder(this.currentPlayer)
                         this.rounds[this.currentRoundIndex].roundState = RoundState.BIDDING
@@ -445,6 +461,8 @@ class Round{
         return this.starter
     }
 
+    //Required for 3,5,6 player to set teams after for individual rounds
+
     setTeams(payload: any){
         const {index, card} = payload
         this.choosenCard = card
@@ -477,7 +495,7 @@ class Round{
 
     }
 
-    //Required for 3,5,6 player to set teams after for individual rounds
+
 
 
     submitBid(bid: number){
@@ -596,16 +614,13 @@ class Round{
                 }
 
                 if(trick.winnerIndex !== null){
-                    console.log('points in kitty')
-                    console.log(pointsInKitty)
                     points[trick.winnerIndex] += pointsInKitty
-
-                    if(lastTrick){
-                        points[trick.winnerIndex] += 10
-                    }
-
                 }
 
+            }
+            
+            if(i === this.tricks.length-2 && lastTrick && trick.winnerIndex !== null){
+                    points[trick.winnerIndex] += 10
             }
 
 

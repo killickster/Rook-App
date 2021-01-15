@@ -190,18 +190,11 @@ module.exports = function(io: any){
         //get player_name from database
         var user = await User.findOne({_id: player_id})
 
-        console.log('disconnecting socket')
-
         var game_from_database = await GameSchema.findOne({_id: game_id})
 
         var game = await games.find(g => {
             return g.game_id === game_id
         })
-
-        console.log('game')
-        console.log(game)
-        console.log('plyaer')
-        console.log(user)
 
         //Check database for game
         socket.disconnect()
