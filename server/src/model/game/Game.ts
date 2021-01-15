@@ -21,7 +21,7 @@ export class Game{
     public mostCards: boolean = false             //If true most cards gets 10
     public throwOutPoints: boolean = false        //If true you can throw out points
 
-    constructor(public game_id: string, public numberOfPlayers: number, lastTrick: boolean, mostCards: boolean, throwOutPoints: boolean){
+    constructor(public game_id: string, public numberOfPlayers: number, lastTrick: boolean, mostCards: boolean, throwOutPoints: boolean, public pointsToWin: number){
 
         console.log('throw out points')
         console.log(throwOutPoints)
@@ -217,7 +217,7 @@ export class Game{
 
                         for(var i = 0; i < this.players.length; i++){
 
-                            if(this.players[i].points > 100){
+                            if(this.players[i].points >= this.pointsToWin){
                                 this.gameFinished = true
                             }
                         }

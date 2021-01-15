@@ -73,7 +73,7 @@ module.exports = function(io: any){
 
                 console.log(play)
 
-                const game = new Game(game_id, game_from_database.numberOfPlayers, play.payload.lastTrick, play.payload.mostCards, play.payload.throwOutPoints)
+                const game = new Game(game_id, game_from_database.numberOfPlayers, play.payload.lastTrick, play.payload.mostCards, play.payload.throwOutPoints, game_from_database.pointsToWin)
 
                 games.push(game)
 

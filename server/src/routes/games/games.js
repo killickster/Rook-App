@@ -22,7 +22,8 @@ router.post('/game', verifyToken, verifyNotHost, async (req,res) => {
         finished: false,
         throwOutPoints: req.body.throwOutPoints,
         lastTrick: req.body.lastTrick,
-        mostCards: req.body.mostCards
+        mostCards: req.body.mostCards,
+        pointsToWin: req.body.pointsToWin
     })
 
     try{
@@ -38,7 +39,8 @@ router.post('/game', verifyToken, verifyNotHost, async (req,res) => {
             playerIds: game.players_id,
             throwOutPoints: game.throwOutPoints,
             lastTrick: game.lastTrick,
-            mostCards: game.mostCards
+            mostCards: game.mostCards,
+            pointsToWin: game.pointsToWin
         }
 
 
@@ -66,7 +68,8 @@ router.get('/', verifyToken, async (req,res) => {
                 finished: game.finished,
                 throwOutPoints: game.throwOutPoints,
                 lastTrick: game.lastTrick,
-                mostCards: game.mostCards
+                mostCards: game.mostCards,
+                pointsToWin: game.pointsToWin
             }
         })
 
@@ -104,7 +107,8 @@ router.put('/game', verifyToken, verifyGame, async(req,res) => {
             numberOfPlayers: savedGame.numberOfPlayers,
             playerNames: savedGame.playerNames,
             playerIds: savedGame.players_id,
-            game: savedGame.finished
+            game: savedGame.finished,
+            pointsToWin: savedGame.pointsToWin
         }
         console.log(savedGame.playerNames)
 

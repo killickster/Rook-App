@@ -45,6 +45,10 @@ const gameSchema = new mongoose.Schema({
     mostCards: {
         type: Boolean,
         require: true
+    },
+    pointsToWin: {
+        type: Number,
+        require: true
     }
 })
 

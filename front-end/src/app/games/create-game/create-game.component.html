@@ -39,6 +39,19 @@
     </div>
 
     <div class="row flex-row">
+        <div class="col-sm wrap">
+        <mat-form-field class='w-100'>
+            <mat-label>Play until</mat-label>
+            <select matNativeControl formControlName = "pointsToWin">
+                <option *ngFor="let points of pointsOptions" [value]="points">{{points}}</option>
+            </select>
+            </mat-form-field>
+
+        </div>
+
+            
+    </div>
+    <div class="row flex-row">
         <div class="col-sm-2 wrap">
             <button mat-button class="btn btn-primary" color="primary" type="submit" [disabled]="myForm.invalid">Create Game</button>
         </div>

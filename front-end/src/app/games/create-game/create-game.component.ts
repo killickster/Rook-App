@@ -15,6 +15,7 @@ export class CreateGameComponent implements OnInit {
   createdGame = false
   myForm: FormGroup
   errorMessage: string
+  pointsOptions: number[] = [300, 500]
 
 
   constructor(private gameService: GamesService, private fb: FormBuilder, private dialogRef: MatDialogRef<CreateGameComponent>) { }
@@ -27,6 +28,7 @@ export class CreateGameComponent implements OnInit {
       throwOutPoints: [false],
       mostCards: [false],
       lastTrick: [false],
+      pointsToWin: [500, Validators.required]
     })
   }
 
@@ -40,7 +42,7 @@ export class CreateGameComponent implements OnInit {
       const formValue = this.myForm.value
 
       if(formValue.numberOfPlayers >= 3 && formValue.numberOfPlayers <= 6){
-        this.gameService.addGame(formValue.numberOfPlayers, formValue.name, formValue.lastTrick, formValue.mostCards, formValue.throwOutPoints)
+        this.gameService.addGame(formValue.numberOfPlayers, formValue.name, formValue.lastTrick, formValue.mostCards, formValue.throwOutPoints, formValue.pointsToWin)
         this.createdGame = true
         this.dialogRef.close()
       }else{

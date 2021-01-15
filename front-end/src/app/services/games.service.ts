@@ -166,8 +166,8 @@ export class GamesService {
 
   }
 
-  addGame(numberOfPlayers: number, name: string, lastTrick: boolean, mostCards: boolean, throwOutPoints: boolean){
-    return this.http.post<Game>('api/games/game', {numberOfPlayers: numberOfPlayers, name: name, throwOutPoints: throwOutPoints, mostCards: mostCards, lastTrick: lastTrick}).pipe(catchError(this.handleErrors), tap(game => {
+  addGame(numberOfPlayers: number, name: string, lastTrick: boolean, mostCards: boolean, throwOutPoints: boolean, pointsToWin: number){
+    return this.http.post<Game>('api/games/game', {numberOfPlayers: numberOfPlayers, name: name, throwOutPoints: throwOutPoints, mostCards: mostCards, lastTrick: lastTrick, pointsToWin: pointsToWin}).pipe(catchError(this.handleErrors), tap(game => {
       this.games.push(game)
       this.game.next(game)
 
