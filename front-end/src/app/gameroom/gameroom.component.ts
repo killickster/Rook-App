@@ -502,8 +502,6 @@ export class GameroomComponent implements OnInit {
       
     }else if(this.gameStage === RoundState.CHOOSING_TRUMP && this.yourTurn){
 
-      this.yourTurn = false
-
 
         this.authService.user.subscribe(user => {
           this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.SET_TRUMP, user.id, card.color)})
@@ -513,6 +511,7 @@ export class GameroomComponent implements OnInit {
 
     }else if(this.gameStage === RoundState.PLAYING && this.yourTurn){
 
+      this.yourTurn = false
       var hasTrickColor = false
 
       if(this.turn !== null){
