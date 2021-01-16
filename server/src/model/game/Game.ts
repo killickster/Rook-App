@@ -111,7 +111,7 @@ export class Game{
         }
 
         if(!this.validateMove(play)){
-            throw('INVALID_MOVE')
+            reject({move: 'INVALID_MOVE', gameState: this})
         }
 
         switch(play.moveType){
@@ -162,18 +162,6 @@ export class Game{
                             team2Points += points[i]
                         }
                     }
-
-                    console.log("team 1 points")
-                    console.log(team1Points)
-
-                    console.log("team 2 points")
-                    console.log(team1Points)
-
-                    console.log('team 1 indicies')
-                    console.log(team1Indicies)
-
-                    console.log('team 2 indicies')
-                    console.log(team2Indicies)
 
                         var bid = this.rounds[this.currentRoundIndex].bid
                         var bidder = this.rounds[this.currentRoundIndex].bidders[0]

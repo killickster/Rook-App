@@ -1,6 +1,7 @@
 const {Game, Player, Play, MoveType} = require('../../../model/game/Game')
 const GameSchema = require('../../../model/Game')
 const User =require('../../../model/User')
+const fs = require('fs');
 
 
 
@@ -149,6 +150,10 @@ module.exports = function(io: any){
 
                         return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id, finished: gameFinished, roundDone: roundDone})
 
+                    }).catch((error: any) => {
+                        fs.writeFile('logs.txt', error.gameState, function (err: any) {
+                            if (err) return console.log(err);
+                        });
                     })
 
                 }else if(play.moveType === MoveType.CORRECTING_MISDEAL){
