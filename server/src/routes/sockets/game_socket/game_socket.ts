@@ -151,7 +151,7 @@ module.exports = function(io: any){
                         return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id, finished: gameFinished, roundDone: roundDone})
 
                     }).catch((error: any) => {
-                        fs.writeFile('logs.txt', error.gameState, function (err: any) {
+                        fs.writeFile('logs.txt', JSON.stringify(error.gameState), function (err: any) {
                             if (err) return console.log(err);
                         });
                     })
