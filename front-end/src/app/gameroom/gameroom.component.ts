@@ -481,6 +481,7 @@ export class GameroomComponent implements OnInit {
 
     if(this.yourTurn && this.gameStage === RoundState.DISCARDING){
 
+      this.yourTurn = false
       if(card.kitty){
         card.kitty = false
       this.kitty.splice(this.kitty.indexOf(card),1)
@@ -502,6 +503,7 @@ export class GameroomComponent implements OnInit {
       
     }else if(this.gameStage === RoundState.CHOOSING_TRUMP && this.yourTurn){
 
+      this.yourTurn = false
 
         this.authService.user.subscribe(user => {
           this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.SET_TRUMP, user.id, card.color)})
