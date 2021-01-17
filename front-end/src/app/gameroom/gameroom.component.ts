@@ -476,9 +476,6 @@ export class GameroomComponent implements OnInit {
 
   cardClicked(card: Card){
 
-    console.log('round state')
-    console.log(this.gameStage)
-
     if(this.yourTurn && this.gameStage === RoundState.DISCARDING){
 
       if(card.kitty){
@@ -510,7 +507,7 @@ export class GameroomComponent implements OnInit {
 
     }else if(this.gameStage === RoundState.PLAYING && this.yourTurn){
 
-      this.yourTurn = false
+
       var hasTrickColor = false
 
       if(this.turn !== null){
@@ -531,6 +528,7 @@ export class GameroomComponent implements OnInit {
         
       }else{
           
+        this.yourTurn = false
           this.authService.user.subscribe(user => {
             this.socketService.emit('play', {player_id: user.id, game_id : this.game_id, play: new Play(MoveType.PLAY, user.id, {card: card, index: this.index})})
           })
