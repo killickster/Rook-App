@@ -33,6 +33,7 @@ module.exports = function(io: any){
 
             if(!game){
                 console.log('no such game')
+                socket.disconnect()
                 return socket.emit("declined", "no such game")
             
             }
@@ -202,10 +203,10 @@ module.exports = function(io: any){
         })
 
         //Check database for game
-        socket.disconnect()
 
         if(!game.finished){
 
+            socket.disconnect()
             game_from_database.finished = true
 
             var max = -Infinity

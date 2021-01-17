@@ -481,7 +481,6 @@ export class GameroomComponent implements OnInit {
 
     if(this.yourTurn && this.gameStage === RoundState.DISCARDING){
 
-      this.yourTurn = false
       if(card.kitty){
         card.kitty = false
       this.kitty.splice(this.kitty.indexOf(card),1)
