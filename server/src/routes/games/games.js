@@ -73,8 +73,6 @@ router.get('/', verifyToken, async (req,res) => {
             }
         })
 
-        console.log(gameReturnObject)
-
         res.send(gameReturnObject)
     }catch(err){
        res.status(400).send(err) 
@@ -84,8 +82,6 @@ router.get('/', verifyToken, async (req,res) => {
 router.put('/game', verifyToken, verifyGame, async(req,res) => {
 
     const game = req.game
-
-    console.log(req.user)
 
 
     for(let id of req.game.players_id){
@@ -110,7 +106,6 @@ router.put('/game', verifyToken, verifyGame, async(req,res) => {
             game: savedGame.finished,
             pointsToWin: savedGame.pointsToWin
         }
-        console.log(savedGame.playerNames)
 
         res.send(returnGame)
 

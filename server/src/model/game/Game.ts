@@ -776,6 +776,27 @@ export class Play {
 }
 
 
+export function getPlayType(play: Play){
+
+    switch(play.moveType){
+        case MoveType.ADD_PLAYER:
+            return "add player"
+        case MoveType.BID:
+            return "bid"
+        case MoveType.PLAY:
+            return "play"
+        case MoveType.SET_TRUMP:
+            return "set trump"
+        case MoveType.INITALIZE_GAME:
+            return "initalize game"
+        case MoveType.CHOOSE_PARTNER:
+            return "choose partner"
+        case MoveType.CORRECTING_MISDEAL:
+            return "correcting misdeal"
+    }
+}
+
+
 
 
 

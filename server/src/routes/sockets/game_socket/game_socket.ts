@@ -1,16 +1,35 @@
-const {Game, Player, Play, MoveType} = require('../../../model/game/Game')
+import { Stream } from "stream";
+
+const {Game, Player, Play, MoveType, getPlayType} = require('../../../model/game/Game')
 const GameSchema = require('../../../model/Game')
 const User =require('../../../model/User')
-const fs = require('fs');
+import {ILogObject, Logger} from 'tslog'
+import {appendFileSync} from 'fs'
 
 
 
 
 var games: typeof Game[] = []
 
-
 module.exports = function(io: any){
 
+function logToTransport(logObject: ILogObject) {
+    appendFileSync("logs.txt", JSON.stringify(logObject) + "\n");
+  }
+  
+  const logger: Logger = new Logger();
+  logger.attachTransport(
+    {
+      silly: logToTransport,
+      debug: logToTransport,
+      trace: logToTransport,
+      info: logToTransport,
+      warn: logToTransport,
+      error: logToTransport,
+      fatal: logToTransport,
+    },
+    "debug"
+  );
 
 
     console.log('running')
@@ -26,6 +45,11 @@ module.exports = function(io: any){
             //get player_name from database
             var user = await User.findOne({_id: player_id})
 
+
+            var game_from_database = await GameSchema.findOne({_id: game_id})
+
+            if(!game_from_database){
+            }
             //Check database for game
             var game = await games.find(g => {
                 return g.game_id === game_id
@@ -33,7 +57,6 @@ module.exports = function(io: any){
 
             if(!game){
                 console.log('no such game')
-                socket.disconnect()
                 return socket.emit("declined", "no such game")
             
             }
@@ -52,6 +75,9 @@ module.exports = function(io: any){
         socket.on('play', async (game_data: any) => {
 
 
+
+
+
             var play: typeof Play = game_data.play
             var player_id = play.player_id
             var game_id: string = game_data.game_id
@@ -68,14 +94,16 @@ module.exports = function(io: any){
 
             //Check database for game
             var game_from_database = await GameSchema.findOne({_id: game_id})
-            
+
+
+
 
 
             if(play.moveType === MoveType.INITALIZE_GAME){
 
                 console.log(play)
 
-                const game = new Game(game_id, game_from_database.numberOfPlayers, play.payload.lastTrick, play.payload.mostCards, play.payload.throwOutPoints, game_from_database.pointsToWin)
+                const game = await new Game(game_id, game_from_database.numberOfPlayers, play.payload.lastTrick, play.payload.mostCards, play.payload.throwOutPoints, game_from_database.pointsToWin)
 
                 games.push(game)
 
@@ -92,9 +120,25 @@ module.exports = function(io: any){
 
             }else{
 
+
+
                 var game = await games.find(g => {
                     return g.game_id === game_id
                 })
+               
+                if(game.players[game.currentPlayer] !== null && game.players[game.currentPlayer]){
+
+                    logger.debug("current player " + game.players[game.currentPlayer].player_id);
+
+                }
+                
+                logger.debug("play player id " + player_id)
+                logger.debug("play type " + getPlayType(play));
+
+                
+
+
+
 
                 if(play.moveType === MoveType.ADD_PLAYER){
                     socket.join(game_id)
@@ -145,6 +189,8 @@ module.exports = function(io: any){
 
                     var play = new Play(play.moveType, play.player_id, play.payload)
 
+
+
                     game.move(play).then((data: any) => {
 
                         const {roundDone, gameFinished} = data
@@ -152,9 +198,7 @@ module.exports = function(io: any){
                         return io.of('/games/socket').to(game_id).emit('game_state_changed', {game_id: game_id, finished: gameFinished, roundDone: roundDone})
 
                     }).catch((error: any) => {
-                        fs.writeFile('logs.txt', JSON.stringify(error.gameState), function (err: any) {
-                            if (err) return console.log(err);
-                        });
+                        return console.log(error)
                     })
 
                 }else if(play.moveType === MoveType.CORRECTING_MISDEAL){
@@ -178,6 +222,8 @@ module.exports = function(io: any){
                     })
 
                 }
+
+
 
 
 

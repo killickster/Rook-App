@@ -77,7 +77,7 @@ export class GameroomComponent implements OnInit {
 
     this.gameService.gameState.subscribe(game => {
 
-      if(game !== null){
+      if(game !== null && game){
 
       this.gameDone = (game['gameFinished'] === true)
 
@@ -110,6 +110,8 @@ export class GameroomComponent implements OnInit {
 
 
             this.rounds = game.rounds
+            console.log("game")
+            console.log(game)
 
 
             
