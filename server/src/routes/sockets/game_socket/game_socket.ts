@@ -199,6 +199,8 @@ function logToTransport(logObject: ILogObject) {
 
                     }).catch((error: any) => {
                         return console.log(error)
+                        logger.error(error);
+                        logger.debug("\n not your turn")
                     })
 
                 }else if(play.moveType === MoveType.CORRECTING_MISDEAL){
